@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
+
+import java.util.EventListener;
+import java.util.EventListenerProxy;
 import java.util.Map;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -36,14 +39,12 @@ public class RoverArm {
         LIFT_COUNTS_PER_UPDOWN_EFFORT = config.getInt("lift_counts_per_updown_effort", 50);
 
         //verticalMotor.setDirection(DcMotor.Direction.FORWARD);
-        verticalMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         verticalMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         verticalMotor.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
 
         verticalMotor.setPower(0);
 
     }
-
 
     public int getLiftPosition() {
         return verticalMotor.getCurrentPosition();
@@ -61,38 +62,54 @@ public class RoverArm {
 
     public void moveUp() {
 
-        int newTarget;
-        newTarget  = verticalMotor.getCurrentPosition() + LIFT_COUNTS_PER_UPDOWN_EFFORT;
-        verticalMotor.setPower(LIFT_POWER);
-        verticalMotor.setTargetPosition(newTarget);
-        verticalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-
-//        verticalMotor.setDirection(DcMotor.Direction.FORWARD);
-//        verticalMotor.setPower(-1.0 * LIFT_POWER);
+        verticalMotor.setDirection(DcMotor.Direction.FORWARD);
+        verticalMotor.setPower(-1.0 * LIFT_POWER);
     }
 
     public void moveDown() {
-
-        int newTarget;
-        newTarget  = verticalMotor.getCurrentPosition() - LIFT_COUNTS_PER_UPDOWN_EFFORT;
+        verticalMotor.setDirection(DcMotor.Direction.FORWARD);
         verticalMotor.setPower(LIFT_POWER);
-        verticalMotor.setTargetPosition(newTarget);
-        verticalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-//        verticalMotor.setDirection(DcMotor.Direction.FORWARD);
-//        verticalMotor.setPower(LIFT_POWER);
     }
 
     public void stop() {
+        verticalMotor.setDirection(DcMotor.Direction.FORWARD);
+        verticalMotor.setPower(0);
+    }
+
+    public void moveUpByEncoder() {
+        int newTarget;
+        ElapsedTime runtime = new ElapsedTime();
+        newTarget = verticalMotor.getCurrentPosition() + LIFT_COUNTS_PER_UPDOWN_EFFORT;
+        verticalMotor.setPower(LIFT_POWER);
+        verticalMotor.setTargetPosition(newTarget);
+        verticalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        runtime.reset();
+        while (verticalMotor.isBusy() && runtime.milliseconds() < 2000) {
+            // wait
+        }
+    }
+
+    public void moveDownByEncoder() {
+
+        int newTarget;
+        ElapsedTime runtime = new ElapsedTime();
+        newTarget = verticalMotor.getCurrentPosition() - LIFT_COUNTS_PER_UPDOWN_EFFORT;
+        verticalMotor.setPower(LIFT_POWER);
+        verticalMotor.setTargetPosition(newTarget);
+        verticalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        runtime.reset();
+        while (verticalMotor.isBusy() && runtime.milliseconds() < 2000) {
+            // wait
+        }
+    }
+
+    public void stopByEncoder() {
 
         verticalMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         verticalMotor.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
         verticalMotor.setPower(0);
-
-//        verticalMotor.setDirection(DcMotor.Direction.FORWARD);
-//        verticalMotor.setPower(0);
     }
+
 
     public boolean isTouched() {
         return !touchSensor.getState();

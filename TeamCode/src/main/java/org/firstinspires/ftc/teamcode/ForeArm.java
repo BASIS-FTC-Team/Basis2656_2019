@@ -25,9 +25,8 @@ public class ForeArm {
     double FOREARM_FORTHBACK_POWER = 1.0;
     int FOREARM_COUNTS_PER_UPDOWN_EFFORT = 50;
     int FOREARM_COUNTS_PER_FORTHBACK_EFFORT =50;
-
-
-
+    int FOREARM_COUNTS_AUTODOWN = 300;
+    int FOREARM_COUNTS_AUTOUP = 300;
 
     HardwareMap hwMap = null;
     public ElapsedTime time = new ElapsedTime();
@@ -46,9 +45,9 @@ public class ForeArm {
 //        motor3.setDirection(DcMotor.Direction.FORWARD);
 //        motor3.setPower(0);
 
-        motor1.setZeroPowerBehavior(ZeroPowerBehavior.FLOAT);
-        motor2.setZeroPowerBehavior(ZeroPowerBehavior.FLOAT);
-        motor3.setZeroPowerBehavior(ZeroPowerBehavior.FLOAT);
+        motor1.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
+        motor2.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
+        motor3.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
 
         motor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -58,8 +57,8 @@ public class ForeArm {
         motor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        FOREARM_UPDOWN_POWER = config.getDouble("forearm_updown_power", 1.0);
-        FOREARM_FORTHBACK_POWER = config.getDouble("forearm_forthback_power",1.0);
+        FOREARM_UPDOWN_POWER = config.getDouble("forearm_updown_power", 0.8);
+        FOREARM_FORTHBACK_POWER = config.getDouble("forearm_forthback_power",0.8);
 
         FOREARM_COUNTS_PER_UPDOWN_EFFORT = config.getInt("forearm_counts_per_updown_effort", 50);
         FOREARM_COUNTS_PER_FORTHBACK_EFFORT = config.getInt("forearm_counts_per_forthback_effort",50);
@@ -67,7 +66,20 @@ public class ForeArm {
 
     }
 
+    public void moveUp() {
 
+        motor1.setDirection(DcMotor.Direction.FORWARD);
+        motor1.setPower(-1.0 * FOREARM_UPDOWN_POWER);
+        motor2.setDirection(DcMotor.Direction.REVERSE);
+        motor2.setPower(-1.0 * FOREARM_UPDOWN_POWER);
+
+    }
+    public void moveDown() {
+        motor1.setDirection(DcMotor.Direction.FORWARD);
+        motor1.setPower(1.0 * FOREARM_UPDOWN_POWER);
+        motor2.setDirection(DcMotor.Direction.REVERSE);
+        motor2.setPower(1.0 * FOREARM_UPDOWN_POWER);
+    }
     public void moveUpDown(double power) {
         motor1.setDirection(DcMotor.Direction.FORWARD);
         motor1.setPower(power);
@@ -75,9 +87,12 @@ public class ForeArm {
         motor2.setPower(power);
     }
 
-    public void moveUp() {
+
+    public void moveUpEnc() {
 
         int newTarget1,newTarget2;
+        ElapsedTime runtime = new ElapsedTime();
+
         newTarget1  = motor1.getCurrentPosition() + FOREARM_COUNTS_PER_UPDOWN_EFFORT;
         newTarget2  = motor2.getCurrentPosition() - FOREARM_COUNTS_PER_UPDOWN_EFFORT;
         motor1.setPower(FOREARM_UPDOWN_POWER);
@@ -87,16 +102,18 @@ public class ForeArm {
         motor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-//        motor1.setDirection(DcMotor.Direction.FORWARD);
-//        motor1.setPower(-1.0 * FOREARM_UPDOWN_POWER);
-//        motor2.setDirection(DcMotor.Direction.REVERSE);
-//        motor2.setPower(-1.0 * FOREARM_UPDOWN_POWER);
+        runtime.reset();
+        while ((motor1.isBusy() || motor2.isBusy()) && runtime.milliseconds()<2000 ) {
+            //wait
+        }
+
 
     }
-
-    public void moveDown() {
+    public void moveDownEnc() {
 
         int newTarget1,newTarget2;
+        ElapsedTime runtime = new ElapsedTime();
+
         newTarget1  = motor1.getCurrentPosition() - FOREARM_COUNTS_PER_UPDOWN_EFFORT;
         newTarget2  = motor2.getCurrentPosition() + FOREARM_COUNTS_PER_UPDOWN_EFFORT;
         motor1.setPower(FOREARM_UPDOWN_POWER);
@@ -106,23 +123,57 @@ public class ForeArm {
         motor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-//        motor1.setDirection(DcMotor.Direction.FORWARD);
-//        motor1.setPower(1.0 * FOREARM_UPDOWN_POWER);
-//        motor2.setDirection(DcMotor.Direction.REVERSE);
-//        motor2.setPower(1.0 * FOREARM_UPDOWN_POWER);
-
+        runtime.reset();
+        while ((motor1.isBusy() || motor2.isBusy()) && runtime.milliseconds()<2000 ) {
+            //wait
+        }
     }
+    public void automoveDownEnc() {
+        int newTarget1,newTarget2;
+        ElapsedTime runtime = new ElapsedTime();
 
-    public void stopUpDown() {
+        newTarget1  = motor1.getCurrentPosition() - FOREARM_COUNTS_AUTODOWN;
+        newTarget2  = motor2.getCurrentPosition() + FOREARM_COUNTS_AUTODOWN;
+        motor1.setPower(FOREARM_UPDOWN_POWER);
+        motor2.setPower(FOREARM_UPDOWN_POWER);
+        motor1.setTargetPosition(newTarget1);
+        motor2.setTargetPosition(newTarget2);
+        motor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        motor1.setZeroPowerBehavior(ZeroPowerBehavior.FLOAT);
-        motor2.setZeroPowerBehavior(ZeroPowerBehavior.FLOAT);
+        runtime.reset();
+        while ((motor1.isBusy() || motor2.isBusy()) && runtime.milliseconds()<2000 ) {
+            //wait
+        }
+    }
+    public void automoveUpEnc() {
+        int newTarget1,newTarget2;
+        ElapsedTime runtime = new ElapsedTime();
+
+        newTarget1  = motor1.getCurrentPosition() - FOREARM_COUNTS_AUTOUP;
+        newTarget2  = motor2.getCurrentPosition() + FOREARM_COUNTS_AUTOUP;
+        motor1.setPower(FOREARM_UPDOWN_POWER);
+        motor2.setPower(FOREARM_UPDOWN_POWER);
+        motor1.setTargetPosition(newTarget1);
+        motor2.setTargetPosition(newTarget2);
+        motor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        runtime.reset();
+        while ((motor1.isBusy() || motor2.isBusy()) && runtime.milliseconds()<2000 ) {
+            //wait
+        }
+    }
+    public void stopUpDownEnc() {
+        motor1.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
+        motor2.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
         motor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor1.setPower(0);
         motor2.setPower(0);
-
     }
+
+
 
     public void moveForward() {
 
@@ -135,7 +186,6 @@ public class ForeArm {
 //        motor3.setDirection(DcMotor.Direction.FORWARD);
 //        motor3.setPower(1.0 * FOREARM_FORTHBACK_POWER);
     }
-
     public void moveBackward() {
 
         int newTarget3;
@@ -147,10 +197,9 @@ public class ForeArm {
 //        motor3.setDirection(DcMotor.Direction.REVERSE);
 //        motor3.setPower(1.0 * FOREARM_FORTHBACK_POWER);
     }
-
     public void stopForthBack() {
 
-        motor3.setZeroPowerBehavior(ZeroPowerBehavior.FLOAT);
+        motor3.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
         motor3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor3.setPower(0);
     }

@@ -37,7 +37,7 @@ public class Auto30sCase01 extends LinearOpMode {
     private int WALL_TO_DEPOT = 1100;
     private int DEPOT_TO_CRATER = 1700;
 
-    private int goldPostion = 0;
+    private GoldPosition goldPostion = GoldPosition.LEFT;
 
     @Override
     public void runOpMode() {
@@ -73,18 +73,18 @@ public class Auto30sCase01 extends LinearOpMode {
         driveTrain.encoderDrive(AUTO_DRIVE_SPEED, 0, -PULL_BACK, 0, 3);
 
         /** 3: Linear shift to wall side */
-        int distanceToMoveTowardWall = DISTANCE_TO_WALL;
+        int distanceToMoveTowardsWall = DISTANCE_TO_WALL;
         switch (goldPostion) {
-            case 1:
-                distanceToMoveTowardWall = DISTANCE_TO_WALL + LEFT_GOLD_DISTANCE;
-            case 2:
-                distanceToMoveTowardWall = DISTANCE_TO_WALL + MIDDLE_GOLD_DISTANCE;
-            case 3:
-                distanceToMoveTowardWall = DISTANCE_TO_WALL + RIGHT_GOLD_DISTANCE;
+            case LEFT:
+                distanceToMoveTowardsWall = DISTANCE_TO_WALL + LEFT_GOLD_DISTANCE;
+            case MIDDLE:
+                distanceToMoveTowardsWall = DISTANCE_TO_WALL + MIDDLE_GOLD_DISTANCE;
+            case RIGHT:
+                distanceToMoveTowardsWall = DISTANCE_TO_WALL + RIGHT_GOLD_DISTANCE;
             default:
-                distanceToMoveTowardWall = DISTANCE_TO_WALL;
+                distanceToMoveTowardsWall = DISTANCE_TO_WALL;
         }
-        driveTrain.encoderDrive(AUTO_DRIVE_SPEED, -distanceToMoveTowardWall, 0, 0, 5);
+        driveTrain.encoderDrive(AUTO_DRIVE_SPEED, -distanceToMoveTowardsWall, 0, 0, 5);
 
         /** 4: Turn towards depot */
         driveTrain.encoderDrive(AUTO_DRIVE_SPEED, 0, 0, -135, 5);
@@ -93,7 +93,7 @@ public class Auto30sCase01 extends LinearOpMode {
         driveTrain.encoderDrive(AUTO_DRIVE_SPEED, 0, WALL_TO_DEPOT, 0, 5);
 
         /** 6: Place team marker  */
-        placeTM();
+        placeTeamMarker();
 
         /** 7: Back to crater */
         driveTrain.encoderDrive(AUTO_DRIVE_SPEED, 0, DEPOT_TO_CRATER, 0, 5);
@@ -118,21 +118,21 @@ public class Auto30sCase01 extends LinearOpMode {
     /**
      * To detect the Gold mineral sample and  identify the position
      *
-     * @return 1 - Gold is on the left
-     * 2 - in the middle
-     * 3 - on the right
-     * 0 - no mineral detected
+     * @return
+     * GoldPosition.LEFT - Gold is on the left
+     * GoldPosition.MIDDLE - in the middle
+     * GoldPosition.RIGHT - on the right
+     * GoldPosition.UNKNOWN - no mineral detected
+     *
      */
 
-    public int identifyGoldPosition() {
-
-        return 1;
+    public GoldPosition identifyGoldPosition() {
+        return GoldPosition.LEFT;
     }
 
-    public void placeTM() {
+    public void placeTeamMarker() {
 
     }
-
 
 //    public void waitForTest() {
 //

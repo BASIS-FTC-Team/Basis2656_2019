@@ -9,6 +9,12 @@ import org.firstinspires.ftc.teamcode.util.Config;
 @TeleOp(name="Check the Config Data")
 public class ConfigData extends LinearOpMode {
 
+
+
+
+
+
+
     private Config config = new Config(Config.configFile);
 
     double FOREARM_UPDOWN_POWER = 0.01;
