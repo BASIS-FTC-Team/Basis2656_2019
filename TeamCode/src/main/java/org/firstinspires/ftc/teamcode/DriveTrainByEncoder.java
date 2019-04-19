@@ -135,6 +135,11 @@ public class DriveTrainByEncoder
         // reset the timeout time and start motion.
         runtime.reset();
 
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         leftFront.setPower(Range.clip(abs(speed*deltaLF/maxDelta),0,1));
         rightFront.setPower(Range.clip(abs(speed*deltaRF/maxDelta),0,1));
         leftBack.setPower(Range.clip(abs(speed*deltaLB/maxDelta),0,1));
@@ -158,13 +163,17 @@ public class DriveTrainByEncoder
         }
 
         // Stop all motion;
-        stop();
+        //stop();
+        leftFront.setPower(0);
+        rightFront.setPower(0);
+        leftBack.setPower(0);
+        rightBack.setPower(0);
 
         // Turn off RUN_TO_POSITION
-        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //  sleep(250);   // optional pause after each move
     }

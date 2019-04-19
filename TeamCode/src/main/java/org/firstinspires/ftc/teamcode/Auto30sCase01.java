@@ -18,13 +18,13 @@ public class Auto30sCase01 extends LinearOpMode {
 //    private String foundColor = null;
     //ColorSensor colorSensor;
     private Config config = new Config(Config.configFile);
-    private GoldDetector gd = new GoldDetector();
+    //private GoldDetector gd = new GoldDetector();
     private DriveTrainByEncoder driveTrain = new DriveTrainByEncoder();
     private ForeArm grabArm = new ForeArm();
 
 
     // Auto drive speed ( from 0.0 to 1.0 )
-    private double AUTO_DRIVE_SPEED = 0.5;
+    private double AUTO_DRIVE_SPEED = 0.1;
 
     // Distances in mm
     private int MOVE_TO_GOLD = 750;
@@ -45,7 +45,7 @@ public class Auto30sCase01 extends LinearOpMode {
         /** Initialization  */
         driveTrain.init(hardwareMap, config);
         grabArm.init(hardwareMap, config);
-        gd.init(hardwareMap, config);
+        //gd.init(hardwareMap, config);
         TelemetryWrapper.init(telemetry, 10);
 
         /** waiting for user to press start */
@@ -66,11 +66,11 @@ public class Auto30sCase01 extends LinearOpMode {
 
         /** 1: Push or collect the Gold */
 
-        driveTrain.encoderDrive(AUTO_DRIVE_SPEED, 0, MOVE_TO_GOLD + PUSH_GOLD, 0, 3);
+        driveTrain.encoderDrive(AUTO_DRIVE_SPEED, 0, -(MOVE_TO_GOLD + PUSH_GOLD), 0, 3);
 
         /** 2: Back out from pushing  */
 
-        driveTrain.encoderDrive(AUTO_DRIVE_SPEED, 0, -PULL_BACK, 0, 3);
+        driveTrain.encoderDrive(AUTO_DRIVE_SPEED, 0, PULL_BACK, 0, 3);
 
         /** 3: Linear shift to wall side */
         int distanceToMoveTowardsWall = DISTANCE_TO_WALL;
@@ -84,19 +84,19 @@ public class Auto30sCase01 extends LinearOpMode {
             default:
                 distanceToMoveTowardsWall = DISTANCE_TO_WALL;
         }
-        driveTrain.encoderDrive(AUTO_DRIVE_SPEED, -distanceToMoveTowardsWall, 0, 0, 5);
+        driveTrain.encoderDrive(AUTO_DRIVE_SPEED, distanceToMoveTowardsWall, 0, 0, 5);
 
         /** 4: Turn towards depot */
-        driveTrain.encoderDrive(AUTO_DRIVE_SPEED, 0, 0, -135, 5);
+        driveTrain.encoderDrive(AUTO_DRIVE_SPEED, 0, 0, 135, 5);
 
         /** 5: Head towards depot */
-        driveTrain.encoderDrive(AUTO_DRIVE_SPEED, 0, WALL_TO_DEPOT, 0, 5);
+        driveTrain.encoderDrive(AUTO_DRIVE_SPEED, 0, -WALL_TO_DEPOT, 0, 5);
 
         /** 6: Place team marker  */
         placeTeamMarker();
 
         /** 7: Back to crater */
-        driveTrain.encoderDrive(AUTO_DRIVE_SPEED, 0, DEPOT_TO_CRATER, 0, 5);
+        driveTrain.encoderDrive(AUTO_DRIVE_SPEED, 0, -DEPOT_TO_CRATER, 0, 5);
 
         /** 8: Turn 180 to crater */
         driveTrain.encoderDrive(AUTO_DRIVE_SPEED, 0, 0, 180, 5);
