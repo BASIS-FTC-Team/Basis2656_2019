@@ -20,32 +20,32 @@ public class Auto30sCase01 extends LinearOpMode {
     private Config config = new Config(Config.configFile);
     private GoldDetector gd = new GoldDetector();
     private DriveTrainByEncoder driveTrain = new DriveTrainByEncoder();
-    private ForeArm grabArm = new ForeArm();
+    //private ForeArm grabArm = new ForeArm();
 
 
     // Auto drive speed ( from 0.0 to 1.0 )
-    private double AUTO_DRIVE_SPEED = 0.5;
+    private double AUTO_DRIVE_SPEED = 0.3;
 
     // Distances in mm
     private int MOVE_TO_GOLD = 750;
     private int PUSH_GOLD = 150;
     private int PULL_BACK = 250;
-    private int LEFT_GOLD_DISTANCE = 0;
-    private int RIGHT_GOLD_DISTANCE = 800;
-    private int MIDDLE_GOLD_DISTANCE = 400;
-    private int DISTANCE_TO_WALL = 830;
+    private int LEFT_GOLD_DISTANCE = -400;
+    private int RIGHT_GOLD_DISTANCE = 400;
+    private int MIDDLE_GOLD_DISTANCE = 0;
+    private int DISTANCE_TO_WALL = 1230;
     private int WALL_TO_DEPOT = 1100;
     private int DEPOT_TO_CRATER = 1700;
 
-    private GoldPosition goldPostion = GoldPosition.MIDDLE;
+    private GoldPosition goldPosition = GoldPosition.MIDDLE;
 
     @Override
     public void runOpMode() {
 
         /** Initialization  */
         driveTrain.init(hardwareMap, config);
-        grabArm.init(hardwareMap, config);
-        gd.init(hardwareMap, config);
+        //grabArm.init(hardwareMap, config);
+        //gd.init(hardwareMap, config);
         TelemetryWrapper.init(telemetry, 10);
 
         /** waiting for user to press start */
@@ -62,12 +62,22 @@ public class Auto30sCase01 extends LinearOpMode {
         adjustInitialPosition();
 
         /** 0.3 Detect the Gold position */
-        goldPostion = identifyGoldPosition();
+        goldPosition = identifyGoldPosition();
 
         /** 1: Push or collect the Gold */
 
         //driveTrain.encoderDrive(AUTO_DRIVE_SPEED, 0, MOVE_TO_GOLD + PUSH_GOLD, 0, 3);
-        driveTrain.moveForthBackEnc(AUTO_DRIVE_SPEED,MOVE_TO_GOLD + PUSH_GOLD,10000, opModeIsActive());
+        if(goldPosition.equals(GoldPosition.LEFT)) {
+            driveTrain.moveLeftRightEnc(AUTO_DRIVE_SPEED, MOVE_TO_GOLD + LEFT_GOLD_DISTANCE, 10000, opModeIsActive());
+            driveTrain.moveForthBackEnc(AUTO_DRIVE_SPEED, PUSH_GOLD, 10000, opModeIsActive());
+        }
+        else if(goldPosition.equals(GoldPosition.RIGHT)) {
+            driveTrain.moveLeftRightEnc(AUTO_DRIVE_SPEED, MOVE_TO_GOLD + RIGHT_GOLD_DISTANCE, 10000, opModeIsActive());
+            driveTrain.moveForthBackEnc(AUTO_DRIVE_SPEED, PUSH_GOLD, 10000, opModeIsActive());
+        }
+        else {
+            driveTrain.moveForthBackEnc(AUTO_DRIVE_SPEED, MOVE_TO_GOLD + PUSH_GOLD, 10000, opModeIsActive());
+        }
 
         /** 2: Back out from pushing  */
 
@@ -76,7 +86,7 @@ public class Auto30sCase01 extends LinearOpMode {
 
         /** 3: Linear shift to wall side */
         int distanceToMoveTowardsWall = DISTANCE_TO_WALL;
-        switch (goldPostion) {
+        switch (goldPosition) {
             case LEFT:
                 distanceToMoveTowardsWall = DISTANCE_TO_WALL + LEFT_GOLD_DISTANCE;
             case MIDDLE:
@@ -110,7 +120,7 @@ public class Auto30sCase01 extends LinearOpMode {
 
         /** 9: Put grabber into crater  */
         //comment the code to pass by the action temporarily
-        grabArm.automoveDownEnc(10000,opModeIsActive());
+        //grabArm.automoveDownEnc(10000,opModeIsActive());
     }
 
 

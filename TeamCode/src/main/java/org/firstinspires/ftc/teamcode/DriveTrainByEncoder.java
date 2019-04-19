@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import java.util.Map;
+
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.util.Config;
@@ -128,6 +130,11 @@ public class DriveTrainByEncoder {
         // reset the timeout time and start motion.
         runtime.reset();
 
+        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         leftFront.setPower(Range.clip(abs(speed*deltaLF/maxDelta),0,1));
         rightFront.setPower(Range.clip(abs(speed*deltaRF/maxDelta),0,1));
         leftBack.setPower(Range.clip(abs(speed*deltaLB/maxDelta),0,1));
@@ -151,13 +158,17 @@ public class DriveTrainByEncoder {
         }
 
         // Stop all motion;
-        stop();
+        //stop();
+        leftFront.setPower(0);
+        rightFront.setPower(0);
+        leftBack.setPower(0);
+        rightBack.setPower(0);
 
         // Turn off RUN_TO_POSITION
-        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         //  sleep(250);   // optional pause after each move
     }
@@ -197,6 +208,11 @@ public class DriveTrainByEncoder {
         COUNTS_PER_MM           = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_MM * 3.1415) * LINE_CORRECTION;
         COUNTS_PER_DEGREE       = WHEEL_DIAGONAL_DISTANCE / WHEEL_DIAMETER_MM  * COUNTS_PER_MOTOR_REV / 360. * DEGREE_CORRECTION;
 
+        leftFront.setDirection(DcMotor.Direction.REVERSE);
+        rightFront.setDirection(DcMotor.Direction.FORWARD);
+        leftBack.setDirection(DcMotor.Direction.REVERSE);
+        rightBack.setDirection(DcMotor.Direction.FORWARD);
+
         leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftBack.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -211,8 +227,8 @@ public class DriveTrainByEncoder {
     /**
      *      speed: the power used for the driving moters
      *      dist: distance to move forward or backward in millimeter
-     *              - positive for forward
-     *              - negative for backwar
+     *              - positive for forwards
+     *              - negative for backwards
      *      timeoutMS: timeout setting for the move (in millisecond)
      */
     public void moveForthBackEnc(double speed, double dist, int timeoutMS, boolean opModeIsActive ) {
@@ -226,9 +242,9 @@ public class DriveTrainByEncoder {
         int timeout = timeoutMS;
         ElapsedTime runtime = new ElapsedTime();
 
-        deltaLF = (int) ( -dist * COUNTS_PER_MM );
+        deltaLF = (int) ( dist * COUNTS_PER_MM );
         deltaRF = (int) ( dist * COUNTS_PER_MM );
-        deltaLB = (int) ( -dist * COUNTS_PER_MM );
+        deltaLB = (int) ( dist * COUNTS_PER_MM );
         deltaRB = (int) ( dist * COUNTS_PER_MM );
 
         newLeftFrontTarget = leftFront.getCurrentPosition() + deltaLF;
@@ -271,7 +287,7 @@ public class DriveTrainByEncoder {
     }
 
     /**
-     *      speed: the power used for the driving moters
+     *      speed: the power used for the driving motors
      *      dist: distance to move left or right in millimeter
      *              - positive for right
      *              - negative for left
