@@ -146,13 +146,13 @@ public class TeleOpTest extends LinearOpMode {
 
             /** For Forearm to move FORWARD or BACKWARD */
             if (gamepad1.a) {
-                foreArm.moveForward();
+                foreArm.moveForwardEnc();
                 TelemetryWrapper.setLine(3,"a pressed. Fore Arm move FORWARD");
             } else if (gamepad1.y) {
-                foreArm.moveBackward();
+                foreArm.moveBackwardEnc();
                 TelemetryWrapper.setLine(3,"y pressed. Fore Arm move BACKWAR");
             } else {
-                foreArm.stopForthBack();
+                foreArm.stopForthBackEnc();
                 TelemetryWrapper.setLine(3,"a or y not pressed. Fore Arm FandB stopped");
             }
 
