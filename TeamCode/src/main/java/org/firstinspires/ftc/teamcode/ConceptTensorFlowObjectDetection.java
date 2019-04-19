@@ -39,6 +39,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.firstinspires.ftc.teamcode.util.telemetry.TelemetryWrapper;
 
 import java.util.List;
 
@@ -115,6 +116,9 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
                     List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
                     if (updatedRecognitions != null) {
                       telemetry.addData("# Object Detected", updatedRecognitions.size());
+                      for (Recognition r:updatedRecognitions) {
+                          telemetry.addData(r.getLabel(),": Top at "+r.getTop()+", Left side at "+r.getLeft());
+                      }
                       if (updatedRecognitions.size() == 3) {
                         int goldMineralX = -1;
                         int silverMineral1X = -1;
@@ -139,7 +143,13 @@ public class ConceptTensorFlowObjectDetection extends LinearOpMode {
                         }
                       }
                       telemetry.update();
+                    } else {
+                        telemetry.addData("updatedRecognitions: ", "null");
+                        telemetry.update();
                     }
+                } else {
+                    telemetry.addData("tfol: ", "null");
+                    telemetry.update();
                 }
             }
         }

@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.util.telemetry.TelemetryWrapper;
 
-@TeleOp(name="Test Forearm Control", group = "Try out")
+@TeleOp(name="Test Forearm Control", group = "Test")
 public class TestForearmControl extends LinearOpMode {
 
     public DcMotor motor_l;

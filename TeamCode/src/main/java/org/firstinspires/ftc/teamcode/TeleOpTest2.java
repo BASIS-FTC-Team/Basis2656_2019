@@ -30,7 +30,6 @@ public class TeleOpTest2 extends LinearOpMode {
         //driveTrain.init(hardwareMap,config);
 
 
-
         DcMotor leftFront = hardwareMap.get(DcMotor.class, "fl_drive");
         DcMotor rightFront = hardwareMap.get(DcMotor.class, "fr_drive");
         DcMotor leftBack = hardwareMap.get(DcMotor.class, "rl_drive");

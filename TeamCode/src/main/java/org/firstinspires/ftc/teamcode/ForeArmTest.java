@@ -17,7 +17,7 @@ public class ForeArmTest {
     double FOREARM_UPDOWN_POWER = 0.5;
     double FOREARM_FORTHBACK_POWER = 0.5;
     int FOREARM_COUNTS_PER_UPDOWN_EFFORT = 10;
-    int FOREARM_COUNTS_PER_FORTHBACK_EFFORT =10;
+    int FOREARM_COUNTS_PER_FORTHBACK_EFFORT = 10;
     int timeoutS = 3000;
 
 
@@ -32,12 +32,11 @@ public class ForeArmTest {
         motor3 = hwMap.get(DcMotor.class, "forearm3");
 
 
-
         FOREARM_UPDOWN_POWER = config.getDouble("forearm_updown_power", 0.5);
-        FOREARM_FORTHBACK_POWER = config.getDouble("forearm_forthback_power",0.5);
+        FOREARM_FORTHBACK_POWER = config.getDouble("forearm_forthback_power", 0.5);
 
         FOREARM_COUNTS_PER_UPDOWN_EFFORT = config.getInt("forearm_counts_per_updown_effort", 10);
-        FOREARM_COUNTS_PER_FORTHBACK_EFFORT = config.getInt("forearm_counts_per_forthback_effort",10);
+        FOREARM_COUNTS_PER_FORTHBACK_EFFORT = config.getInt("forearm_counts_per_forthback_effort", 10);
 
     }
 
@@ -67,9 +66,9 @@ public class ForeArmTest {
 
     public void moveUp() {
 
-        int newTarget1,newTarget2;
-        newTarget1  = motor1.getCurrentPosition() + FOREARM_COUNTS_PER_UPDOWN_EFFORT;
-        newTarget2  = motor2.getCurrentPosition() - FOREARM_COUNTS_PER_UPDOWN_EFFORT;
+        int newTarget1, newTarget2;
+        newTarget1 = motor1.getCurrentPosition() + FOREARM_COUNTS_PER_UPDOWN_EFFORT;
+        newTarget2 = motor2.getCurrentPosition() - FOREARM_COUNTS_PER_UPDOWN_EFFORT;
 
         motor1.setTargetPosition(newTarget1);
         motor2.setTargetPosition(newTarget2);
@@ -86,11 +85,11 @@ public class ForeArmTest {
 
     }
 
-    public void moveDown(int timeoutS) {
+    public void moveDownEnc(int timeoutS) {
 
-        int newTarget1,newTarget2;
-        newTarget1  = motor1.getCurrentPosition() - FOREARM_COUNTS_PER_UPDOWN_EFFORT;
-        newTarget2  = motor2.getCurrentPosition() + FOREARM_COUNTS_PER_UPDOWN_EFFORT;
+        int newTarget1, newTarget2;
+        newTarget1 = motor1.getCurrentPosition() - FOREARM_COUNTS_PER_UPDOWN_EFFORT;
+        newTarget2 = motor2.getCurrentPosition() + FOREARM_COUNTS_PER_UPDOWN_EFFORT;
         motor1.setTargetPosition(newTarget1);
         motor2.setTargetPosition(newTarget2);
         motor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -102,15 +101,17 @@ public class ForeArmTest {
 
         while (motor1.isBusy() && motor2.isBusy() && runtimeFor1MovingStep.milliseconds() <= timeoutS) {
             //looping
-            TelemetryWrapper.setLine(8,"runtimeFor1MovingStep: " + runtimeFor1MovingStep.toString());
+            TelemetryWrapper.setLine(8, "runtimeFor1MovingStep: " + runtimeFor1MovingStep.toString());
         }
         motor1.setPower(0);
         motor2.setPower(0);
-//        motor1.setDirection(DcMotor.Direction.FORWARD);
-//        motor1.setPower(1.0 * FOREARM_UPDOWN_POWER);
-//        motor2.setDirection(DcMotor.Direction.REVERSE);
-//        motor2.setPower(1.0 * FOREARM_UPDOWN_POWER);
+    }
 
+    public void moveDown() {
+        motor1.setDirection(DcMotor.Direction.FORWARD);
+        motor1.setPower(1.0 * FOREARM_UPDOWN_POWER);
+        motor2.setDirection(DcMotor.Direction.REVERSE);
+        motor2.setPower(1.0 * FOREARM_UPDOWN_POWER);
     }
 
     public void stopUpDown() {
@@ -127,7 +128,7 @@ public class ForeArmTest {
     public void moveForward() {
 
         int newTarget3;
-        newTarget3  = motor3.getCurrentPosition() + FOREARM_COUNTS_PER_FORTHBACK_EFFORT;
+        newTarget3 = motor3.getCurrentPosition() + FOREARM_COUNTS_PER_FORTHBACK_EFFORT;
         motor3.setPower(FOREARM_FORTHBACK_POWER);
         motor3.setTargetPosition(newTarget3);
         motor3.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -139,7 +140,7 @@ public class ForeArmTest {
     public void moveBackward() {
 
         int newTarget3;
-        newTarget3  = motor3.getCurrentPosition() - FOREARM_COUNTS_PER_FORTHBACK_EFFORT;
+        newTarget3 = motor3.getCurrentPosition() - FOREARM_COUNTS_PER_FORTHBACK_EFFORT;
         motor3.setPower(FOREARM_FORTHBACK_POWER);
         motor3.setTargetPosition(newTarget3);
         motor3.setMode(DcMotor.RunMode.RUN_TO_POSITION);
