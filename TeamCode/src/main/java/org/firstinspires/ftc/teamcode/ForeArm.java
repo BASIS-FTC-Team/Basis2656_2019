@@ -31,7 +31,7 @@ public class ForeArm {
     int FOREARM_COUNTS_AUTOUP = 300;
 
     int COUNTS_PER_REV_FOR_UPDOWN = 1120;
-    int GEAR_REDUCTION_FOR_UPDOWN_MOTOR = 10;
+    int GEAR_REDUCTION_FOR_UPDOWN_MOTOR = 6; // 20:40 * 30:90 = 1:6
 
     HardwareMap hwMap = null;
     public ElapsedTime time = new ElapsedTime();
@@ -197,10 +197,12 @@ public class ForeArm {
             //wait
         }
     }
-    public void automoveUpEnc(double targetSpeed, double absoluteAngle) {
+    public void automoveUpEnc(double targetSpeed, double moveAngle) {
         /**
          * targetSpeed: is target ANGULAR speed in DEGREEs
-         * absoluteAngle: is the angle the ForeArm is going to move up automatically
+         * moveAngle: is the angle the ForeArm is going to move up/down automatically
+         *              - positive for moving down
+         *              - negative for moving up
          * opModeIsActive: is
          */
         int newTarget1,newTarget2;
@@ -214,7 +216,7 @@ public class ForeArm {
         double actualSpeed = 0;
         double power = 0;
 
-        int MOVE_COUNTS = (int)( (absoluteAngle / 360) * COUNTS_PER_REV_FOR_UPDOWN * GEAR_REDUCTION_FOR_UPDOWN_MOTOR);
+        int MOVE_COUNTS = (int)( (moveAngle / 360) * COUNTS_PER_REV_FOR_UPDOWN * GEAR_REDUCTION_FOR_UPDOWN_MOTOR);
         newTarget1  = motor1.getCurrentPosition() - MOVE_COUNTS;
         newTarget2  = motor2.getCurrentPosition() + MOVE_COUNTS;
 
@@ -239,7 +241,7 @@ public class ForeArm {
             dt = t2 - t1;
             actualSpeed = ((((pos2 - pos1) / COUNTS_PER_REV_FOR_UPDOWN) * 360 ) /
                             GEAR_REDUCTION_FOR_UPDOWN_MOTOR ) / (t2 - t1);
-            power = pid.update(targetSpeed, actualSpeed, dt);
+            power += pid.update(targetSpeed, actualSpeed, dt);
             motor1.setPower(power);
             motor2.setPower(power);
             pos1 = pos2;

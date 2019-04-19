@@ -115,11 +115,12 @@ public class Auto30sCase01 extends LinearOpMode {
 
 
     public void landFromLatch() {
+        TelemetryWrapper.setLine(1,"landFromLatch...");
 
     }
 
     public void adjustInitialPosition() {
-
+        TelemetryWrapper.setLine(1,"landFromLatch...");
     }
 
     /**
@@ -141,29 +142,5 @@ public class Auto30sCase01 extends LinearOpMode {
 
     }
 
-//    public void waitForTest() {
-//
-//        int detectID = 0;
-//        while (opModeIsActive()) {
-//            while ((runtime.seconds() < 10) && detectID == 0) {
-//                TelemetryWrapper.setLine(3, "Start Target detect...");
-//                gd.doDetect();
-//                detectID = gd.getId();
-//                //returns which color the jewel is
-//                switch (detectID) {
-//                    case 1:
-//                        TelemetryWrapper.setLine(4, "Left is Gold");
-//                        break;
-//                    case 2:
-//                        TelemetryWrapper.setLine(4, "Middle is Gold");
-//                        break;
-//                    case 3:
-//                        TelemetryWrapper.setLine(4, "Right is Gold");
-//                        break;
-//                    default:
-//                        TelemetryWrapper.setLine(4, "No Gold found!");
-//                }
-//            }
-//        }
-//    }
+
 }
