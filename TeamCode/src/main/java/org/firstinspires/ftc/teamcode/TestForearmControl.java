@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -12,6 +13,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.util.telemetry.TelemetryWrapper;
 
 @TeleOp(name="Test Forearm Control", group = "Test")
+@Disabled
 public class TestForearmControl extends LinearOpMode {
 
     public DcMotor motor_l;
@@ -121,7 +123,6 @@ public class TestForearmControl extends LinearOpMode {
                             TelemetryWrapper.setLine(5,"r_cPos:"+motor_r.getCurrentPosition()+
                                     " r_tPos:"+motor_r.getTargetPosition());
                             TelemetryWrapper.setLine(6,"(WaitingLoop)Runtime1:"+runtime1.toString());
-
                         }
 
                         sleep(100);

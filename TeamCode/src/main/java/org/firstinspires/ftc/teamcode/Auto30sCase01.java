@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.util.Config;
 import org.firstinspires.ftc.teamcode.util.telemetry.TelemetryWrapper;
 
-@Autonomous(name="Auto30s-Case01",group = "Auto30s")
+@Autonomous(name="Auto-01_Basis2656_2019",group = "Basis2656_2019")
 
 public class Auto30sCase01 extends LinearOpMode {
 
@@ -125,7 +125,7 @@ public class Auto30sCase01 extends LinearOpMode {
 
 
     public void landFromLatch() {
-        TelemetryWrapper.setLine(1,"landFromLatch...");
+        TelemetryWrapper.setLine(1,"Landing from the latch...");
 
     }
 
@@ -144,11 +144,14 @@ public class Auto30sCase01 extends LinearOpMode {
      *
      */
 
-    public GoldPosition identifyGoldPosition() {
+    public GoldPosition identifyGoldPosition()
+    {
+        TelemetryWrapper.setLine(1,"Identifying the gold position ...");
         return GoldPosition.LEFT;
     }
 
     public void placeTeamMarker() {
+        TelemetryWrapper.setLine(1,"Placing the team maker...");
 
     }
 

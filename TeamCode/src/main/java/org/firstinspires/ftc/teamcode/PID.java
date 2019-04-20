@@ -88,16 +88,62 @@ public class PID {
         this.td = D;
     }
 
-    public double getPIDCoef_P() {
+    public void setKp(double kp) {
+        this.kp = kp;
+    }
+    public void setTi(double ti) {
+        this.ti = ti;
+    }
+    public void setTd(double td) {
+        this.td = td;
+    }
+    public void setIntegralMin(double integralMin) {
+        this.integralMin = integralMin;
+    }
+    public void setIntegralMax(double integralMax) {
+        this.integralMax = integralMax;
+    }
+    public void setOutputMin(double outputMin) {
+        this.outputMin = outputMin;
+    }
+    public void setOutputMax(double outputMax) {
+        this.outputMax = outputMax;
+    }
+
+    public double getKp() {
         return this.kp;
     }
 
-    public double getPIDCoef_I() {
+    public double getTi() {
         return this.ti;
     }
 
-    public double getPIDCoef_D() {
+    public double getTd() {
         return this.td;
+    }
+
+    public double getIntegralMin() {
+        return this.integralMin;
+    }
+
+    public double getIntegralMax() {
+        return this.integralMax;
+    }
+
+    public double getOutputMin() {
+        return this.outputMin;
+    }
+
+    public double getOutputMax() {
+        return this.outputMax;
+    }
+
+    public double getPreviousError() {
+        return this.previousError;
+    }
+
+    public double getRunningIntegral() {
+        return this.runningIntegral;
     }
 
 }

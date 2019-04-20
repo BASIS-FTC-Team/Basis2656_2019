@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -17,7 +18,8 @@ import org.firstinspires.ftc.teamcode.util.telemetry.TelemetryWrapper;
 
 
 @TeleOp(name = "TeleOp Mode Test 2",group = "Test")
-public class TeleOpTest2 extends LinearOpMode {
+@Disabled
+public class TestTeleOp extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();

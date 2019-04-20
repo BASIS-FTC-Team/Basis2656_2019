@@ -1,19 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.util.telemetry.TelemetryWrapper;
 import org.firstinspires.ftc.teamcode.util.Config;
 
-@TeleOp(name="Check the Config Data")
-public class ConfigData extends LinearOpMode {
-
-
-
-
-
-
+@TeleOp(name="Check the Config Data",group = "Test")
+@Disabled
+public class TestConfigData extends LinearOpMode {
 
     private Config config = new Config(Config.configFile);
 

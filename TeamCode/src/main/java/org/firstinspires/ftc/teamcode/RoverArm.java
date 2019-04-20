@@ -33,14 +33,16 @@ public class RoverArm {
         hwMap = Map;
         verticalMotor = hwMap.get(DcMotor.class, "rover_elevator");
         touchSensor = hwMap.get(DigitalChannel.class, "elevatortouch");
-        //verticalMotor.setDirection(DcMotor.Direction.REVERSE);
+
+        verticalMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        verticalMotor.setDirection(DcMotor.Direction.REVERSE);
 
         LIFT_POWER = config.getDouble("lift_power", 1.0);
         LIFT_COUNTS_PER_UPDOWN_EFFORT = config.getInt("lift_counts_per_updown_effort", 50);
 
         //verticalMotor.setDirection(DcMotor.Direction.FORWARD);
-        verticalMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        verticalMotor.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
+//        verticalMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        verticalMotor.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
 
         verticalMotor.setPower(0);
 
@@ -53,7 +55,6 @@ public class RoverArm {
     public void setLiftZeroPosition() {
         verticalMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
-
 
     public void moveUpOrDown(double power) {
         verticalMotor.setDirection(DcMotor.Direction.FORWARD);
