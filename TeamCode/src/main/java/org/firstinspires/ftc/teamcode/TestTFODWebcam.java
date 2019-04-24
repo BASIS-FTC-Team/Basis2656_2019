@@ -34,11 +34,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
-import org.firstinspires.ftc.teamcode.util.telemetry.TelemetryWrapper;
 
 import java.util.List;
 
@@ -52,24 +51,43 @@ import java.util.List;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@TeleOp(name = "Mineral Detector", group = "Test")
+@TeleOp(name = "Test TFOD Webcam", group = "Test")
 //@Disabled
-public class MineralDetector extends LinearOpMode {
+public class TestTFODWebcam extends LinearOpMode {
     private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
     private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
     private static final String LABEL_SILVER_MINERAL = "Silver Mineral";
 
+    /*
+     * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
+     * 'parameters.vuforiaLicenseKey' is initialized is for illustration only, and will not function.
+     * A Vuforia 'Development' license key, can be obtained free of charge from the Vuforia developer
+     * web site at https://developer.vuforia.com/license-manager.
+     *
+     * Vuforia license keys are always 380 characters long, and look as if they contain mostly
+     * random data. As an example, here is a example of a fragment of a valid key:
+     *      ... yIgIzTqZ4mWjk9wd3cZO9T1axEqzuhxoGlfOOI2dRzKS4T0hQ8kT ...
+     * Once you've obtained a license key, copy the string from the Vuforia web site
+     * and paste it in to your code on the next line, between the double quotes.
+     */
     private static final String VUFORIA_KEY = "AaVQPxH/////AAABmWbgMV3r8kMuucDJZwS+C8IqcKbjimK6x7yZkfsYnCLGA1cHVqGOF+tSmO//7vH+NwYrxmEfltB1UGzWki397Ksrl57wPSMPbGU2y9Cg+iSgHMGpJVx4IDeD6ldnTIRetHFeW0r4OzmfsDc5eI0tChOd2FYv2Q8MuHq/QXlsdOHEOyy43xqj5QF4eRSVznttm6fDzN2egZWEIr8Un9B0hCEv6OmQATKUsEPx7BnqCxjBK00252+n2Na17OxE2hYP8WXUerdZOOU1GyWFPOG2DDeYDWiipgYGXgpIC+a846STiSZcFXLP2S3ENu78EoCFKs7Fw7sm5u58dzZ5PyMg8VUormyNmcHm9RU2Fl5364WO";
 
-    /** Vuforia localization engine.  */
+    /**
+     * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
+     * localization engine.
+     */
     private VuforiaLocalizer vuforia;
 
-    /** Tensor Flow Object Detection engine. */
+    /**
+     * {@link #tfod} is the variable we will use to store our instance of the Tensor Flow Object
+     * Detection engine.
+     */
     private TFObjectDetector tfod;
 
     @Override
     public void runOpMode() {
-
+        // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
+        // first.
         initVuforia();
 
         if (ClassFactory.getInstance().canCreateTFObjectDetector()) {
@@ -84,117 +102,44 @@ public class MineralDetector extends LinearOpMode {
         waitForStart();
 
         if (opModeIsActive()) {
-
-            TelemetryWrapper.init(telemetry,11);
-            TelemetryWrapper.setLine(0,"Mineral detection Started");
-
             /** Activate Tensor Flow Object Detection. */
             if (tfod != null) {
                 tfod.activate();
             }
 
-            TelemetryWrapper.clear();
-            TelemetryWrapper.render();
-            TelemetryWrapper.setLine(0,"Gamepad A pressed: detection info");
-
-            int check_times = 0;
-            int tfod_null = 0;
-            int updatedRecognition_null = 0;
-
             while (opModeIsActive()) {
-                check_times++;
-//                /** Press button A to check what are detected and give the information about it */
-//                if (gamepad1.a) {
-//                TelemetryWrapper.clear();
-//                TelemetryWrapper.render();
-//                TelemetryWrapper.setLine(0, "Gamepad A pressed: detection info");
-                for (int i=2;i<9; i++) {
-                    TelemetryWrapper.setLine(i,"");
-                }
-                int line = 2;
                 if (tfod != null) {
                     // getUpdatedRecognitions() will return null if no new information is available since
                     // the last time that call was made.
                     List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
                     if (updatedRecognitions != null) {
-                        for (Recognition r : updatedRecognitions) {
-                            TelemetryWrapper.setLine(line, r.getLabel() + ": Top at " + r.getTop() + ", Left side at " + r.getLeft());
-                            line++;
-                            if (line > 8) {
-                                TelemetryWrapper.setLine(10, "TelemetryWrapper lines more then 10.");
-                            }
+                      telemetry.addData("# Object Detected", updatedRecognitions.size());
+                      if (updatedRecognitions.size() == 3) {
+                        int goldMineralX = -1;
+                        int silverMineral1X = -1;
+                        int silverMineral2X = -1;
+                        for (Recognition recognition : updatedRecognitions) {
+                          if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
+                            goldMineralX = (int) recognition.getLeft();
+                          } else if (silverMineral1X == -1) {
+                            silverMineral1X = (int) recognition.getLeft();
+                          } else {
+                            silverMineral2X = (int) recognition.getLeft();
+                          }
                         }
-                    } else {
-                        updatedRecognition_null++;
-                        TelemetryWrapper.setLine(10, "tfod: updatedRecognitions is null.");
+                        if (goldMineralX != -1 && silverMineral1X != -1 && silverMineral2X != -1) {
+                          if (goldMineralX < silverMineral1X && goldMineralX < silverMineral2X) {
+                            telemetry.addData("Gold Mineral Position", "Left");
+                          } else if (goldMineralX > silverMineral1X && goldMineralX > silverMineral2X) {
+                            telemetry.addData("Gold Mineral Position", "Right");
+                          } else {
+                            telemetry.addData("Gold Mineral Position", "Center");
+                          }
+                        }
+                      }
+                      telemetry.update();
                     }
-
-                } else {
-
-                    tfod_null++;
-                    TelemetryWrapper.setLine(10, "tfod: tfod is null");
-
                 }
-
-//                }
-//
-//                /** Press button B to identify the position of gold mineral */
-//                if (gamepad1.b) {
-//
-//                    TelemetryWrapper.clear();
-//                    TelemetryWrapper.render();
-//                    TelemetryWrapper.setLine(1,"Gamepad B pressed: detect Gold Position");
-//
-//                    if (tfod != null) {
-//                        // getUpdatedRecognitions() will return null if no new information is available since
-//                        // the last time that call was made.
-//                        List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-//
-//                        if (updatedRecognitions != null) {
-//
-//                            TelemetryWrapper.setLine(3,"# Object Detected" + updatedRecognitions.size());
-//
-//                            if (updatedRecognitions.size() == 3) {
-//                                int goldMineralX = -1;
-//                                int silverMineral1X = -1;
-//                                int silverMineral2X = -1;
-//                                for (Recognition recognition : updatedRecognitions) {
-//                                    if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
-//                                        goldMineralX = (int) recognition.getLeft();
-//                                    } else if (silverMineral1X == -1) {
-//                                        silverMineral1X = (int) recognition.getLeft();
-//                                    } else {
-//                                        silverMineral2X = (int) recognition.getLeft();
-//                                    }
-//                                }
-//                                if (goldMineralX != -1 && silverMineral1X != -1 && silverMineral2X != -1) {
-//                                    if (goldMineralX < silverMineral1X && goldMineralX < silverMineral2X) {
-//
-//                                        TelemetryWrapper.setLine(4,"Gold Mineral Position: Left");
-//
-//                                    } else if (goldMineralX > silverMineral1X && goldMineralX > silverMineral2X) {
-//
-//                                        TelemetryWrapper.setLine(4,"Gold Mineral Position: Right");
-//                                    } else {
-//                                        TelemetryWrapper.setLine(4,"Gold Mineral Position: Center");
-//                                    }
-//                                }
-//                            } else {
-//                                TelemetryWrapper.setLine(4,"Gold Mineral Position: Center");
-//                            }
-//                        }
-//                    }
-//                }
-
-//                /** Press button x to exit */
-//                if (gamepad1.x) {
-//                    break;
-//                }
-
-                TelemetryWrapper.setLine(1, "loops: " + check_times +
-                        " updatedRec null:" + updatedRecognition_null +
-                        " tfod null: " + tfod_null);
-
             }
         }
 
@@ -207,27 +152,28 @@ public class MineralDetector extends LinearOpMode {
      * Initialize the Vuforia localization engine.
      */
     private void initVuforia() {
-
+        /*
+         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
+         */
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraDirection = CameraDirection.BACK;
+        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
+
+        //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
 
+        // Loading trackables is not necessary for the Tensor Flow Object Detection engine.
     }
 
     /**
      * Initialize the Tensor Flow Object Detection engine.
      */
     private void initTfod() {
-
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-                                        "tfodMonitorViewId",
-                                        "id",
-                                         hardwareMap.appContext.getPackageName());
+            "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minimumConfidence = 0.8;  //Added by J.Tu on 2019-04-24 00:23
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_GOLD_MINERAL, LABEL_SILVER_MINERAL);
-
     }
 }

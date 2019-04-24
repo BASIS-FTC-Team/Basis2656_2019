@@ -18,6 +18,8 @@ public class ButtonHelper {
      */
     private boolean[] buttons = new boolean[15];
     private boolean[] held = new boolean[15];
+    private boolean[] released = new boolean[15];
+
     /**
      * A button for use in the pressed(), released(), and pressing() methods
      */
@@ -60,18 +62,23 @@ public class ButtonHelper {
         buttons[right_stick_button] = gamepad.right_stick_button;
         for (int i = 0; i < 15; i++) {
             held[i] = buttons[i] && buttons2[i];
+            released[i] = !buttons[i] && buttons2[i];
         }
     }
 
     public boolean pressed(int idx) {
         return buttons[idx];
     }
-
+    public boolean pressing(int idx) {
+        return !held[idx] && pressed(idx);
+    }
     public boolean released(int idx) {
         return !pressed(idx);
     }
-
-    public boolean pressing(int idx) {
-        return !held[idx] && pressed(idx);
+    public boolean releasing(int idx) {
+        return released[idx];
+    }
+    public boolean held(int idx) {
+        return held[idx];
     }
 }

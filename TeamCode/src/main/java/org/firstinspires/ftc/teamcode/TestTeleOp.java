@@ -16,7 +16,6 @@ import org.firstinspires.ftc.teamcode.util.ButtonHelper;
 import org.firstinspires.ftc.teamcode.util.Config;
 import org.firstinspires.ftc.teamcode.util.telemetry.TelemetryWrapper;
 
-
 @TeleOp(name = "TeleOp Mode Test 2",group = "Test")
 @Disabled
 public class TestTeleOp extends LinearOpMode {
@@ -30,7 +29,6 @@ public class TestTeleOp extends LinearOpMode {
         //DriveTrain driveTrain = new DriveTrain();
 
         //driveTrain.init(hardwareMap,config);
-
 
         DcMotor leftFront = hardwareMap.get(DcMotor.class, "fl_drive");
         DcMotor rightFront = hardwareMap.get(DcMotor.class, "fr_drive");

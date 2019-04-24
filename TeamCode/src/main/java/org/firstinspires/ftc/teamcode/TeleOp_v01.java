@@ -1,30 +1,7 @@
-/* Copyright (c) 2017 FIRST. All rights reserved.
+/**
  *
- * Redistribution and use in source and binary forms, with or without modification,
- * are permitted (subject to the limitations in the disclaimer below) provided that
- * the following conditions are met:
+ * This program is the version of Apr.20, 2019 and needs modifications to be able to work properly.
  *
- * Redistributions of source code must retain the above copyright notice, this list
- * of conditions and the following disclaimer.
- *
- * Redistributions in binary form must reproduce the above copyright notice, this
- * list of conditions and the following disclaimer in the documentation and/or
- * other materials provided with the distribution.
- *
- * Neither the name of FIRST nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior written permission.
- *
- * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS
- * LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 package org.firstinspires.ftc.teamcode;
@@ -58,30 +35,26 @@ import static org.firstinspires.ftc.teamcode.util.ButtonHelper.start;
 
 import org.firstinspires.ftc.teamcode.util.telemetry.TelemetryWrapper;
 
-/**
- * This OpMode scans a single servo back and forwards until Stop is pressed.
- * The code is structured as a LinearOpMode
- * INCREMENT sets how much to increase/decrease the servo position each cycle
- * CYCLE_MS sets the update period.
- *
- * This code assumes a Servo configured with the name "left claw" as is found on a pushbot.
- *
- * NOTE: When any servo position is set, ALL attached servos are activated, so ensure that any other
- * connected servos are able to move freely before running this test.
- *
- * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
- */
-@TeleOp(name = "TeleOp_Basis2656_2019",group = "Basis2656_2019")
+
+@TeleOp(name = "TeleOp_v01", group = "Basis2656_2019")
 //@Disabled
-public class TeleOp_Basis2019 extends LinearOpMode {
+public class TeleOp_v01 extends LinearOpMode {
 
-    static final double INCREMENT   = 0.01;     // amount to slew servo each CYCLE_MS cycle
-    static final int    CYCLE_MS    =   50;     // period of each cycle
+    LiftArm liftArm = new LiftArm();
+    ForeArm foreArm = new ForeArm();
+    MineralCollector mineralCollector = new MineralCollector();
+    DriveTrain driveTrain = new DriveTrain();
+    PID pidForForearmUpDown = null;
+    PID pidForForearmForthBack = null;
+    PID pidForLiftUpDown = null;
 
-    static boolean sucking = false;
-    static boolean pushing = false;
-    static boolean isClawOpened = true;
+    private Config config = new Config(Config.configFile);
+
+//
+//    static final double INCREMENT   = 0.01;     // amount to slew servo each CYCLE_MS cycle
+//    static final int    CYCLE_MS    =   50;     // period of each cycle
+//
+
 
     boolean foreArmIsUping = false;
     boolean foreArmIsDowning = false;
@@ -92,14 +65,12 @@ public class TeleOp_Basis2019 extends LinearOpMode {
     boolean liftIsUping = false;
     boolean liftIsDowning = false;
 
-    private Config config = new Config(Config.configFile);
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
 
     private ButtonHelper helper;
     private ButtonHelper helper2;
-
 
     VuforiaLocalizer vuforia;
 
@@ -109,14 +80,14 @@ public class TeleOp_Basis2019 extends LinearOpMode {
 
         helper = new ButtonHelper(gamepad1);
         helper2 = new ButtonHelper(gamepad2);
-        RoverArm roverArm = new RoverArm();
-        ForeArm foreArm = new ForeArm();
-        MineralCollector mineralCollector = new MineralCollector();
-        DriveTrain driveTrain = new DriveTrain();
+
+        pidForForearmUpDown = new PID(0.5,0.05,0.05,-3.0,3.0,-0.1,0.1);
+        pidForForearmForthBack = new PID(0.5,0.05,0.05,-3.0,3.0,-0.1,0.1);
+        pidForLiftUpDown = new PID(0.5,0.05,0.05,-3.0,3.0,-0.1,0.1);
 
         driveTrain.init(hardwareMap,config);
-        roverArm.init(hardwareMap,config);
-        foreArm.init(hardwareMap,config);
+        liftArm.init(hardwareMap,config,pidForLiftUpDown);
+        foreArm.init(hardwareMap,config,pidForForearmUpDown,pidForForearmForthBack);
         mineralCollector.init(hardwareMap,config);
 
         // Wait for the start button
@@ -257,11 +228,11 @@ public class TeleOp_Basis2019 extends LinearOpMode {
             /** Latching and landing */
             if(gamepad1.dpad_up) {
                 if (liftIsUping) {
-                    roverArm.stop();
+                    liftArm.stop();
                     liftIsUping = false;
                     TelemetryWrapper.setLine(2, "Lift stopped moving up");
                 } else {
-                    roverArm.moveUp();
+                    liftArm.moveUp();
                     liftIsUping = true;
                     TelemetryWrapper.setLine(2, "Lift moving up...");
                 }
@@ -269,33 +240,33 @@ public class TeleOp_Basis2019 extends LinearOpMode {
             }
             if(gamepad1.dpad_down) {
                 if (liftIsDowning) {
-                    roverArm.stop();
+                    liftArm.stop();
                     liftIsDowning = false;
                     TelemetryWrapper.setLine(2, "Lift stopped moving down");
                 } else {
-                    roverArm.moveDown();
+                    liftArm.moveDown();
                     liftIsDowning = true;
                     TelemetryWrapper.setLine(2, "Lift moving down...");
                 }
                 sleep(50);
             }
 //            if(helper.pressed(dpad_up)){
-//                if(!roverArm.isTouched()) {
+//                if(!liftArm.isTouched()) {
 //                    TelemetryWrapper.setLine(0, "Not Touched when going UP");
-//                    roverArm.moveUpByEncoder();
-//                    TelemetryWrapper.setLine(1,"Container Move Up at speed: "+ (-1)*roverArm.LIFT_POWER);
-//                    TelemetryWrapper.setLine(8,"Container current postion: "+ roverArm.getLiftPosition());
+//                    liftArm.moveUpByEncoder();
+//                    TelemetryWrapper.setLine(1,"Container Move Up at speed: "+ (-1)*liftArm.LIFT_POWER);
+//                    TelemetryWrapper.setLine(8,"Container current postion: "+ liftArm.getLiftPosition());
 //                }
 //            } else if(helper.pressed(dpad_down)){
 //                    TelemetryWrapper.setLine(0, "Not Touched when going DOWN");
-//                    roverArm.moveDownByEncoder();
-//                    TelemetryWrapper.setLine(1, "Container Move Down at speed: " + roverArm.LIFT_POWER);
-//                    TelemetryWrapper.setLine(8, "Container current postion: " + roverArm.getLiftPosition());
+//                    liftArm.moveDownByEncoder();
+//                    TelemetryWrapper.setLine(1, "Container Move Down at speed: " + liftArm.LIFT_POWER);
+//                    TelemetryWrapper.setLine(8, "Container current postion: " + liftArm.getLiftPosition());
 //            } else {
-//                roverArm.stopByEncoder();
+//                liftArm.stopByEncoder();
 //                TelemetryWrapper.setLine(1,"dpad up/down not pressed. Container Stopped!");
 //            }
-//            if(roverArm.isTouched()){
+//            if(liftArm.isTouched()){
 //                TelemetryWrapper.setLine(0,"Touch sensor pressed");
 //            } else {
 //                TelemetryWrapper.setLine(0,"Touch sensor NOT pressed");
@@ -304,17 +275,17 @@ public class TeleOp_Basis2019 extends LinearOpMode {
             /** The following part is for automove testing */
 
             if (gamepad2.dpad_down) {
-                foreArm.automoveUpDownEnc(0.5,-45.0);
+                foreArm.moveUpDownAngleEnc(0.5,-45.0,2000);
             }
             if (gamepad2.dpad_up) {
-                foreArm.automoveUpDownEnc(0.5,45.0);
+                foreArm.moveUpDownAngleEnc(0.5,45.0,2000);
             }
 
             if (gamepad2.x) {
-                foreArm.automoveUpDownEncPID(10.0,45.0);
+                foreArm.moveUpDownAngleEncPID(10.0,45.0,2000);
             }
             if (gamepad2.b) {
-                foreArm.automoveUpDownEncPID(10.0,-45.0);
+                foreArm.moveUpDownAngleEncPID(10.0,-45.0,2000);
             }
 
             if (gamepad2.y) {

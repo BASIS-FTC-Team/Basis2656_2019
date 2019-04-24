@@ -28,14 +28,12 @@ public class DriveTrain {
         leftFront.setPower(0);
         rightFront.setPower(0);
 
-
         leftBack = hwMap.get(DcMotor.class, "rl_drive");
         rightBack = hwMap.get(DcMotor.class, "rr_drive");
         leftBack.setDirection(DcMotor.Direction.FORWARD);
         rightBack.setDirection(DcMotor.Direction.REVERSE);
         leftBack.setPower(0);
         rightBack.setPower(0);
-
 
     }
     public void move(double powerx, double powery, double turn){
@@ -52,4 +50,32 @@ public class DriveTrain {
     public void stop(){
         move(0,0,0);
     }
+
+    /**
+     * Robot motion through 4 Mecanum wheels controlled by gamepad.left_stick_x, left_stick_y, right_stick_x
+     * The left joystick is used to translate the robot, while the right joystick controls the rotation of the robot.
+     */
+    public void moveFree(double left_stick_x, double left_stick_y, double right_stick_x) {
+
+        double r = Math.hypot(left_stick_x,left_stick_y);
+        double robotAngle = Math.atan2(left_stick_y,left_stick_x) - Math.PI / 4;
+        double rightX = right_stick_x;
+        final double v1 = r * Math.cos(robotAngle) + rightX;
+        final double v2 = r * Math.sin(robotAngle) - rightX;
+        final double v3 = r * Math.sin(robotAngle) + rightX;
+        final double v4 = r * Math.cos(robotAngle) - rightX;
+
+        leftFront.setDirection(DcMotor.Direction.REVERSE);
+        rightFront.setDirection(DcMotor.Direction.FORWARD);
+        leftBack.setDirection(DcMotor.Direction.REVERSE);
+        rightBack.setDirection(DcMotor.Direction.FORWARD);
+
+        leftFront.setPower(v1);
+        rightFront.setPower(v2);
+        leftBack.setPower(v3);
+        rightBack.setPower(v4);
+
+    }
+
+
 }

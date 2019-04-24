@@ -7,9 +7,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.util.Config;
 import org.firstinspires.ftc.teamcode.util.telemetry.TelemetryWrapper;
 
-@Autonomous(name="Auto-01_Basis2656_2019",group = "Basis2656_2019")
+@Autonomous(name="AutoCase01_Basis2656_2019",group = "Basis2656_2019")
 
-public class Auto30sCase01 extends LinearOpMode {
+public class AutoCase01 extends LinearOpMode {
 
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -143,7 +143,6 @@ public class Auto30sCase01 extends LinearOpMode {
      * GoldPosition.UNKNOWN - no mineral detected
      *
      */
-
     public GoldPosition identifyGoldPosition()
     {
         TelemetryWrapper.setLine(1,"Identifying the gold position ...");

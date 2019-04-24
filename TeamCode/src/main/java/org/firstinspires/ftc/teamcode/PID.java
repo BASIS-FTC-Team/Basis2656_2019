@@ -87,7 +87,6 @@ public class PID {
         this.ti = I;
         this.td = D;
     }
-
     public void setKp(double kp) {
         this.kp = kp;
     }
@@ -113,27 +112,21 @@ public class PID {
     public double getKp() {
         return this.kp;
     }
-
     public double getTi() {
         return this.ti;
     }
-
     public double getTd() {
         return this.td;
     }
-
     public double getIntegralMin() {
         return this.integralMin;
     }
-
     public double getIntegralMax() {
         return this.integralMax;
     }
-
     public double getOutputMin() {
         return this.outputMin;
     }
-
     public double getOutputMax() {
         return this.outputMax;
     }
@@ -141,9 +134,7 @@ public class PID {
     public double getPreviousError() {
         return this.previousError;
     }
-
     public double getRunningIntegral() {
         return this.runningIntegral;
     }
-
 }
