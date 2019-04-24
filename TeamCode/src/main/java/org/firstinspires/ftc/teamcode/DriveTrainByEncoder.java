@@ -231,7 +231,7 @@ public class DriveTrainByEncoder {
      *              - negative for backwards
      *      timeoutMS: timeout setting for the move (in millisecond)
      */
-    public void moveForthBackEnc(double speed, double dist, int timeoutMS, boolean opModeIsActive ) {
+    public void moveForthBackEnc(double speed, double dist, int timeoutMS ) {
 
         int newLeftFrontTarget = 0;
         int newRightFrontTarget = 0;
@@ -269,9 +269,8 @@ public class DriveTrainByEncoder {
         leftBack.setPower(power);
         rightBack.setPower(power);
 
-        while ((leftFront.isBusy() || leftBack.isBusy() || rightFront.isBusy() || rightBack.isBusy()) &&
-                ( runtime.milliseconds() < timeout ) &&
-                ( opModeIsActive ) ) {
+        while ((leftFront.isBusy() && leftBack.isBusy() && rightFront.isBusy() && rightBack.isBusy()) &&
+                ( runtime.milliseconds() < timeout ) ) {
             // waiting to finish
         }
 
@@ -293,7 +292,7 @@ public class DriveTrainByEncoder {
      *              - negative for left
      *      timeoutMS: timeout setting for the move (in millisecond)
      */
-    public void moveLeftRightEnc(double speed, double dist, int timeoutMS, boolean opModeIsActive ) {
+    public void moveLeftRightEnc(double speed, double dist, int timeoutMS ) {
         int newLeftFrontTarget = 0;
         int newRightFrontTarget = 0;
         int newLeftBackTarget = 0;
@@ -330,9 +329,8 @@ public class DriveTrainByEncoder {
         leftBack.setPower(power);
         rightBack.setPower(power);
 
-        while ((leftFront.isBusy() || leftBack.isBusy() || rightFront.isBusy() || rightBack.isBusy()) &&
-                (runtime.milliseconds() < timeout) &&
-                (opModeIsActive)) {
+        while ((leftFront.isBusy() && leftBack.isBusy() && rightFront.isBusy() && rightBack.isBusy()) &&
+                (runtime.milliseconds() < timeout)) {
             // waiting to finish
         }
 
@@ -354,7 +352,7 @@ public class DriveTrainByEncoder {
      *                          - negative for turning counter-clock-wise
      *      timeoutMS: timeout setting for the move (in millisecond)
      */
-    public void spinEnc(double speed, double angle_in_degree, int timeoutMS, boolean opModeIsActive ) {
+    public void spinEnc(double speed, double angle_in_degree, int timeoutMS ) {
 
         int newLeftFrontTarget = 0;
         int newRightFrontTarget = 0;
@@ -393,9 +391,8 @@ public class DriveTrainByEncoder {
         leftBack.setPower(power);
         rightBack.setPower(power);
 
-        while ((leftFront.isBusy() || leftBack.isBusy() || rightFront.isBusy() || rightBack.isBusy()) &&
-                (runtime.milliseconds() < timeout) &&
-                ( opModeIsActive )) {
+        while ((leftFront.isBusy() && leftBack.isBusy() && rightFront.isBusy() && rightBack.isBusy()) &&
+                (runtime.milliseconds() < timeout)) {
             // waiting to finish
         }
 

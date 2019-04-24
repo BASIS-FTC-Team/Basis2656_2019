@@ -68,21 +68,21 @@ public class AutoCase01 extends LinearOpMode {
 
         //driveTrain.encoderDrive(AUTO_DRIVE_SPEED, 0, MOVE_TO_GOLD + PUSH_GOLD, 0, 3);
         if(goldPosition.equals(GoldPosition.LEFT)) {
-            driveTrain.moveLeftRightEnc(AUTO_DRIVE_SPEED, MOVE_TO_GOLD + LEFT_GOLD_DISTANCE, 10000, opModeIsActive());
-            driveTrain.moveForthBackEnc(AUTO_DRIVE_SPEED, PUSH_GOLD, 10000, opModeIsActive());
+            driveTrain.moveLeftRightEnc(AUTO_DRIVE_SPEED, MOVE_TO_GOLD + LEFT_GOLD_DISTANCE, 10000);
+            driveTrain.moveForthBackEnc(AUTO_DRIVE_SPEED, PUSH_GOLD, 10000);
         }
         else if(goldPosition.equals(GoldPosition.RIGHT)) {
-            driveTrain.moveLeftRightEnc(AUTO_DRIVE_SPEED, MOVE_TO_GOLD + RIGHT_GOLD_DISTANCE, 10000, opModeIsActive());
-            driveTrain.moveForthBackEnc(AUTO_DRIVE_SPEED, PUSH_GOLD, 10000, opModeIsActive());
+            driveTrain.moveLeftRightEnc(AUTO_DRIVE_SPEED, MOVE_TO_GOLD + RIGHT_GOLD_DISTANCE, 10000);
+            driveTrain.moveForthBackEnc(AUTO_DRIVE_SPEED, PUSH_GOLD, 10000);
         }
         else {
-            driveTrain.moveForthBackEnc(AUTO_DRIVE_SPEED, MOVE_TO_GOLD + PUSH_GOLD, 10000, opModeIsActive());
+            driveTrain.moveForthBackEnc(AUTO_DRIVE_SPEED, MOVE_TO_GOLD + PUSH_GOLD, 10000);
         }
 
         /** 2: Back out from pushing  */
 
         //driveTrain.encoderDrive(AUTO_DRIVE_SPEED, 0, -PULL_BACK, 0, 3);
-        driveTrain.moveForthBackEnc(AUTO_DRIVE_SPEED,PULL_BACK,5000,opModeIsActive());
+        driveTrain.moveForthBackEnc(AUTO_DRIVE_SPEED,PULL_BACK,5000);
 
         /** 3: Linear shift to wall side */
         int distanceToMoveTowardsWall = DISTANCE_TO_WALL;
@@ -97,26 +97,26 @@ public class AutoCase01 extends LinearOpMode {
                 distanceToMoveTowardsWall = DISTANCE_TO_WALL;
         }
         //driveTrain.encoderDrive(AUTO_DRIVE_SPEED, -distanceToMoveTowardsWall, 0, 0, 5);
-        driveTrain.moveLeftRightEnc(AUTO_DRIVE_SPEED, -distanceToMoveTowardsWall,10000,opModeIsActive());
+        driveTrain.moveLeftRightEnc(AUTO_DRIVE_SPEED, -distanceToMoveTowardsWall,10000);
 
         /** 4: Turn towards depot */
         //driveTrain.encoderDrive(AUTO_DRIVE_SPEED, 0, 0, -135, 5);
-        driveTrain.spinEnc(AUTO_DRIVE_SPEED,-135, 10000,opModeIsActive());
+        driveTrain.spinEnc(AUTO_DRIVE_SPEED,-135, 10000);
 
         /** 5: Head towards depot */
         //driveTrain.encoderDrive(AUTO_DRIVE_SPEED, 0, WALL_TO_DEPOT, 0, 5);
-        driveTrain.moveForthBackEnc(AUTO_DRIVE_SPEED,WALL_TO_DEPOT,10000, opModeIsActive());
+        driveTrain.moveForthBackEnc(AUTO_DRIVE_SPEED,WALL_TO_DEPOT,10000);
 
         /** 6: Place team marker  */
         placeTeamMarker();
 
         /** 7: Back to crater */
         //driveTrain.encoderDrive(AUTO_DRIVE_SPEED, 0, DEPOT_TO_CRATER, 0, 5);
-        driveTrain.moveForthBackEnc(AUTO_DRIVE_SPEED,-DEPOT_TO_CRATER,10000,opModeIsActive());
+        driveTrain.moveForthBackEnc(AUTO_DRIVE_SPEED,-DEPOT_TO_CRATER,10000);
 
         /** 8: Turn 180 to crater */
         //driveTrain.encoderDrive(AUTO_DRIVE_SPEED, 0, 0, 180, 5);
-        driveTrain.spinEnc(AUTO_DRIVE_SPEED,180,10000,opModeIsActive());
+        driveTrain.spinEnc(AUTO_DRIVE_SPEED,180,10000);
 
         /** 9: Put grabber into crater  */
         //comment the code to pass by the action temporarily
