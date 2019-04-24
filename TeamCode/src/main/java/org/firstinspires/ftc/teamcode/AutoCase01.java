@@ -151,7 +151,6 @@ public class AutoCase01 extends LinearOpMode {
 
     public void placeTeamMarker() {
         TelemetryWrapper.setLine(1,"Placing the team maker...");
-
     }
 
 
