@@ -13,10 +13,7 @@ public class AutoCase01 extends LinearOpMode {
 
 
     private ElapsedTime runtime = new ElapsedTime();
-    //color of the team
-//    private String teamColor = "RED";
-//    private String foundColor = null;
-    //ColorSensor colorSensor;
+
     private Config config = new Config(Config.configFile);
     private GoldDetector gd = new GoldDetector();
     private DriveTrainByEncoder driveTrain = new DriveTrainByEncoder();

@@ -65,6 +65,4 @@ public class TestEncDrive extends LinearOpMode {
             }
         }
     }
-
-
 }
