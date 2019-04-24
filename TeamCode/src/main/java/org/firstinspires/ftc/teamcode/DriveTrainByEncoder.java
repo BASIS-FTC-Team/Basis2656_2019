@@ -26,7 +26,7 @@ public class DriveTrainByEncoder {
     double     COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
     double     DRIVE_GEAR_REDUCTION    = 1.0 ;     // This is < 1.0 if geared UP
     double     WHEEL_DIAMETER_MM       = 100.0 ;     // For figuring circumference
-    double     WHEEL_DIAGONAL_DISTANCE  = 450.0 ;     // for the  distance between two diagonal wheel
+    double     WHEEL_DIAGONAL_DISTANCE  = 490.0 ;     // for the  distance between two diagonal wheel
     double     COUNTS_PER_MM           = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_MM * 3.1415);
     double     DEGREE_CORRECTION       = 1.543;
     double     LINE_CORRECTION         = 1.0;
@@ -43,10 +43,10 @@ public class DriveTrainByEncoder {
         rightFront = hwMap.get(DcMotor.class, "fr_drive");
         leftBack = hwMap.get(DcMotor.class, "rl_drive");
         rightBack = hwMap.get(DcMotor.class, "rr_drive");
-        leftFront.setDirection(DcMotor.Direction.FORWARD);
-        rightFront.setDirection(DcMotor.Direction.REVERSE);
-        leftBack.setDirection(DcMotor.Direction.FORWARD);
-        rightBack.setDirection(DcMotor.Direction.REVERSE);
+        leftFront.setDirection(DcMotor.Direction.REVERSE);
+        rightFront.setDirection(DcMotor.Direction.FORWARD);
+        leftBack.setDirection(DcMotor.Direction.REVERSE);
+        rightBack.setDirection(DcMotor.Direction.FORWARD);
         leftFront.setPower(0);
         rightFront.setPower(0);
         leftBack.setPower(0);
@@ -272,6 +272,7 @@ public class DriveTrainByEncoder {
         while ((leftFront.isBusy() && leftBack.isBusy() && rightFront.isBusy() && rightBack.isBusy()) &&
                 ( runtime.milliseconds() < timeout ) ) {
             // waiting to finish
+            TelemetryWrapper.setLine(3, "" + leftFront.getCurrentPosition());
         }
 
         leftFront.setPower(0);
@@ -302,10 +303,10 @@ public class DriveTrainByEncoder {
         int timeout = timeoutMS;
         ElapsedTime runtime = new ElapsedTime();
 
-        deltaLF = (int) (  dist * COUNTS_PER_MM * XY_CORRECTION );
+        deltaLF = (int) (  -dist * COUNTS_PER_MM * XY_CORRECTION );
         deltaRF = (int) (  dist * COUNTS_PER_MM * XY_CORRECTION );
-        deltaLB = (int) ( -dist * COUNTS_PER_MM * XY_CORRECTION );
-        deltaRB = (int) ( -dist * COUNTS_PER_MM * XY_CORRECTION );
+        deltaLB = (int) (  dist * COUNTS_PER_MM * XY_CORRECTION );
+        deltaRB = (int) (  -dist * COUNTS_PER_MM * XY_CORRECTION );
 
         newLeftFrontTarget = leftFront.getCurrentPosition() + deltaLF;
         newRightFrontTarget = rightFront.getCurrentPosition() + deltaRF;

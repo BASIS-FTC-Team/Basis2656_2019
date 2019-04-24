@@ -68,11 +68,11 @@ public class AutoCase01 extends LinearOpMode {
 
         //driveTrain.encoderDrive(AUTO_DRIVE_SPEED, 0, MOVE_TO_GOLD + PUSH_GOLD, 0, 3);
         if(goldPosition.equals(GoldPosition.LEFT)) {
-            driveTrain.moveLeftRightEnc(AUTO_DRIVE_SPEED, MOVE_TO_GOLD + LEFT_GOLD_DISTANCE, 10000);
-            driveTrain.moveForthBackEnc(AUTO_DRIVE_SPEED, PUSH_GOLD, 10000);
+            //driveTrain.moveLeftRightEnc(AUTO_DRIVE_SPEED, MOVE_TO_GOLD + LEFT_GOLD_DISTANCE, 10000);
+            driveTrain.moveForthBackEnc(AUTO_DRIVE_SPEED, 3142, 10000);
         }
         else if(goldPosition.equals(GoldPosition.RIGHT)) {
-            driveTrain.moveLeftRightEnc(AUTO_DRIVE_SPEED, MOVE_TO_GOLD + RIGHT_GOLD_DISTANCE, 10000);
+            //driveTrain.moveLeftRightEnc(AUTO_DRIVE_SPEED, MOVE_TO_GOLD + RIGHT_GOLD_DISTANCE, 10000);
             driveTrain.moveForthBackEnc(AUTO_DRIVE_SPEED, PUSH_GOLD, 10000);
         }
         else {
