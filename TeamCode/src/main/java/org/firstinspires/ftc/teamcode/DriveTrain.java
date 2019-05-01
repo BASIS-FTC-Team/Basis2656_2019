@@ -41,9 +41,9 @@ public class DriveTrain {
 
     }
     public void move(double powerx, double powery, double turn){
-        speedx = powerx;
-        speedy = powery;
-        offset = turn;
+        speedx =  powerx;
+        speedy =  - powery;
+        offset =  turn;
         leftFront.setPower(Range.clip(speedy-speedx+offset,-1,1));
         rightFront.setPower(Range.clip(speedy+speedx-offset,-1,1));
         leftBack.setPower(Range.clip(speedy+speedx+offset,-1,1));
@@ -77,7 +77,6 @@ public class DriveTrain {
             v3 /= maxV;
             v4 /= maxV;
         }
-
 
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         rightFront.setDirection(DcMotor.Direction.FORWARD);

@@ -8,15 +8,16 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.util.Config;
+import static org.firstinspires.ftc.teamcode.Parameters.*;
 
 public class MineralCollector {
     private CRServo servo1;  // Rotate to wipe in
     private Servo servo2;  // Turn over the holder
 
-    private double HOLDER_OPEN = 0.65;
-    private double HOLDER_CLOSED = 0.23;
-
-    private double WIPE_SPEED = 0.99;
+//    private double HOLDER_OPEN = 0.65;
+//    private double HOLDER_CLOSED = 0.23;
+//
+//    private double WIPE_SPEED = 0.99;
     private boolean isRunning = false;
     private boolean isWipeOut = false;
 
@@ -29,9 +30,11 @@ public class MineralCollector {
     public void init(HardwareMap Map, Config config) {
 
         conf =config;
-        HOLDER_CLOSED = conf.getDouble("holder_closed_pos", 0.23);
-        HOLDER_OPEN = conf.getDouble("holder_open_pos", 0.65);
-        WIPE_SPEED = conf.getDouble("wipe_rotation_speed", 0.99);
+
+        //moved to Parameters.java
+//        HOLDER_CLOSED = conf.getDouble("holder_closed_pos", 0.23);
+//        HOLDER_OPEN = conf.getDouble("holder_open_pos", 0.65);
+//        WIPE_SPEED = conf.getDouble("wipe_rotation_speed", 0.99);
 
         hwMap = Map;
         servo1 = hwMap.crservo.get("wipe_servo");

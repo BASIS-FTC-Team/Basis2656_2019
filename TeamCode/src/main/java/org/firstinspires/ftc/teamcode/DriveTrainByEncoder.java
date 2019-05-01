@@ -2,16 +2,16 @@ package org.firstinspires.ftc.teamcode;
 
 
 import com.qualcomm.robotcore.hardware.DcMotor;
-import java.util.Map;
 
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.util.Config;
+import static org.firstinspires.ftc.teamcode.Parameters.*;
+
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-import org.firstinspires.ftc.teamcode.util.telemetry.TelemetryWrapper;
+import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
 
 import static java.lang.Math.*;
 
@@ -24,27 +24,27 @@ public class DriveTrainByEncoder {
     HardwareMap hwMap = null;
 
     private ElapsedTime runtime = new ElapsedTime();
-
-    double     COUNTS_PER_MOTOR_REV     = 1440 ;    // eg: TETRIX Motor Encoder
-    double     DRIVE_GEAR_REDUCTION     = 1.0 ;     // This is < 1.0 if geared UP
-    double     WHEEL_DIAMETER_MM        = 100.0 ;     // For figuring circumference
-    /** for the  distance between two diagonal wheel */
-    //double     WHEEL_DIAGONAL_DISTANCE  = 490.0 ;     // the prototype robot
-    double     WHEEL_DIAGONAL_DISTANCE  = 464.2 ;     // the competition robot ( wheel distances: sqrt( 350mm ^ 2 * 305mm ^ 2) = 464.0
-
-    double     DEGREE_CORRECTION        = 1.543;
-    double     LINE_CORRECTION          = 1.0;
-    double     XY_CORRECTION            = 1.2;
-
-    double     COUNTS_PER_MM            = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_MM * 3.1415);
-    double     COUNTS_PER_DEGREE        = WHEEL_DIAGONAL_DISTANCE / WHEEL_DIAMETER_MM  * COUNTS_PER_MOTOR_REV / 360. * DEGREE_CORRECTION;
-
-    // MIN_DRIVE_SPEED should be less than or equal to MAX_DRIVE_SPEED
-    double MIN_DRIVE_SPEED              = 0.2;
-    double MAX_DRIVE_SPEED              = 0.9;
-
-    int    COUNTS_THRESHOLD_FOR_SLOWDOWN = 50;
-
+/////////// Moved to Parameters /////////////////////////
+//    double     COUNTS_PER_MOTOR_REV     = 1440 ;    // eg: TETRIX Motor Encoder
+//    double     DRIVE_GEAR_REDUCTION     = 1.0 ;     // This is < 1.0 if geared UP
+//    double     WHEEL_DIAMETER_MM        = 100.0 ;     // For figuring circumference
+//    /** for the  distance between two diagonal wheel */
+//    //double     WHEEL_DIAGONAL_DISTANCE  = 490.0 ;     // the prototype robot
+//    double     WHEEL_DIAGONAL_DISTANCE  = 464.2 ;     // the competition robot ( wheel distances: sqrt( 350mm ^ 2 * 305mm ^ 2) = 464.0
+//
+//    double     DEGREE_CORRECTION        = 1.543;
+//    double     LINE_CORRECTION          = 1.0;
+//    double     XY_CORRECTION            = 1.2;
+//
+//    double     COUNTS_PER_MM            = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_MM * 3.1415);
+//    double     COUNTS_PER_DEGREE        = WHEEL_DIAGONAL_DISTANCE / WHEEL_DIAMETER_MM  * COUNTS_PER_MOTOR_REV / 360. * DEGREE_CORRECTION;
+//
+//    // MIN_DRIVE_SPEED should be less than or equal to MAX_DRIVE_SPEED
+//    double MIN_DRIVE_SPEED              = 0.2;
+//    double MAX_DRIVE_SPEED              = 0.9;
+//
+//    int    COUNTS_THRESHOLD_FOR_SLOWDOWN = 50;
+////////////////////////////////////
 
 //    static final double     DRIVE_SPEED             = 0.6;
 //    static final double     TURN_SPEED              = 0.5;
@@ -63,7 +63,12 @@ public class DriveTrainByEncoder {
         rightBack.setDirection(DcMotor.Direction.FORWARD);
 
         setPowerToAll(0);
+
+        /**
+         * Get all the parameters' value from config file
+         */
         setConfigurations(config);
+
         setModeToAll(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setModeToAll(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -167,7 +172,7 @@ public class DriveTrainByEncoder {
         leftBack = hwMap.get(DcMotor.class, "rl_drive");
         rightBack = hwMap.get(DcMotor.class, "rr_drive");
 
-        setConfigurations(config);
+        //setConfigurations(config);
 
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         rightFront.setDirection(DcMotor.Direction.FORWARD);
@@ -401,19 +406,19 @@ public class DriveTrainByEncoder {
         rightBack.setZeroPowerBehavior(zeroPowerBehaviorForAll);
     }
     private void setConfigurations(Config config) {
-
-        COUNTS_PER_MOTOR_REV = config.getDouble("counts_per_motor_rev", 1440);
-        DRIVE_GEAR_REDUCTION = config.getDouble("drive_gear_reduction",1.0);
-        WHEEL_DIAGONAL_DISTANCE = config.getDouble("wheel_diagonal_distance", 450.);
-        WHEEL_DIAMETER_MM = config.getDouble("wheel_diameter", 100.);
-        DEGREE_CORRECTION = config.getDouble("degree_correction", 1.543);
-        LINE_CORRECTION = config.getDouble("line_correction", 1.0);
-        XY_CORRECTION = config.getDouble("xy_correction", 1.2);
-        COUNTS_PER_MM           = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_MM * 3.1415) * LINE_CORRECTION;
-        COUNTS_PER_DEGREE       = WHEEL_DIAGONAL_DISTANCE / WHEEL_DIAMETER_MM  * COUNTS_PER_MOTOR_REV / 360. * DEGREE_CORRECTION;
-
-        MIN_DRIVE_SPEED = config.getDouble("min_drive_speed",0.2);
-        MAX_DRIVE_SPEED = config.getDouble("max_dirve_speed",0.9);
+////////////  Moved to Parameters.java //////////////
+//        COUNTS_PER_MOTOR_REV = config.getDouble("counts_per_motor_rev", 1440);
+//        DRIVE_GEAR_REDUCTION = config.getDouble("drive_gear_reduction",1.0);
+//        WHEEL_DIAGONAL_DISTANCE = config.getDouble("wheel_diagonal_distance", 450.);
+//        WHEEL_DIAMETER_MM = config.getDouble("wheel_diameter", 100.);
+//        DEGREE_CORRECTION = config.getDouble("degree_correction", 1.543);
+//        LINE_CORRECTION = config.getDouble("line_correction", 1.0);
+//        XY_CORRECTION = config.getDouble("xy_correction", 1.2);
+//        COUNTS_PER_MM           = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) / (WHEEL_DIAMETER_MM * 3.1415) * LINE_CORRECTION;
+//        COUNTS_PER_DEGREE       = WHEEL_DIAGONAL_DISTANCE / WHEEL_DIAMETER_MM  * COUNTS_PER_MOTOR_REV / 360. * DEGREE_CORRECTION;
+//
+//        MIN_DRIVE_SPEED = config.getDouble("min_drive_speed",0.2);
+//        MAX_DRIVE_SPEED = config.getDouble("max_dirve_speed",0.9);
 
     }
 }

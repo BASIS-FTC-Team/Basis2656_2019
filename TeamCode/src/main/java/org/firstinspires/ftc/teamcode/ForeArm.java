@@ -30,6 +30,9 @@ public class ForeArm {
     private DcMotor motor2;
     private DcMotor motor3;
 
+    private  DigitalChannel touchSensor1;
+    //private  DigitalChannel touchSensor2;
+
     private PID pidForUpDown = null;
     private PID pidForForthBack = null;
 
@@ -57,6 +60,9 @@ public class ForeArm {
         motor1 = hwMap.get(DcMotor.class, "forearm1");
         motor2 = hwMap.get(DcMotor.class, "forearm2");
         motor3 = hwMap.get(DcMotor.class, "forearm3");
+        touchSensor1 = hwMap.get(DigitalChannel.class, "forearm_touchsensor1");
+        //touchSensor2 = hwMap.get(DigitalChannel.class, "forearm_touchsensor2");
+
         this.pidForUpDown = pidForUpDown;
         this.pidForForthBack = pidForForthBack;
 
@@ -100,6 +106,10 @@ public class ForeArm {
         motor1 = hwMap.get(DcMotor.class, "forearm1");
         motor2 = hwMap.get(DcMotor.class, "forearm2");
         motor3 = hwMap.get(DcMotor.class, "forearm3");
+
+        touchSensor1 = hwMap.get(DigitalChannel.class, "forearm_touchsensor1");
+        //touchSensor2 = hwMap.get(DigitalChannel.class, "forearm_touchsensor2");
+
         this.pidForUpDown = pidForUpDown;
         this.pidForForthBack = pidForForthBack;
 
@@ -324,6 +334,10 @@ public class ForeArm {
     }
     public void keepUpingEnc() {
         double power = Math.max(motor1.getPower(),motor2.getPower());
+        if (sensor1IsTouched()) {
+            stopUpDownEnc();
+            return;
+        }
         if ((Math.abs(motor1.getTargetPosition() - motor1.getCurrentPosition()) < 100) ||
                 (Math.abs(motor2.getTargetPosition() - motor2.getCurrentPosition()) < 100))   {
             motor1.setTargetPosition(motor1.getCurrentPosition() + 1000);
@@ -399,6 +413,8 @@ public class ForeArm {
     }
 /******************** End of Part II ************************************/
 
+
+/******************** Start of Part III *********************************/
     /**
      * Function: Move the foreArm UP or DOWN automatically,
      * but WITHOUT PID adjustment by calling PID Class methods
@@ -437,15 +453,18 @@ public class ForeArm {
             isUpDownStopped = true;
         }
         runtime.reset();
-        motor1.setPower(0.1);
-        motor2.setPower(0.1);
+        motor1.setPower(MIN_POWER_FOR_FOREARM_UPDOWN);
+        motor2.setPower(MIN_POWER_FOR_FOREARM_UPDOWN);
 
         while ((motor1.isBusy() && motor2.isBusy()) && runtime.milliseconds()<timeoutMS) {
             //wait
             double power = Math.max(motor1.getPower(),motor2.getPower());
-            if (Math.abs(MOVE_COUNTS) >= 300) {
-                if ((Math.abs(motor1.getTargetPosition() - motor1.getCurrentPosition()) > (Math.abs(MOVE_COUNTS) - 100)) ||
-                        (Math.abs(motor2.getTargetPosition() - motor2.getCurrentPosition()) > (Math.abs(MOVE_COUNTS) - 100)) ) {
+            if (sensor1IsTouched()) {
+                break;
+            }
+            if (Math.abs(MOVE_COUNTS) >= (COUNTS_THRESHOLD_FOR_SLOWDOWN * 2 + 50)) {
+                if ((Math.abs(motor1.getTargetPosition() - motor1.getCurrentPosition()) > (Math.abs(MOVE_COUNTS) - COUNTS_THRESHOLD_FOR_SLOWDOWN)) &&
+                        (Math.abs(motor2.getTargetPosition() - motor2.getCurrentPosition()) > (Math.abs(MOVE_COUNTS) - COUNTS_THRESHOLD_FOR_SLOWDOWN)) ) {
                     if (power < MAX_POPER_FOR_FOREARM_UPDOWN) {
                         power += ACCELERATION_FOR_FOREARM_UPDOWN;
                         if (power > MAX_POPER_FOR_FOREARM_UPDOWN) {
@@ -453,8 +472,8 @@ public class ForeArm {
                         }
                     }
                 }
-                if ((Math.abs(motor1.getTargetPosition() - motor1.getCurrentPosition()) <  100) ||
-                        (Math.abs(motor2.getTargetPosition() - motor2.getCurrentPosition()) <  100)) {
+                if ((Math.abs(motor1.getTargetPosition() - motor1.getCurrentPosition()) <  COUNTS_THRESHOLD_FOR_SLOWDOWN) ||
+                        (Math.abs(motor2.getTargetPosition() - motor2.getCurrentPosition()) <  COUNTS_THRESHOLD_FOR_SLOWDOWN)) {
                     if (power > MIN_POWER_FOR_FOREARM_UPDOWN) {
                         power -= ACCELERATION_FOR_FOREARM_UPDOWN;
                         if (power < MIN_POWER_FOR_FOREARM_UPDOWN) {
@@ -463,7 +482,6 @@ public class ForeArm {
                     }
                 }
             }
-
             motor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             motor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             motor1.setPower(power);
@@ -520,7 +538,7 @@ public class ForeArm {
         t1 = runtime.milliseconds();
         pos1 = motor1.getCurrentPosition();
 
-        power = FOREARM_UPDOWN_POWER;
+        power = MAX_POPER_FOR_FOREARM_UPDOWN;
         motor1.setPower(power);
         motor2.setPower(power);
 
@@ -539,4 +557,9 @@ public class ForeArm {
         }
     }
 
+/******************** End of Part III *********************************/
+
+    public boolean sensor1IsTouched() {
+        return !touchSensor1.getState();
+    }
 }

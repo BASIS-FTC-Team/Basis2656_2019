@@ -3,17 +3,11 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
 
-import java.util.EventListener;
-import java.util.EventListenerProxy;
-import java.util.Map;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.Config;
-import org.firstinspires.ftc.teamcode.util.telemetry.TelemetryWrapper;
 
 import com.qualcomm.robotcore.util.Range;
 import static org.firstinspires.ftc.teamcode.Parameters.*;
@@ -27,12 +21,12 @@ public class LiftArm {
 //    double LIFT_POWER = 1.0;
 //    int LIFT_COUNTS_PER_UPDOWN_EFFORT =50;
 
-    public static double LIFT_POWER = 0.9;
-    public static int LIFT_COUNTS_PER_UPDOWN_EFFORT =50;
-    public static double LIFT_AUTO_MOVE_DIST = 125.0; //Measured mannually
-    public static int LIFT_AUTO_MOVE_COUNTS = 862; // (int) 125 / 97.5 [15 segments of chain * 6.5 mm/seg] * 56/24 [Reduction rate] * 144 (counts_per_rev)
-    public static int LIFT_AUTO_LANDING_COUNTS = 1000; // LIFT_AUTO_MOVE_COUNTS + 5
-    public static int LIFT_AUTO_LATCHING_COUNTS = 1000; // LIFT_AUTO_MOVE_COUNTS + 125
+//    public static double LIFT_POWER = 0.9;
+//    public static int LIFT_COUNTS_PER_UPDOWN_EFFORT =50;
+//    public static double LIFT_AUTO_MOVE_DIST = 125.0; //Measured mannually
+//    public static int LIFT_AUTO_MOVE_COUNTS = 862; // (int) 125 / 97.5 [15 segments of chain * 6.5 mm/seg] * 56/24 [Reduction rate] * 144 (counts_per_rev)
+//    public static int LIFT_AUTO_LANDING_COUNTS = 1000; // LIFT_AUTO_MOVE_COUNTS + 5
+//    public static int LIFT_AUTO_LATCHING_COUNTS = 1000; // LIFT_AUTO_MOVE_COUNTS + 125
 
 //
 //    double container_position = 0.20;
@@ -48,15 +42,14 @@ public class LiftArm {
 
     public void init(HardwareMap Map, Config config, PID pidLiftUpDown) {
         hwMap = Map;
-
-        LIFT_POWER = config.getDouble("lift_power", 0.8);
-        LIFT_COUNTS_PER_UPDOWN_EFFORT = config.getInt("lift_counts_per_updown_effort", 50);
-
-        LIFT_AUTO_MOVE_DIST = config.getDouble("lift_auto_move_dist",125.0);
-        LIFT_AUTO_MOVE_COUNTS = config.getInt("lift_auto_move_counts",862);
-        LIFT_AUTO_LANDING_COUNTS = config.getInt("lift_auto_landing_counts", 1000);
-        LIFT_AUTO_LATCHING_COUNTS = config.getInt("lift_auto_latching_counts",1000);
-
+// Moved to Parameters.java //////////
+//        LIFT_POWER = config.getDouble("lift_power", 0.8);
+//        LIFT_COUNTS_PER_UPDOWN_EFFORT = config.getInt("lift_counts_per_updown_effort", 50);
+//
+//        LIFT_AUTO_MOVE_DIST = config.getDouble("lift_auto_move_dist",125.0);
+//        LIFT_AUTO_MOVE_COUNTS = config.getInt("lift_auto_move_counts",862);
+//        LIFT_AUTO_LANDING_COUNTS = config.getInt("lift_auto_landing_counts", 1000);
+//        LIFT_AUTO_LATCHING_COUNTS = config.getInt("lift_auto_latching_counts",1000);
 
         this.pidLiftUpDown = pidLiftUpDown;
         verticalMotor = hwMap.get(DcMotor.class, "rover_elevator");
@@ -78,13 +71,19 @@ public class LiftArm {
     public void initEnc(HardwareMap Map, Config config, PID pidLiftUpDown) {
         hwMap = Map;
 
-        LIFT_POWER = config.getDouble("lift_power", 0.8);
-        LIFT_COUNTS_PER_UPDOWN_EFFORT = config.getInt("lift_counts_per_updown_effort", 50);
+        // Moved to Parameters.java
+//        LIFT_POWER = config.getDouble("lift_power", 0.8);
+//        LIFT_COUNTS_PER_UPDOWN_EFFORT = config.getInt("lift_counts_per_updown_effort", 50);
+//
+//        LIFT_AUTO_MOVE_DIST = config.getDouble("lift_auto_move_dist",125.0);
+//        LIFT_AUTO_MOVE_COUNTS = config.getInt("lift_auto_move_counts",862);
+//        LIFT_AUTO_LANDING_COUNTS = config.getInt("lift_auto_landing_counts", 1000);
+//        LIFT_AUTO_LATCHING_COUNTS = config.getInt("lift_auto_latching_counts",1000);
+//
 
-        LIFT_AUTO_MOVE_DIST = config.getDouble("lift_auto_move_dist",125.0);
-        LIFT_AUTO_MOVE_COUNTS = config.getInt("lift_auto_move_counts",862);
-        LIFT_AUTO_LANDING_COUNTS = config.getInt("lift_auto_landing_counts", 1000);
-        LIFT_AUTO_LATCHING_COUNTS = config.getInt("lift_auto_latching_counts",1000);
+
+
+
 
         this.pidLiftUpDown = pidLiftUpDown;
         verticalMotor = hwMap.get(DcMotor.class, "rover_elevator");
@@ -225,8 +224,8 @@ public class LiftArm {
     public void latchOnEnc(int timeoutMS) {
         ElapsedTime runtime = new ElapsedTime();
         //double upDist = LIFT_AUTO_MOVE_DIST; // Measured mannually
-        int moveCounts = 862 ;// LIFT_AUTO_LATCHING_COUNTS; // (int) 125 [upDist] / 97.5 [15 segments of chain * 6.5 mm/seg] * 56/24 [Reduction rate] * 288 (counts_per_rev) + 125
-        double power = 0.95 ; //LIFT_POWER;
+        int moveCounts = LIFT_AUTO_LATCHING_COUNTS; // (int) 125 [upDist] / 97.5 [15 segments of chain * 6.5 mm/seg] * 56/24 [Reduction rate] * 288 (counts_per_rev) + 125
+        double power = LIFT_POWER;
         verticalMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         int newTarget = verticalMotor.getCurrentPosition() - moveCounts;
         verticalMotor.setTargetPosition(newTarget);
@@ -258,8 +257,8 @@ public class LiftArm {
     public void landOffEnc(int timeoutMS) {
         ElapsedTime runtime = new ElapsedTime();
         //double downDist = LIFT_AUTO_MOVE_DIST;
-        int moveCounts = 862; //LIFT_AUTO_LANDING_COUNTS; // (int) 125 [downDist] / 97.5 [15 segments of chain * 6.5 mm/seg] * 56/24 [Reduction rate] * 288 (counts_per_rev), plus 5 mm
-        double power = 0.95; // LIFT_POWER;
+        int moveCounts = LIFT_AUTO_LANDING_COUNTS; // (int) 125 [downDist] / 97.5 [15 segments of chain * 6.5 mm/seg] * 56/24 [Reduction rate] * 288 (counts_per_rev), plus 5 mm
+        double power = LIFT_POWER;
         verticalMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         verticalMotor.setTargetPosition(verticalMotor.getCurrentPosition() + moveCounts);
         verticalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);

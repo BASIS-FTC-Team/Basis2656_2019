@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -11,12 +10,14 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.util.Config;
-import org.firstinspires.ftc.teamcode.util.telemetry.TelemetryWrapper;
+import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
+
+import static org.firstinspires.ftc.teamcode.Parameters.*;
 
 
-@Autonomous(name="AutoCase01_Basis2656_2019",group = "Basis2656_2019")
+@Autonomous(name="AutoCase01_01_Basis2656_2019",group = "Basis2656_2019")
 @Disabled
-public class AutoCase01 extends LinearOpMode {
+public class AutoCase01_01 extends LinearOpMode {
 
     private static final String VUFORIA_KEY = "AaVQPxH/////AAABmWbgMV3r8kMuucDJZwS+C8IqcKbjimK6x7yZkfsYnCLGA1cHVqGOF+tSmO//7vH+NwYrxmEfltB1UGzWki397Ksrl57wPSMPbGU2y9Cg+iSgHMGpJVx4IDeD6ldnTIRetHFeW0r4OzmfsDc5eI0tChOd2FYv2Q8MuHq/QXlsdOHEOyy43xqj5QF4eRSVznttm6fDzN2egZWEIr8Un9B0hCEv6OmQATKUsEPx7BnqCxjBK00252+n2Na17OxE2hYP8WXUerdZOOU1GyWFPOG2DDeYDWiipgYGXgpIC+a846STiSZcFXLP2S3ENu78EoCFKs7Fw7sm5u58dzZ5PyMg8VUormyNmcHm9RU2Fl5364WO";
 
@@ -58,22 +59,22 @@ public class AutoCase01 extends LinearOpMode {
      *
      */
 
-    private static final double DIST_BTWN_MINERALS = 368.3; // 14.5 inches * 25.4 mm/in
-    private double FIRST_MOVE_RIGHT = 40;
-    private double INITIAL_MOVE_TO_MINERAL = 382.5;
-    private double INITIAL_DIST_TO_WALL = 1275.0;
-
-    //private double MOVE_TO_GOLD = 750;
-    private double PUSH_GOLD =  382.5;
-    private double PULL_BACK = 382.5;
-    private double LEFT_GOLD_DISTANCE = -DIST_BTWN_MINERALS;
-    private double RIGHT_GOLD_DISTANCE = DIST_BTWN_MINERALS;
-    private double MIDDLE_GOLD_DISTANCE = 0;
-    private double DISTANCE_TO_WALL = INITIAL_DIST_TO_WALL;
-    private double WALL_TO_DEPOT = 663.0; // 1.5 * 597.0 (tile length) - 80.0 (FRONT_WHEEL_CENTER_TO_FRONT_RIM) - 305.0/2 (half of DIST_BTWN_FRONT_REAR_WHEELS) ;
-    private double DEPOT_TO_CRATER = 1326.0; // 597.0 (tile length)  * 3 - (80 + 305.0/2) [center to front rim] * 2;
-
-    private double TFOD_CONFIDENCE = 0.8;  // the default value in tfod class is 0.4
+//    private static final double DIST_BTWN_MINERALS = 368.3; // 14.5 inches * 25.4 mm/in
+//    private double FIRST_MOVE_RIGHT = 40;
+//    private double INITIAL_MOVE_TO_MINERAL = 382.5;
+//    private double INITIAL_DIST_TO_WALL = 1275.0;
+//
+//    //private double MOVE_TO_GOLD = 750;
+//    private double PUSH_GOLD =  382.5;
+//    private double PULL_BACK = 382.5;
+//    private double LEFT_GOLD_DISTANCE = -DIST_BTWN_MINERALS;
+//    private double RIGHT_GOLD_DISTANCE = DIST_BTWN_MINERALS;
+//    private double MIDDLE_GOLD_DISTANCE = 0;
+//    private double DISTANCE_TO_WALL = INITIAL_DIST_TO_WALL;
+//    private double WALL_TO_DEPOT = 663.0; // 1.5 * 597.0 (tile length) - 80.0 (FRONT_WHEEL_CENTER_TO_FRONT_RIM) - 305.0/2 (half of DIST_BTWN_FRONT_REAR_WHEELS) ;
+//    private double DEPOT_TO_CRATER = 1326.0; // 597.0 (tile length)  * 3 - (80 + 305.0/2) [center to front rim] * 2;
+//
+//    private double TFOD_CONFIDENCE = 0.8;  // the default value in tfod class is 0.4
     private GoldPosition goldPosition = GoldPosition.UNKNOWN;
 
 

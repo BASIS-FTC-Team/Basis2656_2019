@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.util.Config;
-import org.firstinspires.ftc.teamcode.util.telemetry.TelemetryWrapper;
+import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
 
 
 @Autonomous(name="AutoCase01_Basis2656_2019_02",group = "Basis2656_2019")

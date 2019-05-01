@@ -19,21 +19,10 @@ import org.firstinspires.ftc.teamcode.util.Config;
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 
-import static org.firstinspires.ftc.teamcode.util.ButtonHelper.dpad_down;
-import static org.firstinspires.ftc.teamcode.util.ButtonHelper.dpad_up;
-import static org.firstinspires.ftc.teamcode.util.ButtonHelper.dpad_left;
-import static org.firstinspires.ftc.teamcode.util.ButtonHelper.dpad_right;
-import static org.firstinspires.ftc.teamcode.util.ButtonHelper.left_bumper;
-import static org.firstinspires.ftc.teamcode.util.ButtonHelper.right_bumper;
-import static org.firstinspires.ftc.teamcode.util.ButtonHelper.a;
-import static org.firstinspires.ftc.teamcode.util.ButtonHelper.b;
-import static org.firstinspires.ftc.teamcode.util.ButtonHelper.x;
-import static org.firstinspires.ftc.teamcode.util.ButtonHelper.y;
-import static org.firstinspires.ftc.teamcode.util.ButtonHelper.start;
+import static org.firstinspires.ftc.teamcode.Parameters.ANGLE_FOR_ONE_STEP;
 
 
-
-import org.firstinspires.ftc.teamcode.util.telemetry.TelemetryWrapper;
+import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
 
 
 @TeleOp(name = "TeleOp_v01", group = "Basis2656_2019")
@@ -275,10 +264,10 @@ public class TeleOp_v01 extends LinearOpMode {
             /** The following part is for automove testing */
 
             if (gamepad2.dpad_down) {
-                foreArm.moveUpDownAngleEnc(0.5,-45.0,2000);
+                foreArm.moveUpDownAngleEnc(ANGLE_FOR_ONE_STEP,2000);
             }
             if (gamepad2.dpad_up) {
-                foreArm.moveUpDownAngleEnc(0.5,45.0,2000);
+                foreArm.moveUpDownAngleEnc(ANGLE_FOR_ONE_STEP,2000);
             }
 
             if (gamepad2.x) {
