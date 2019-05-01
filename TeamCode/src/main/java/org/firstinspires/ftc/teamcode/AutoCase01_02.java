@@ -1,9 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -14,9 +12,9 @@ import org.firstinspires.ftc.teamcode.util.Config;
 import org.firstinspires.ftc.teamcode.util.telemetry.TelemetryWrapper;
 
 
-@Autonomous(name="AutoCase01_Basis2656_2019",group = "Basis2656_2019")
-@Disabled
-public class AutoCase01 extends LinearOpMode {
+@Autonomous(name="AutoCase01_Basis2656_2019_02",group = "Basis2656_2019")
+
+public class AutoCase01_02 extends LinearOpMode {
 
     private static final String VUFORIA_KEY = "AaVQPxH/////AAABmWbgMV3r8kMuucDJZwS+C8IqcKbjimK6x7yZkfsYnCLGA1cHVqGOF+tSmO//7vH+NwYrxmEfltB1UGzWki397Ksrl57wPSMPbGU2y9Cg+iSgHMGpJVx4IDeD6ldnTIRetHFeW0r4OzmfsDc5eI0tChOd2FYv2Q8MuHq/QXlsdOHEOyy43xqj5QF4eRSVznttm6fDzN2egZWEIr8Un9B0hCEv6OmQATKUsEPx7BnqCxjBK00252+n2Na17OxE2hYP8WXUerdZOOU1GyWFPOG2DDeYDWiipgYGXgpIC+a846STiSZcFXLP2S3ENu78EoCFKs7Fw7sm5u58dzZ5PyMg8VUormyNmcHm9RU2Fl5364WO";
 
@@ -25,16 +23,15 @@ public class AutoCase01 extends LinearOpMode {
     /** Tensor Flow Object Detection engine. */
     private TFObjectDetector tfod;
     /** Mineral Recognizer */
-    private MineralRecognizer mineralRecognizer;
+    private MineralRecognizer mR;
     private PID pidForForearmUpDown = null;
     private PID pidForForearmForthBack = null;
     private PID pidForLiftUpDown = null;
-    private MineralCollector mineralCollector = null;
+    private MineralCollector mineralCollector = new MineralCollector();
 
     private ElapsedTime runtime = new ElapsedTime();
 
     private Config config = new Config(Config.configFile);
-    //private GoldDetector gd = new GoldDetector();
     private DriveTrainByEncoder driveTrainEnc = new DriveTrainByEncoder();
     private ForeArm foreArm = new ForeArm();
     private LiftArm liftArm = new LiftArm();
@@ -84,15 +81,18 @@ public class AutoCase01 extends LinearOpMode {
         pidForForearmForthBack = new PID(0.5,0.05,0.05,-3.0,3.0,-0.1,0.1);
         pidForLiftUpDown = new PID(0.5,0.05,0.05,-3.0,3.0,-0.1,0.1);
 
+
         /** Initialization  */
+        Parameters.init(config);
+
         driveTrainEnc.init(hardwareMap, config);
 
         // Encoder will be used for controlling the foreArm
-        foreArm.initEnc(hardwareMap,config,pidForForearmUpDown,pidForForearmForthBack);
-        mineralCollector.init(hardwareMap,config);
+        foreArm.initEnc(hardwareMap, config, pidForForearmUpDown, pidForForearmForthBack);
+        mineralCollector.init(hardwareMap, config);
 
         // Encoder will be used for controlling the liftArm
-        liftArm.initEnc(hardwareMap,config,pidForLiftUpDown);
+        liftArm.initEnc(hardwareMap, config, pidForLiftUpDown);
 
         //gd.init(hardwareMap, config);
         TelemetryWrapper.init(telemetry, 10);
@@ -111,41 +111,41 @@ public class AutoCase01 extends LinearOpMode {
         TelemetryWrapper.setLine(1,String.format("%8.1f Step 2: Moving 40mm right...",runtime.milliseconds()));
         driveTrainEnc.moveLeftRightEnc(FIRST_MOVE_RIGHT,5000);
 
-        TelemetryWrapper.setLine(1,String.format("%8.1f Step 3: Moving forward 40mm right...",runtime.milliseconds()));
-        driveTrainEnc.moveForthBackEnc(AUTO_DRIVE_SPEED, INITIAL_MOVE_TO_MINERAL,5000);
-
-        TelemetryWrapper.setLine(1,String.format("%8.1f Step 4: Moving left/right to search gold...",runtime.milliseconds()));
-        driveTrainEnc.moveLeftRightEnc(RIGHT_GOLD_DISTANCE,5000);
-        DISTANCE_TO_WALL = INITIAL_DIST_TO_WALL + RIGHT_GOLD_DISTANCE;
-
-        TelemetryWrapper.setLine(1,String.format("%8.1f Step 5: Moving forwards to push gold...",runtime.milliseconds()));
-        driveTrainEnc.moveForthBackEnc(AUTO_DRIVE_SPEED,PUSH_GOLD,5000);
-
-        TelemetryWrapper.setLine(1,String.format("%8.1f Step 6: Moving back after pushing gold...",runtime.milliseconds()));
-        driveTrainEnc.moveForthBackEnc(AUTO_DRIVE_SPEED,-PULL_BACK,5000);
-
-        TelemetryWrapper.setLine(1,String.format("%8.1f Step 7: Moving left towards the wall...",runtime.milliseconds()));
-        driveTrainEnc.moveLeftRightEnc(-DISTANCE_TO_WALL,10000);
-
-        TelemetryWrapper.setLine(1,String.format("%8.1f Step 8: Turning - 135 degrees for depot...",runtime.milliseconds()));
-        driveTrainEnc.spinEnc(AUTO_DRIVE_SPEED,-135,5000);
-
-        TelemetryWrapper.setLine(1,String.format("%8.1f Step 9: Moving towards depot...",runtime.milliseconds()));
-        driveTrainEnc.moveForthBackEnc(AUTO_DRIVE_SPEED,WALL_TO_DEPOT,10000);
-
-        TelemetryWrapper.setLine(1,String.format("%8.1f Step 10: Putting off the Team Marker...",runtime.milliseconds()));
-        foreArm.moveUpDownAngleEnc(30,5000);
-        mineralCollector.wipeOut();
-        foreArm.moveUpDownAngleEnc(-30,5000);
-
-        TelemetryWrapper.setLine(1,String.format("%8.1f Step 11: Turning - 180 degrees for crater...",runtime.milliseconds()));
-        driveTrainEnc.spinEnc(AUTO_DRIVE_SPEED,-180,10000);
-
-        TelemetryWrapper.setLine(1,String.format("%8.1f Step 12: Moving towards depot...",runtime.milliseconds()));
-        driveTrainEnc.moveForthBackEnc(AUTO_DRIVE_SPEED,DEPOT_TO_CRATER,10000);
-
-        TelemetryWrapper.setLine(1,String.format("%8.1f Step 13: Putting off the foreArm to touch the crater...",runtime.milliseconds()));
-        foreArm.moveUpDownAngleEnc(30,5000);
+//        TelemetryWrapper.setLine(1,String.format("%8.1f Step 3: Moving forward 40mm right...",runtime.milliseconds()));
+//        driveTrainEnc.moveForthBackEnc(AUTO_DRIVE_SPEED,INITIAL_MOVE_TO_MINERAL,5000);
+//
+//        TelemetryWrapper.setLine(1,String.format("%8.1f Step 4: Moving left/right to search gold...",runtime.milliseconds()));
+//        driveTrainEnc.moveLeftRightEnc(AUTO_DRIVE_SPEED,RIGHT_GOLD_DISTANCE,5000);
+//        DISTANCE_TO_WALL = INITIAL_DIST_TO_WALL + RIGHT_GOLD_DISTANCE;
+//
+//        TelemetryWrapper.setLine(1,String.format("%8.1f Step 5: Moving forwards to push gold...",runtime.milliseconds()));
+//        driveTrainEnc.moveForthBackEnc(AUTO_DRIVE_SPEED,PUSH_GOLD,5000);
+//
+//        TelemetryWrapper.setLine(1,String.format("%8.1f Step 6: Moving back after pushing gold...",runtime.milliseconds()));
+//        driveTrainEnc.moveForthBackEnc(AUTO_DRIVE_SPEED,-PULL_BACK,5000);
+//
+//        TelemetryWrapper.setLine(1,String.format("%8.1f Step 7: Moving left towards the wall...",runtime.milliseconds()));
+//        driveTrainEnc.moveLeftRightEnc(AUTO_DRIVE_SPEED,-DISTANCE_TO_WALL,10000);
+//
+//        TelemetryWrapper.setLine(1,String.format("%8.1f Step 8: Turning - 135 degrees for depot...",runtime.milliseconds()));
+//        driveTrainEnc.spinEnc(AUTO_DRIVE_SPEED,-135,5000);
+//
+//        TelemetryWrapper.setLine(1,String.format("%8.1f Step 9: Moving towards depot...",runtime.milliseconds()));
+//        driveTrainEnc.moveForthBackEnc(AUTO_DRIVE_SPEED,WALL_TO_DEPOT,10000);
+//
+//        TelemetryWrapper.setLine(1,String.format("%8.1f Step 10: Putting off the Team Marker...",runtime.milliseconds()));
+//        foreArm.moveUpDownAngleEnc(0.5,-30,5000);
+//        mineralCollector.wipeOut();
+//        foreArm.moveUpDownAngleEnc(0.5,+30,5000);
+//
+//        TelemetryWrapper.setLine(1,String.format("%8.1f Step 11: Turning - 180 degrees for crater...",runtime.milliseconds()));
+//        driveTrainEnc.spinEnc(AUTO_DRIVE_SPEED,-180,10000);
+//
+//        TelemetryWrapper.setLine(1,String.format("%8.1f Step 12: Moving towards depot...",runtime.milliseconds()));
+//        driveTrainEnc.moveForthBackEnc(AUTO_DRIVE_SPEED,DEPOT_TO_CRATER,10000);
+//
+//        TelemetryWrapper.setLine(1,String.format("%8.1f Step 13: Putting off the foreArm to touch the crater...",runtime.milliseconds()));
+//        foreArm.moveUpDownAngleEnc(0.5,-30,5000);
 
 
 //        /** 0.2 Adjust the position and the orientation */
@@ -237,24 +237,24 @@ public class AutoCase01 extends LinearOpMode {
         double increamentalDist = 50.0;
         while ( runtime.milliseconds() < 5000 ) {
             int loops0 = 0;
-            while ((loops0 < 10) && ( mineralRecognizer.getNumM() == 0 )) {
-                mineralRecognizer.update();
+            while ((loops0 < 10) && ( mR.getNumM() == 0 )) {
+                mR.update();
                 loops0 ++;
             }
-            if (mineralRecognizer.getNumM() <= 1) {
+            if (mR.getNumM() <= 1) {
                 int loops = 0;
-                while ( mineralRecognizer.getNumM() <= 1 )
+                while ( mR.getNumM() <= 1 )
                 driveTrainEnc.moveLeftRightEnc(increamentalDist, 2000);
                 continue;
-            } else if ( mineralRecognizer.getHAlignSlope() > 2.0 ) {
-                driveTrainEnc.spinEnc(AUTO_DRIVE_SPEED,mineralRecognizer.getHAlignSlope(),2000);
+            } else if ( mR.getHAlignSlope() > 2.0 ) {
+                driveTrainEnc.spinEnc(AUTO_DRIVE_SPEED,Math.atan(mR.getHAlignSlope()),2000);
                 continue;
-            } else if (! mineralRecognizer.isGoldFound()) {
+            } else if (! mR.isGoldFound()) {
 
                 driveTrainEnc.moveLeftRightEnc(increamentalDist,2000);
                 continue;
-            } else if ( mineralRecognizer.getFirstGoldAngle() > 1.5 ) {
-                driveTrainEnc.moveLeftRightEnc(mineralRecognizer.getFirstGoldAngle(),2000);
+            } else if ( mR.getFirstGoldAngle() > 1.5 ) {
+                driveTrainEnc.spinEnc(AUTO_DRIVE_SPEED, mR.getFirstGoldAngle(),2000);
                 continue;
             }
         }
@@ -275,7 +275,7 @@ public class AutoCase01 extends LinearOpMode {
     {
         //TelemetryWrapper.setLine(1,"Identifying the gold position ...");
         //mr.update();
-        return mineralRecognizer.getGoldPosition();
+        return mR.getGoldPosition();
     }
 
     public void placeTeamMarker() {

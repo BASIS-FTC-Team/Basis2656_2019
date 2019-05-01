@@ -23,13 +23,15 @@ public class MineralCollector {
 
 
     HardwareMap hwMap = null;
+    Config conf;
     public ElapsedTime time = new ElapsedTime();
 
     public void init(HardwareMap Map, Config config) {
 
-        HOLDER_CLOSED = config.getDouble("holder_closed_pos", 0.23);
-        HOLDER_OPEN = config.getDouble("holder_open_pos", 0.65);
-        WIPE_SPEED = config.getDouble("wipe_rotation_speed", 0.99);
+        conf =config;
+        HOLDER_CLOSED = conf.getDouble("holder_closed_pos", 0.23);
+        HOLDER_OPEN = conf.getDouble("holder_open_pos", 0.65);
+        WIPE_SPEED = conf.getDouble("wipe_rotation_speed", 0.99);
 
         hwMap = Map;
         servo1 = hwMap.crservo.get("wipe_servo");

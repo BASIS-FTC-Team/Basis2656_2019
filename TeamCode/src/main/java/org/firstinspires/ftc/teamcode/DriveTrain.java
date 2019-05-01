@@ -5,6 +5,10 @@ import java.util.Map;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.util.Config;
+
+import com.qualcomm.robotcore.hardware.PwmControl;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoControllerEx;
 import com.qualcomm.robotcore.util.Range;
 
 
@@ -54,16 +58,26 @@ public class DriveTrain {
     /**
      * Robot motion through 4 Mecanum wheels controlled by gamepad.left_stick_x, left_stick_y, right_stick_x
      * The left joystick is used to translate the robot, while the right joystick controls the rotation of the robot.
+     * @param drive_x = - left_stick_x
+     * @param drive_y = left_stick_y
+     * @param turn    = - right_stick_x
      */
-    public void moveFree(double left_stick_x, double left_stick_y, double right_stick_x) {
+    public void moveFree(double drive_x, double drive_y, double turn) {
 
-        double r = Math.hypot(left_stick_x,left_stick_y);
-        double robotAngle = Math.atan2(left_stick_y,left_stick_x) - Math.PI / 4;
-        double rightX = right_stick_x;
-        final double v1 = r * Math.cos(robotAngle) + rightX;
-        final double v2 = r * Math.sin(robotAngle) - rightX;
-        final double v3 = r * Math.sin(robotAngle) + rightX;
-        final double v4 = r * Math.cos(robotAngle) - rightX;
+        double r = Math.hypot(drive_x,drive_y);
+        double robotAngle = Math.atan2(drive_y,drive_x) - Math.PI / 4;
+        double v1 = r * Math.cos(robotAngle) + turn;
+        double v2 = r * Math.sin(robotAngle) - turn;
+        double v3 = r * Math.sin(robotAngle) + turn;
+        double v4 = r * Math.cos(robotAngle) - turn;
+        double maxV = Math.max(Math.max(Math.abs(v1),Math.abs(v2)),Math.max(Math.abs(v3),Math.abs(v4)));
+        if (maxV > 1) {
+            v1 /= maxV;
+            v2 /= maxV;
+            v3 /= maxV;
+            v4 /= maxV;
+        }
+
 
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         rightFront.setDirection(DcMotor.Direction.FORWARD);
@@ -74,8 +88,7 @@ public class DriveTrain {
         rightFront.setPower(v2);
         leftBack.setPower(v3);
         rightBack.setPower(v4);
-
     }
 
-
 }
+

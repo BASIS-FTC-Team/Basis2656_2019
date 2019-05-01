@@ -67,6 +67,9 @@ public class MineralDetector extends LinearOpMode {
     /** Tensor Flow Object Detection engine. */
     private TFObjectDetector tfod;
 
+    /** Mineral Recognizer */
+    private MineralRecognizer mr;
+
     @Override
     public void runOpMode() {
 
@@ -77,6 +80,8 @@ public class MineralDetector extends LinearOpMode {
         } else {
             telemetry.addData("Sorry!", "This device is not compatible with TFOD");
         }
+
+        mr.initialize(tfod);
 
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start tracking");
@@ -136,61 +141,6 @@ public class MineralDetector extends LinearOpMode {
 
                 }
 
-//                }
-//
-//                /** Press button B to identify the position of gold mineral */
-//                if (gamepad1.b) {
-//
-//                    TelemetryWrapper.clear();
-//                    TelemetryWrapper.render();
-//                    TelemetryWrapper.setLine(1,"Gamepad B pressed: detect Gold Position");
-//
-//                    if (tfod != null) {
-//                        // getUpdatedRecognitions() will return null if no new information is available since
-//                        // the last time that call was made.
-//                        List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-//
-//                        if (updatedRecognitions != null) {
-//
-//                            TelemetryWrapper.setLine(3,"# Object Detected" + updatedRecognitions.size());
-//
-//                            if (updatedRecognitions.size() == 3) {
-//                                int goldMineralX = -1;
-//                                int silverMineral1X = -1;
-//                                int silverMineral2X = -1;
-//                                for (Recognition recognition : updatedRecognitions) {
-//                                    if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
-//                                        goldMineralX = (int) recognition.getLeft();
-//                                    } else if (silverMineral1X == -1) {
-//                                        silverMineral1X = (int) recognition.getLeft();
-//                                    } else {
-//                                        silverMineral2X = (int) recognition.getLeft();
-//                                    }
-//                                }
-//                                if (goldMineralX != -1 && silverMineral1X != -1 && silverMineral2X != -1) {
-//                                    if (goldMineralX < silverMineral1X && goldMineralX < silverMineral2X) {
-//
-//                                        TelemetryWrapper.setLine(4,"Gold Mineral Position: Left");
-//
-//                                    } else if (goldMineralX > silverMineral1X && goldMineralX > silverMineral2X) {
-//
-//                                        TelemetryWrapper.setLine(4,"Gold Mineral Position: Right");
-//                                    } else {
-//                                        TelemetryWrapper.setLine(4,"Gold Mineral Position: Center");
-//                                    }
-//                                }
-//                            } else {
-//                                TelemetryWrapper.setLine(4,"Gold Mineral Position: Center");
-//                            }
-//                        }
-//                    }
-//                }
-
-//                /** Press button x to exit */
-//                if (gamepad1.x) {
-//                    break;
-//                }
-
                 TelemetryWrapper.setLine(1, "loops: " + check_times +
                         " updatedRec null:" + updatedRecognition_null +
                         " tfod null: " + tfod_null);
@@ -227,7 +177,7 @@ public class MineralDetector extends LinearOpMode {
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
         tfodParameters.minimumConfidence = 0.8;  //Added by J.Tu on 2019-04-24 00:23
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_GOLD_MINERAL, LABEL_SILVER_MINERAL);
+        //tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_GOLD_MINERAL, LABEL_SILVER_MINERAL);
 
     }
 }
