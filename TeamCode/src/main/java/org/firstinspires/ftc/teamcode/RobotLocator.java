@@ -17,20 +17,17 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.YZX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
 import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
 import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.FRONT;
+import static org.firstinspires.ftc.teamcode.Parameters.*;
 
 public class RobotLocator {
 
     private OpenGLMatrix lastLocation = null;
-    private boolean             targetVisible = false;
+    private boolean targetVisible = false;
     private VectorF translation = null;  // express position (translation) of robot in "inches".
     private Orientation rotation = null;     // express the rotation of the robot in "degrees".
 
-    private static final float  mmPerInch        = 25.4f;
-    private static final float  mmFTCFieldWidth  = (12*6) * mmPerInch;       // the width of the FTC field (from the center point to the outer panels)
-    private static final float  mmTargetHeight   = (6) * mmPerInch;          // the height of the center of the target image above the floor
-
-    //    // Select which camera you want use.  The FRONT camera is the one on the same side as the screen.
-//    // Valid choices are:  BACK or FRONT
+    // Select which camera you want use.  The FRONT camera is the one on the same side as the screen.
+    // Valid choices are:  BACK or FRONT
     private static final VuforiaLocalizer.CameraDirection CAMERA_CHOICE = BACK;
 //
     /**
@@ -38,17 +35,11 @@ public class RobotLocator {
      * localization engine.
      */
     private VuforiaLocalizer vuforia = null;
-    private final int                   CAMERA_FORWARD_DISPLACEMENT  = 110;   // eg: Camera is 110 mm in front of robot center
-    private final int                   CAMERA_VERTICAL_DISPLACEMENT = 200;   // eg: Camera is 200 mm above ground
-    private final int                   CAMERA_LEFT_DISPLACEMENT     = 0;     // eg: Camera is ON the robot's center line
 
-    private List<VuforiaTrackable>      allTrackables = new ArrayList<VuforiaTrackable>();
+    private List<VuforiaTrackable>  allTrackables = new ArrayList<VuforiaTrackable>();
     private VuforiaTrackables targetsRoverRuckus;
 
     public void RobotLocator(){
-//        super();
-        //this.vuforia = vuforia;
-
     }
 
     public void initialize(VuforiaLocalizer vuforia) {
@@ -111,10 +102,7 @@ public class RobotLocator {
         targetVisible = false;
         for (VuforiaTrackable trackable : allTrackables) {
             if (((VuforiaTrackableDefaultListener)trackable.getListener()).isVisible()) {
-                //telemetry.addData("Visible Target", trackable.getName());
                 targetVisible = true;
-                // getUpdatedRobotLocation() will return null if no new information is available since
-                // the last time that call was made, or if the trackable is not currently visible.
                 OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener)trackable.getListener()).getUpdatedRobotLocation();
                 if (robotLocationTransform != null) {
                     lastLocation = robotLocationTransform;

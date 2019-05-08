@@ -1,87 +1,77 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
-
-import org.firstinspires.ftc.teamcode.util.Config;
+import static org.firstinspires.ftc.teamcode.Hardware2019.*;
 import static org.firstinspires.ftc.teamcode.Parameters.*;
 
 public class MineralCollector {
-    private CRServo servo1;  // Rotate to wipe in
-    private Servo servo2;  // Turn over the holder
 
-//    private double HOLDER_OPEN = 0.65;
-//    private double HOLDER_CLOSED = 0.23;
-//
-//    private double WIPE_SPEED = 0.99;
-    private boolean isRunning = false;
-    private boolean isWipeOut = false;
+    private boolean isWipingOut = false;
+    private boolean isWipingIn = false;
+    private boolean holderIsClosed = true;
 
 
-
-    HardwareMap hwMap = null;
-    Config conf;
-    public ElapsedTime time = new ElapsedTime();
-
-    public void init(HardwareMap Map, Config config) {
-
-        conf =config;
-
-        //moved to Parameters.java
-//        HOLDER_CLOSED = conf.getDouble("holder_closed_pos", 0.23);
-//        HOLDER_OPEN = conf.getDouble("holder_open_pos", 0.65);
-//        WIPE_SPEED = conf.getDouble("wipe_rotation_speed", 0.99);
-
-        hwMap = Map;
-        servo1 = hwMap.crservo.get("wipe_servo");
-        servo2 = hwMap.get(Servo.class, "turn_servo");
-
+    public void init() {
+        // For wiping
         servo1.setPower(0);
-        servo2.setPosition(HOLDER_CLOSED);
+        isWipingIn = false;
+        isWipingOut = false;
+
+        // For holder open/close
+        servo2.setPosition(HOLDER_CLOSED_POS);
+        holderIsClosed = true;
 
     }
 
     public void wipeIn() {
         servo1.setDirection(CRServo.Direction.FORWARD);
-        servo1.setPower(WIPE_SPEED);
-        isWipeOut = false;
-        isRunning = true;
+        servo1.setPower(WIPE_ROTATION_SPEED);
+        isWipingIn = true;
+        isWipingOut = false;
+
     }
 
     public void wipeOut() {
         servo1.setDirection(CRServo.Direction.REVERSE);
-        servo1.setPower(WIPE_SPEED);
-        isWipeOut = true;
-        isRunning = true;
+        servo1.setPower(WIPE_ROTATION_SPEED);
+        isWipingIn = false;
+        isWipingOut = true;
     }
 
     public void wipeStop() {
         servo1.setPower(0);
+        isWipingIn = false;
+        isWipingOut = false;
     }
 
-    public void wipePause() {
-        isRunning = isRunning?false:true;
-        if(isRunning){
-            if(isWipeOut) wipeOut();
-            else wipeIn();
-        }
-        else wipeStop();
-    }
-
-    public void wipeInOut(float power) {
-        servo1.setPower(Range.clip(power,-1.0,1.0));
-    }
 
     public void openHolder(){
-        servo2.setPosition(HOLDER_OPEN);
+        servo2.setPosition(HOLDER_OPEN_POS);
+        holderIsClosed = false;
     }
 
     public void closeHolder() {
-        servo2.setPosition(HOLDER_CLOSED);
+        servo2.setPosition(HOLDER_CLOSED_POS);
+        holderIsClosed = true;
     }
 
+    public boolean isStopped() {
+        return ((!isWipingIn) && (!isWipingOut));
+    }
+
+    public boolean isWipingOut() {
+        return isWipingOut;
+    }
+
+    public boolean isWipingIn() {
+        return isWipingIn;
+    }
+
+    public boolean holderIsClosed() {
+        return holderIsClosed;
+    }
+
+    public boolean holderIsOpen() {
+        return !holderIsClosed;
+    }
 }

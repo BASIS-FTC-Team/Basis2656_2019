@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,29 +11,36 @@ import java.util.List;
 
 public class MineralRecognizer {
 
-    private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
-    private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
-    private static final String LABEL_SILVER_MINERAL = "Silver Mineral";
-    /** the TFOD used for the recognization */
+//    private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
+    private static final String LABEL_GOLD = "Gold Mineral";
+    private static final String LABEL_SILVER = "Silver Mineral";
+
+    /* the TFOD used for the recognization */
     private TFObjectDetector    td = null;
+
     /** the List to keep the recognized minerals, sorted by the center_x of minierals */
     private List<Mineral>       rMList = new ArrayList<Mineral>();
+
     /** if there is gold recognized, goldFound is set true, otherwise, is false */
     private boolean             goldFound = false;
+
     /** the number of recognized Minerals, Golds, and Silvers */
     private int                 numM = 0;
     private int                 numG = 0;
     private int                 numS = 0;
+
     /** If no gold (even no mineral) is detected, it will be 0;
      * otherwise, it is the order of the gold in the recognized minerals List when first occurs
      */
     private int                 firstGoldOrderFromLeft = 0;
+
     /** Goal for giving out the Gold's position when 3 minerals are detected
      * when there is ONLY ONE gold in the EXACT THREE minerals' case, it indicates
      * the actual position of the gold, i.e., LEFT / MIDDLE / RIGHT
      * otherwise it will be UNKNOWN
      */
     private GoldPosition        goldPosition = GoldPosition.UNKNOWN;
+
     /**
      * if no gold (or even no mineral) detected, the angle is set to 90.0 (Degree)
      * otherwise, the angle is the one from the camera to the first gold
@@ -41,6 +49,7 @@ public class MineralRecognizer {
      *              positive, when the gold is on the left
      * */
     private double              firstGoldAngle = 90.0; //in Degrees, range: -90.0 ~ +90.0
+
     /**
      *  the slope is 0, when the alignment line of the centers of the recognized minerals is vertical to the camera direction
      *               positive, when the line is from top-left to bottom-right
@@ -51,10 +60,7 @@ public class MineralRecognizer {
 
     public void initialize(TFObjectDetector tfod) {
         this.td = tfod;
-//        if (td != null) {
-//            td.activate();
-//        }
-        td.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_GOLD_MINERAL, LABEL_SILVER_MINERAL);
+        //td.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_GOLD_MINERAL, LABEL_SILVER_MINERAL);
         update();
     }
 
@@ -63,6 +69,7 @@ public class MineralRecognizer {
             List<Recognition> recognitionList = td.getUpdatedRecognitions();
             if (recognitionList == null) {
                 numM = 0;
+                //TelemetryWrapper.setLine(1,);
             } else {
                 numM = recognitionList.size();
             }
@@ -73,11 +80,11 @@ public class MineralRecognizer {
             } else {
                 rMList.clear();
                 for (Recognition r : recognitionList) {
-                    Mineral mineral = new Mineral(r);
-                    rMList.add(mineral);
-                    if (r.getLabel().equals(LABEL_GOLD_MINERAL)) {
+                    //Mineral mineral = new Mineral(r);
+                    rMList.add(new Mineral(r));
+                    if (r.getLabel().equals(LABEL_GOLD)) {
                         numG++;
-                    } else if (r.getLabel().equals(LABEL_SILVER_MINERAL)) {
+                    } else {
                         numS++;
                     }
                 }
@@ -140,12 +147,24 @@ public class MineralRecognizer {
     public int getNumM() { return numM; }
     public int getNumG() { return numG; }
     public int getNumS() { return numS; }
+
     public GoldPosition getGoldPosition() { return goldPosition; }
     public double getFirstGoldAngle() { return firstGoldAngle; }
-    public List<Mineral> getRecogMineralList() { return rMList;}
+    public List<Mineral> getRecognizedMineralList() { return rMList;}
     public double getHAlignSlope() { return hAlignSlope; }
-    public boolean isGoldFound() { return goldFound; }
+    public boolean goldIsFound() { return goldFound; }
     public TFObjectDetector getTFOD() { return td; }
+    //the parameter idx below starts from 0, goes to numM-1
+    public Mineral get(int idx ) {
+        if (numM == 0) {
+            return null;
+        }
+        else if ((idx < 0)|| (idx > (numM-1))) {
+            return null;
+        } else {
+            return rMList.get(idx);
+        }
+    }
 
     public void activate() {
         if (td != null) {

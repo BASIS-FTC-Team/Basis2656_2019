@@ -6,34 +6,37 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.util.Config;
 
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoControllerEx;
 import com.qualcomm.robotcore.util.Range;
 
+import static org.firstinspires.ftc.teamcode.Hardware2019.*;
+
 
 public class DriveTrain {
-    DcMotor leftFront   = null;
-    DcMotor rightFront   = null;
-    DcMotor leftBack  = null;
-    DcMotor rightBack  = null;
+//    DcMotor leftFront   = null;
+//    DcMotor rightFront   = null;
+//    DcMotor leftBack  = null;
+//    DcMotor rightBack  = null;
     double speedx;
     double speedy;
     double offset;
-    HardwareMap hwMap = null;
+    //HardwareMap hwMap = null;
 
-    public void init(HardwareMap Map, Config config) {
-        hwMap = Map;
+    public void init() {
+        //hwMap = Map;
 // not use the front drive temporary
-        leftFront = hwMap.get(DcMotor.class, "fl_drive");
-        rightFront = hwMap.get(DcMotor.class, "fr_drive");
+//        leftFront = hwMap.get(DcMotor.class, "fl_drive");
+//        rightFront = hwMap.get(DcMotor.class, "fr_drive");
         leftFront.setDirection(DcMotor.Direction.FORWARD);
         rightFront.setDirection(DcMotor.Direction.REVERSE);
         leftFront.setPower(0);
         rightFront.setPower(0);
 
-        leftBack = hwMap.get(DcMotor.class, "rl_drive");
-        rightBack = hwMap.get(DcMotor.class, "rr_drive");
+//        leftBack = hwMap.get(DcMotor.class, "rl_drive");
+//        rightBack = hwMap.get(DcMotor.class, "rr_drive");
         leftBack.setDirection(DcMotor.Direction.FORWARD);
         rightBack.setDirection(DcMotor.Direction.REVERSE);
         leftBack.setPower(0);
@@ -49,7 +52,6 @@ public class DriveTrain {
         leftBack.setPower(Range.clip(speedy+speedx+offset,-1,1));
         rightBack.setPower(Range.clip(speedy-speedx-offset,-1,1));
     }
-
 
     public void stop(){
         move(0,0,0);
