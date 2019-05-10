@@ -23,8 +23,8 @@ public class RobotLocator {
 
     private OpenGLMatrix lastLocation = null;
     private boolean targetVisible = false;
-    private VectorF translation = null;  // express position (translation) of robot in "inches".
-    private Orientation rotation = null;     // express the rotation of the robot in "degrees".
+    private VectorF translation = new VectorF(1024,1024,1024);  // express position (translation) of robot in "inches".
+    private Orientation rotation = new Orientation(EXTRINSIC,XYZ,DEGREES,0.f,0.f,0.f,0);     // express the rotation of the robot in "degrees".
 
     // Select which camera you want use.  The FRONT camera is the one on the same side as the screen.
     // Valid choices are:  BACK or FRONT
@@ -87,7 +87,9 @@ public class RobotLocator {
         OpenGLMatrix phoneLocationOnRobot = OpenGLMatrix
                 .translation(CAMERA_FORWARD_DISPLACEMENT, CAMERA_LEFT_DISPLACEMENT, CAMERA_VERTICAL_DISPLACEMENT)
                 .multiplied(Orientation.getRotationMatrix(EXTRINSIC, YZX, DEGREES,
-                        CAMERA_CHOICE == FRONT ? 90 : -90, 0, 0));
+                        CAMERA_CHOICE == FRONT ? 90 : -90, 0, 180)); // Notice: 1.YZX order is used.2.Not only FRONT/BACK,
+                                                                                          // but also need to consider camera is put on upper side or lower side,
+                                                                                            // which will cause the thrigAngle(around X) to be 0 or 180
 
         /**  Let all the trackable listeners know where the phone is.  */
         for (VuforiaTrackable trackable : allTrackables)

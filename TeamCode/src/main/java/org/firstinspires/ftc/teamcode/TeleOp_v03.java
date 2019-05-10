@@ -103,7 +103,7 @@ public class TeleOp_v03 extends LinearOpMode {
 
             /** move the robot */
 
-            /** Origin version */
+            /****************** Origin version ********************
 //            double drivey =  -gamepad1.left_stick_y;
 //            double drivex =  -gamepad1.left_stick_x;
 //            double turn  =  gamepad1.right_stick_x;
@@ -116,28 +116,26 @@ public class TeleOp_v03 extends LinearOpMode {
 //                turn = gamepad2.right_stick_x * 0.25;
 //                driveTrain.move(drivex, drivey, turn);
 //            }
-            /** New version */
+             *****************************************************/
 
+            /** New version */
 
             //////////////// Robot Driving /////////////////////////////////////////////////////////
             /** Reduction ratios are applied to the stick readings
              * to reduce the too strong power applied to the motors
-             * */
+             **/
             double drive_x =  gamepad1.left_stick_x ;
             double drive_y = -gamepad1.left_stick_y ;
             double turn =     gamepad1.right_stick_x ;
             if (Math.abs(drive_y) > 0.01 || Math.abs(drive_x) > 0.01 || Math.abs(turn) > 0.01) {
-
                 // Allow minor stick_y value when intending move left/right only
                 if ((Math.abs(drive_y) < Math.abs(drive_x)) && (Math.abs(drive_y) < 0.05)) {
                     drive_y = 0;
                 }
-
                 drive_x *=  0.8;
                 drive_y *=  0.6;
                 turn    *=  0.5;
                 driveTrain.moveFree(drive_x, drive_y, turn);
-
             } else {
                 drive_x =   gamepad2.left_stick_x * 0.5;
                 drive_y = - gamepad2.left_stick_y * 0.5;
@@ -197,12 +195,12 @@ public class TeleOp_v03 extends LinearOpMode {
             }
 
             // 一键上收测试
-            if (bH2.pressed(dpad_up)) {
+            if (bH1.pressed(dpad_up)) {
                 foreArm.moveUpDownAngleEnc2(ANGLE_FOR_ONE_STEP);
                 TelemetryWrapper.setLine(6,"Button BACK pressed.");
             }
             // 一键下放测试
-            if (bH2.pressed(dpad_down)) {
+            if (bH1.pressed(dpad_down)) {
                 foreArm.moveUpDownAngleEnc2(-ANGLE_FOR_ONE_STEP);
                 TelemetryWrapper.setLine(6,"Button START pressed.");
             }
@@ -229,7 +227,7 @@ public class TeleOp_v03 extends LinearOpMode {
 
             ////////  Controlling the mineral collector  ////////////////////////////////////////////
             /** For collecting the minerals */
-            if (bH1.pressing(left_bumper) || bH2.pressing(left_bumper)) {
+            if (bH1.pressing(dpad_left)) {
 
                 if (mineralCollector.isWipingIn()) {
                     mineralCollector.wipeStop();
@@ -239,7 +237,7 @@ public class TeleOp_v03 extends LinearOpMode {
                     TelemetryWrapper.setLine(2, "Wiping IN");
                 }
             }
-            if (bH1.pressing(right_bumper) || bH2.pressing(right_bumper)) {
+            if (bH1.pressing(dpad_right)) {
 
                 if (mineralCollector.isWipingOut()) {
                     mineralCollector.wipeStop();
@@ -251,10 +249,10 @@ public class TeleOp_v03 extends LinearOpMode {
             }
 
             /** For opening or closing the mineral collector holder */
-            if (bH1.pressing(dpad_right)) {
+            if (bH1.pressing(right_bumper)) {
                 mineralCollector.openHolder();
                 TelemetryWrapper.setLine(2,"Open the Holder");
-            } else if (bH1.pressing(dpad_left)) {
+            } else if (bH1.pressing(left_bumper)) {
                 mineralCollector.closeHolder();
                 TelemetryWrapper.setLine(2,"Close the Holder");
             }
@@ -263,19 +261,19 @@ public class TeleOp_v03 extends LinearOpMode {
             /** Latching up: dpad_up
              *  landing off: dpad_down
              **/
-            if(bH1.held(dpad_up)){
+            if(bH2.held(dpad_up)) {
                     TelemetryWrapper.setLine(0, "Button DPAD_UP pressed, going UP");
                     liftArm.keepUpingEnc();
                     TelemetryWrapper.setLine(1,"Lift Move Up at speed: "+ liftArm.getRunningPower());
                     TelemetryWrapper.setLine(8,"Lift current postion: "+ liftArm.getLiftPosition());
             }
-            if(bH1.releasing(dpad_up)) {
+            if(bH2.releasing(dpad_up)) {
                     TelemetryWrapper.setLine(0, "Releasing DPAD_UP to STOP going UP");
                     liftArm.stopEnc();
                     TelemetryWrapper.setLine(1, "Lift Move Up at speed: " + liftArm.getRunningPower());
                     TelemetryWrapper.setLine(8, "Lift current postion: " + liftArm.getLiftPosition());
             }
-            if(bH1.held(dpad_down)){
+            if(bH2.held(dpad_down)) {
                 if(!liftArm.isTouched()) {
                     TelemetryWrapper.setLine(0, "Sensor Not Touched when going DOWN");
                     liftArm.keepDowningEnc();
@@ -288,7 +286,7 @@ public class TeleOp_v03 extends LinearOpMode {
                     TelemetryWrapper.setLine(0, "Sensor Touched when going DOWN, STOP at once!");
                 }
             }
-            if(bH1.releasing(dpad_down)) {
+            if(bH2.releasing(dpad_down)) {
                 if (!liftArm.isTouched()) {
                     TelemetryWrapper.setLine(0, "Releasing dpad_down to STOP going DOWN");
                     liftArm.stopEnc();
@@ -301,22 +299,19 @@ public class TeleOp_v03 extends LinearOpMode {
                     TelemetryWrapper.setLine(0, "Sensor Touched when going DOWN, STOP at once!");
                 }
             }
-            if(liftArm.isTouched()){
+            if(liftArm.isTouched()) {
                 TelemetryWrapper.setLine(0,"Touch sensor pressed");
             } else {
                 TelemetryWrapper.setLine(0,"Touch sensor NOT pressed");
             }
-
-
-            ///////////////// End of Version 3 ///////////////////
+            /////////////////// End of Version 3 /////////////////////////////////////////
 
 
             /*****************************************************************************
              *  The following part is for automove testing
-             */
 
 
-            /** End of automove testing
+             *  End of automove testing
              * **************************************************************************/
 
         }

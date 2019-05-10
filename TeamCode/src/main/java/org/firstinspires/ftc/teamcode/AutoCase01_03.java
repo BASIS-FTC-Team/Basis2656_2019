@@ -20,7 +20,10 @@ import static org.firstinspires.ftc.teamcode.Parameters.*;
 
 public class AutoCase01_03 extends LinearOpMode {
 
-    private static final String VUFORIA_KEY = "AaVQPxH/////AAABmWbgMV3r8kMuucDJZwS+C8IqcKbjimK6x7yZkfsYnCLGA1cHVqGOF+tSmO//7vH+NwYrxmEfltB1UGzWki397Ksrl57wPSMPbGU2y9Cg+iSgHMGpJVx4IDeD6ldnTIRetHFeW0r4OzmfsDc5eI0tChOd2FYv2Q8MuHq/QXlsdOHEOyy43xqj5QF4eRSVznttm6fDzN2egZWEIr8Un9B0hCEv6OmQATKUsEPx7BnqCxjBK00252+n2Na17OxE2hYP8WXUerdZOOU1GyWFPOG2DDeYDWiipgYGXgpIC+a846STiSZcFXLP2S3ENu78EoCFKs7Fw7sm5u58dzZ5PyMg8VUormyNmcHm9RU2Fl5364WO";
+    private ElapsedTime runtime = new ElapsedTime();
+    private Config config = new Config(Config.configFile);
+
+
 
     /** Vuforia localization engine.  */
     private VuforiaLocalizer vuforia;
@@ -28,20 +31,15 @@ public class AutoCase01_03 extends LinearOpMode {
     private TFObjectDetector tfod;
     /** Mineral Recognizer */
     private MineralRecognizer mR;
-
+    /** Mineral Collector */
     private MineralCollector mineralCollector = new MineralCollector();
 
-    private ElapsedTime runtime = new ElapsedTime();
-
-    private Config config = new Config(Config.configFile);
     private DriveTrainByEncoder driveTrainEnc = new DriveTrainByEncoder();
     private ForeArm foreArm = new ForeArm();
     private LiftArm liftArm = new LiftArm();
 
     /** Auto drive speed ( actually the power applied to motors, from 0.0 to 1.0 ) */
-    private double AUTO_DRIVE_SPEED = 0.5;
-//    private double AUTO_LIFT_SPEED = 0.3;
-//    private int    AUTO_LIFT_DOWN_COUNTS = 200;
+    //private double AUTO_DRIVE_SPEED = 0.5;
 
     /** Distances in millimeters to move automatically
      *
@@ -56,25 +54,8 @@ public class AutoCase01_03 extends LinearOpMode {
      *
      *
      */
-///////////////// Move to Parameters.java  ///////////////////
-//    private static final double DIST_BTWN_MINERALS = 368.3; // 14.5 inches * 25.4 mm/in
-//    private double FIRST_MOVE_RIGHT = 40;
-//    private double INITIAL_MOVE_TO_MINERAL = 382.5;
-//    private double INITIAL_DIST_TO_WALL = 1275.0;
-//
-//    //private double MOVE_TO_GOLD = 750;
-//    private double PUSH_GOLD =  382.5;
-//    private double PULL_BACK = 382.5;
-//    private double LEFT_GOLD_DISTANCE = -DIST_BTWN_MINERALS;
-//    private double RIGHT_GOLD_DISTANCE = DIST_BTWN_MINERALS;
-//    private double MIDDLE_GOLD_DISTANCE = 0;
-//    private double DISTANCE_TO_WALL = INITIAL_DIST_TO_WALL;
-//    private double WALL_TO_DEPOT = 663.0; // 1.5 * 597.0 (tile length) - 80.0 (FRONT_WHEEL_CENTER_TO_FRONT_RIM) - 305.0/2 (half of DIST_BTWN_FRONT_REAR_WHEELS) ;
-//    private double DEPOT_TO_CRATER = 1326.0; // 597.0 (tile length)  * 3 - (80 + 305.0/2) [center to front rim] * 2;
-//
-//    private double TFOD_CONFIDENCE = 0.8;  // the default value in tfod class is 0.4
-    private GoldPosition goldPosition = GoldPosition.UNKNOWN;
 
+    private GoldPosition goldPosition = GoldPosition.UNKNOWN;
 
     @Override
     public void runOpMode() {

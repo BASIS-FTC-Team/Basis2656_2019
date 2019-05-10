@@ -154,7 +154,7 @@ public class LiftArm {
         int moveCounts = LIFT_AUTO_LATCHING_COUNTS; // (int) 125 [upDist] / 97.5 [15 segments of chain * 6.5 mm/seg] * 56/24 [Reduction rate] * 288 (counts_per_rev) + 125
         double power = LIFT_POWER;
         verticalMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        int newTarget = verticalMotor.getCurrentPosition() + moveCounts;
+        int newTarget = verticalMotor.getCurrentPosition() - moveCounts;
         verticalMotor.setTargetPosition(newTarget);
         verticalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         runtime.reset();
@@ -185,7 +185,7 @@ public class LiftArm {
         int moveCounts = LIFT_AUTO_LANDING_COUNTS; // (int) 125 [downDist] / 97.5 [15 segments of chain * 6.5 mm/seg] * 56/24 [Reduction rate] * 288 (counts_per_rev), plus 5 mm
         double power = LIFT_POWER;
         verticalMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        verticalMotor.setTargetPosition(verticalMotor.getCurrentPosition() - moveCounts);
+        verticalMotor.setTargetPosition(verticalMotor.getCurrentPosition() + moveCounts);
         verticalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         runtime.reset();
         verticalMotor.setPower(power);
