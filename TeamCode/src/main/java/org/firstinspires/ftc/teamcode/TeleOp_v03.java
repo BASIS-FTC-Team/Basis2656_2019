@@ -194,16 +194,16 @@ public class TeleOp_v03 extends LinearOpMode {
                 TelemetryWrapper.setLine(6, "Button A2 released.");
             }
 
-            // 一键上收测试
-            if (bH1.pressed(dpad_up)) {
-                foreArm.moveUpDownAngleEnc2(ANGLE_FOR_ONE_STEP);
-                TelemetryWrapper.setLine(6,"Button BACK pressed.");
-            }
-            // 一键下放测试
-            if (bH1.pressed(dpad_down)) {
-                foreArm.moveUpDownAngleEnc2(-ANGLE_FOR_ONE_STEP);
-                TelemetryWrapper.setLine(6,"Button START pressed.");
-            }
+//            // 一键上收测试
+//            if (bH1.pressed(dpad_up)) {
+//                foreArm.moveUpDownAngleEnc2(ANGLE_FOR_ONE_STEP);
+//                TelemetryWrapper.setLine(6,"Button BACK pressed.");
+//            }
+//            // 一键下放测试
+//            if (bH1.pressed(dpad_down)) {
+//                foreArm.moveUpDownAngleEnc2(-ANGLE_FOR_ONE_STEP);
+//                TelemetryWrapper.setLine(6,"Button START pressed.");
+//            }
 
             /////////  Controlling foreArm Forth/Back  ///////////////////////////////////////////////
             /** For Forearm to move FORWARD or BACKWARD */
@@ -227,7 +227,7 @@ public class TeleOp_v03 extends LinearOpMode {
 
             ////////  Controlling the mineral collector  ////////////////////////////////////////////
             /** For collecting the minerals */
-            if (bH1.pressing(dpad_left)) {
+            if (bH1.pressing(left_bumper)) {
 
                 if (mineralCollector.isWipingIn()) {
                     mineralCollector.wipeStop();
@@ -237,7 +237,7 @@ public class TeleOp_v03 extends LinearOpMode {
                     TelemetryWrapper.setLine(2, "Wiping IN");
                 }
             }
-            if (bH1.pressing(dpad_right)) {
+            if (bH1.pressing(right_bumper)) {
 
                 if (mineralCollector.isWipingOut()) {
                     mineralCollector.wipeStop();
@@ -249,10 +249,10 @@ public class TeleOp_v03 extends LinearOpMode {
             }
 
             /** For opening or closing the mineral collector holder */
-            if (bH1.pressing(right_bumper)) {
+            if (bH1.pressing(dpad_right)) {
                 mineralCollector.openHolder();
                 TelemetryWrapper.setLine(2,"Open the Holder");
-            } else if (bH1.pressing(left_bumper)) {
+            } else if (bH1.pressing(dpad_left)) {
                 mineralCollector.closeHolder();
                 TelemetryWrapper.setLine(2,"Close the Holder");
             }
@@ -261,19 +261,19 @@ public class TeleOp_v03 extends LinearOpMode {
             /** Latching up: dpad_up
              *  landing off: dpad_down
              **/
-            if(bH2.held(dpad_up)) {
+            if(bH1.held(dpad_up) || bH2.held(dpad_up)) {
                     TelemetryWrapper.setLine(0, "Button DPAD_UP pressed, going UP");
                     liftArm.keepUpingEnc();
                     TelemetryWrapper.setLine(1,"Lift Move Up at speed: "+ liftArm.getRunningPower());
                     TelemetryWrapper.setLine(8,"Lift current postion: "+ liftArm.getLiftPosition());
             }
-            if(bH2.releasing(dpad_up)) {
+            if(bH1.releasing(dpad_up) || bH2.releasing(dpad_up)) {
                     TelemetryWrapper.setLine(0, "Releasing DPAD_UP to STOP going UP");
                     liftArm.stopEnc();
                     TelemetryWrapper.setLine(1, "Lift Move Up at speed: " + liftArm.getRunningPower());
                     TelemetryWrapper.setLine(8, "Lift current postion: " + liftArm.getLiftPosition());
             }
-            if(bH2.held(dpad_down)) {
+            if(bH1.held(dpad_down) || bH2.held(dpad_down)) {
                 if(!liftArm.isTouched()) {
                     TelemetryWrapper.setLine(0, "Sensor Not Touched when going DOWN");
                     liftArm.keepDowningEnc();
@@ -286,7 +286,7 @@ public class TeleOp_v03 extends LinearOpMode {
                     TelemetryWrapper.setLine(0, "Sensor Touched when going DOWN, STOP at once!");
                 }
             }
-            if(bH2.releasing(dpad_down)) {
+            if(bH1.releasing(dpad_down) || bH2.releasing(dpad_down)) {
                 if (!liftArm.isTouched()) {
                     TelemetryWrapper.setLine(0, "Releasing dpad_down to STOP going DOWN");
                     liftArm.stopEnc();
@@ -308,7 +308,7 @@ public class TeleOp_v03 extends LinearOpMode {
 
 
             /*****************************************************************************
-             *  The following part is for automove testing
+             *  The following part is for auto-move testing
 
 
              *  End of automove testing

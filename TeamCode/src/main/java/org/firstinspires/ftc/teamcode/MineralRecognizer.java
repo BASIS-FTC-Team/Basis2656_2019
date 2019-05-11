@@ -149,6 +149,7 @@ public class MineralRecognizer {
     public int getNumS() { return numS; }
 
     public GoldPosition getGoldPosition() { return goldPosition; }
+    public int getFirstGoldOrderFromLeft() { return firstGoldOrderFromLeft; }
     public double getFirstGoldAngle() { return firstGoldAngle; }
     public List<Mineral> getRecognizedMineralList() { return rMList;}
     public double getHAlignSlope() { return hAlignSlope; }

@@ -87,7 +87,7 @@ public class RobotLocator {
         OpenGLMatrix phoneLocationOnRobot = OpenGLMatrix
                 .translation(CAMERA_FORWARD_DISPLACEMENT, CAMERA_LEFT_DISPLACEMENT, CAMERA_VERTICAL_DISPLACEMENT)
                 .multiplied(Orientation.getRotationMatrix(EXTRINSIC, YZX, DEGREES,
-                        CAMERA_CHOICE == FRONT ? 90 : -90, 0, 180)); // Notice: 1.YZX order is used.2.Not only FRONT/BACK,
+                        CAMERA_CHOICE == FRONT ? 90 : -90, 0, 0)); // Notice: 1.YZX order is used.2.Not only FRONT/BACK,
                                                                                           // but also need to consider camera is put on upper side or lower side,
                                                                                             // which will cause the thrigAngle(around X) to be 0 or 180
 

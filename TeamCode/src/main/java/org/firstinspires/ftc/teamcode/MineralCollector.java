@@ -55,6 +55,10 @@ public class MineralCollector {
         holderIsClosed = true;
     }
 
+    public void dropTeamMarker() {
+        servo2.setPosition(DROP_TEAMARKER_POS);
+    }
+
     public boolean isStopped() {
         return ((!isWipingIn) && (!isWipingOut));
     }

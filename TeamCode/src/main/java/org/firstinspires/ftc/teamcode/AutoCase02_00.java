@@ -10,20 +10,30 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
-import org.firstinspires.ftc.teamcode.util.ButtonHelper;
 import org.firstinspires.ftc.teamcode.util.Config;
-import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
 
-import java.util.ArrayList;
-import java.util.List;
+import static org.firstinspires.ftc.teamcode.Parameters.ANGLE_AUTO_UPDOWN;
+import static org.firstinspires.ftc.teamcode.Parameters.CAMERA_LEFT_DISPLACEMENT;
+import static org.firstinspires.ftc.teamcode.Parameters.COUNTS_FOREARM_BACKWARD;
+import static org.firstinspires.ftc.teamcode.Parameters.DEPOT_TO_CRATER;
+import static org.firstinspires.ftc.teamcode.Parameters.DISTANCE_TO_WALL;
+import static org.firstinspires.ftc.teamcode.Parameters.DIST_BTWN_MINERALS;
+import static org.firstinspires.ftc.teamcode.Parameters.DIST_TO_ADJUST_BY_WALL;
+import static org.firstinspires.ftc.teamcode.Parameters.FIRST_MOVE_RIGHT;
+import static org.firstinspires.ftc.teamcode.Parameters.INITIAL_DIST_TO_WALL;
+import static org.firstinspires.ftc.teamcode.Parameters.INITIAL_MOVE_TO_MINERAL;
+import static org.firstinspires.ftc.teamcode.Parameters.MAX_COUNTS_FOREARM_FORWARD;
+import static org.firstinspires.ftc.teamcode.Parameters.MINERAL_DETECT_TIMELIMIT;
+import static org.firstinspires.ftc.teamcode.Parameters.PULL_BACK;
+import static org.firstinspires.ftc.teamcode.Parameters.PUSH_GOLD;
+import static org.firstinspires.ftc.teamcode.Parameters.VUFORIA_KEY;
+import static org.firstinspires.ftc.teamcode.Parameters.WALL_TO_DEPOT;
 
-import static org.firstinspires.ftc.teamcode.Parameters.*;
 
-
-@Autonomous(name="AutoCase01_03",group = "Basis2656_2019")
+@Autonomous(name="AutoCase02_00",group = "Basis2656_2019")
 //@Disabled
 
-public class AutoCase01_03 extends LinearOpMode {
+public class AutoCase02_00 extends LinearOpMode {
 
 
     /*** Define your variables here ********************************************************/
@@ -111,7 +121,7 @@ public class AutoCase01_03 extends LinearOpMode {
         turnLightOn();
         int quick_times = 1;
         mR.update();
-        while ((!mR.goldIsFound()) && (runtime.milliseconds() < 1000)) {
+        while ((!mR.goldIsFound()) && (runtime.milliseconds() < 500)) {
             mR.update();
             quick_times++;
         }
@@ -130,7 +140,7 @@ public class AutoCase01_03 extends LinearOpMode {
         angleToTurnAtWall = -135.0;
         runtime.reset();
 
-        if (true) {
+        if (gP != GoldPosition.UNKNOWN) {
             switch (gP) {
                 case MIDDLE:
                     driveTrainEnc.moveForthBackEnc(INITIAL_MOVE_TO_MINERAL, 5000);

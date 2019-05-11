@@ -13,7 +13,7 @@ public class Parameters {
     public static final float   mmTargetHeight   = (6) * mmPerInch;          // the height of the center of the target image above the floor
     /* Smart phone's camera displacement, used by RobotLocator.java */
     public static int           CAMERA_FORWARD_DISPLACEMENT  = 228;   // eg: Camera is 240 mm in front of robot center
-    public static int           CAMERA_VERTICAL_DISPLACEMENT = 105;   // eg: Camera is 105 mm above ground
+    public static int           CAMERA_VERTICAL_DISPLACEMENT = 85;   // eg: Camera is 105 mm above ground
     public static int           CAMERA_LEFT_DISPLACEMENT     = 65;     // eg: Camera is 50 mm right of the robot's center line
     //public static double CAMERA_TO_CENTER = -10.0; // the distance from camera to the left-right center line of the robot, negative on the left, positive on the right
     /* TFOD */
@@ -31,12 +31,16 @@ public class Parameters {
     public static double        INITIAL_DIST_TO_WALL = 1275.0;
     public static double        PUSH_GOLD =  382.5;
     public static double        PULL_BACK = 382.5;
-    public static double        LEFT_GOLD_DISTANCE = -DIST_BTWN_MINERALS;
-    public static double        RIGHT_GOLD_DISTANCE = DIST_BTWN_MINERALS;
-    public static double        MIDDLE_GOLD_DISTANCE = 0;
+//    public static double        LEFT_GOLD_DISTANCE = -DIST_BTWN_MINERALS;
+//    public static double        RIGHT_GOLD_DISTANCE = DIST_BTWN_MINERALS;
+//    public static double        MIDDLE_GOLD_DISTANCE = 0;
     public static double        DISTANCE_TO_WALL = INITIAL_DIST_TO_WALL;
+    public static double        DIST_TO_ADJUST_BY_WALL = 40.;
     public static double        WALL_TO_DEPOT = 663.0; // 1.5 * 597.0 (tile length) - 80.0 (FRONT_WHEEL_CENTER_TO_FRONT_RIM) - 305.0/2 (half of DIST_BTWN_FRONT_REAR_WHEELS) ;
+    public static int           MAX_COUNTS_FOREARM_FORWARD = 1500; // Stretch out to the farest place
+    public static int           COUNTS_FOREARM_BACKWARD = 500; // Draw back to the right place for deliver the mineral to the cargo
     public static double        DEPOT_TO_CRATER = 1326.0; // 597.0 (tile length)  * 3 - (80 + 305.0/2) [center to front rim] * 2;
+    public static double        ANGLE_AUTO_UPDOWN = 60.;
     //public static double AUTO_DRIVE_SPEED = 0.8;
 
     //////////////////////////////// from ForeArm.java ////////////////////////////////////////////
@@ -82,6 +86,7 @@ public class Parameters {
     // from MineralCollector.java ///////////
     public static double        HOLDER_OPEN_POS = 0.65;     // Servo Position for holder_open
     public static double        HOLDER_CLOSED_POS = 0.23;   // Servo Position for holder_closed
+    public static double        DROP_TEAMARKER_POS = 0.95;
     public static double        WIPE_ROTATION_SPEED = 0.99;
 
 
@@ -103,13 +108,16 @@ public class Parameters {
         INITIAL_DIST_TO_WALL = config.getDouble("initial_dist_to_wall",1275.0);
         PUSH_GOLD =  config.getDouble("push_gold",382.5);
         PULL_BACK = config.getDouble("pull_back",382.5);
-        LEFT_GOLD_DISTANCE = -DIST_BTWN_MINERALS;
-        RIGHT_GOLD_DISTANCE = DIST_BTWN_MINERALS;
-        MIDDLE_GOLD_DISTANCE = 0;
+//        LEFT_GOLD_DISTANCE = -DIST_BTWN_MINERALS;
+//        RIGHT_GOLD_DISTANCE = DIST_BTWN_MINERALS;
+//        MIDDLE_GOLD_DISTANCE = 0;
         DISTANCE_TO_WALL = INITIAL_DIST_TO_WALL;
+        DIST_TO_ADJUST_BY_WALL = config.getDouble("dist_to_adjust_by_wall", 40.);
         WALL_TO_DEPOT = config.getDouble("wall_to_depot",663.0); // 1.5 * 597.0 (tile length) - 80.0 (FRONT_WHEEL_CENTER_TO_FRONT_RIM) - 305.0/2 (half of DIST_BTWN_FRONT_REAR_WHEELS) ;
+        MAX_COUNTS_FOREARM_FORWARD = config.getInt("max_counts_forearm_forward",1500); // Stretch out to the farest place
+        COUNTS_FOREARM_BACKWARD = config.getInt("counts_forearm_backward",500);
         DEPOT_TO_CRATER = config.getDouble("depot_to_crater",1326.0); // 597.0 (tile length)  * 3 - (80 + 305.0/2) [center to front rim] * 2;
-
+        ANGLE_AUTO_UPDOWN = config.getDouble("angle_auto_updown",60.);
         //AUTO_DRIVE_SPEED = config.getDouble("auto_drive_speed",0.8);
         // from ForeArm.java
         MIN_POWER_FOR_FOREARM_UPDOWN = config.getDouble("min_power_for_forearm_updown",0.1);
@@ -155,6 +163,7 @@ public class Parameters {
         // from MineralCollector.java
         HOLDER_CLOSED_POS = config.getDouble("holder_closed_pos", 0.23);
         HOLDER_OPEN_POS = config.getDouble("holder_open_pos", 0.65);
+        DROP_TEAMARKER_POS = config.getDouble("drop_teammarker_pos",0.95);
         WIPE_ROTATION_SPEED = config.getDouble("wipe_rotation_speed", 0.99);
     }
 }

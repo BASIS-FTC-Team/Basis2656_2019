@@ -111,11 +111,14 @@ public class ForeArm {
  *
  * */
     public void moveForwardEnc(int timeoutMS) {
+        moveForwardEnc(FOREARM_COUNTS_PER_FORTHBACK_EFFORT, timeoutMS);
+    }
+    public void moveForwardEnc(int counts, int timeoutMS) {
 
         ElapsedTime runtime = new ElapsedTime();
         motor3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         int newTarget3;
-        newTarget3  = motor3.getCurrentPosition() - FOREARM_COUNTS_PER_FORTHBACK_EFFORT;
+        newTarget3  = motor3.getCurrentPosition() - counts;
         motor3.setTargetPosition(newTarget3);
         motor3.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         runtime.reset();
@@ -125,6 +128,9 @@ public class ForeArm {
         }
     }
     public void moveBackwardEnc(int timeoutMS) {
+        moveBackwardEnc(FOREARM_COUNTS_PER_FORTHBACK_EFFORT, timeoutMS);
+    }
+    public void moveBackwardEnc(int counts, int timeoutMS) {
 
         ElapsedTime runtime = new ElapsedTime();
         motor3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -139,6 +145,7 @@ public class ForeArm {
         }
 
     }
+
     public void keepForwardingEnc() {
         double power = motor3.getPower();
         if (Math.abs(motor3.getTargetPosition() - motor3.getCurrentPosition()) < 100) {
