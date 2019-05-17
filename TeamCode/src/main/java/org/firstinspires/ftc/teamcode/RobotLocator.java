@@ -21,10 +21,10 @@ import static org.firstinspires.ftc.teamcode.Parameters.*;
 
 public class RobotLocator {
 
-    private OpenGLMatrix lastLocation = null;
-    private boolean targetVisible = false;
-    private VectorF translation = new VectorF(1024,1024,1024);  // express position (translation) of robot in "inches".
-    private Orientation rotation = new Orientation(EXTRINSIC,XYZ,DEGREES,0.f,0.f,0.f,0);     // express the rotation of the robot in "degrees".
+    private OpenGLMatrix            lastLocation = null;
+    private boolean                 targetVisible = false;
+    private VectorF                 translation = new VectorF(1024,1024,1024);  // express position (translation) of robot in "inches".
+    private Orientation             rotation = new Orientation(EXTRINSIC,XYZ,DEGREES,0.f,0.f,0.f,0);     // express the rotation of the robot in "degrees".
 
     // Select which camera you want use.  The FRONT camera is the one on the same side as the screen.
     // Valid choices are:  BACK or FRONT
@@ -34,10 +34,10 @@ public class RobotLocator {
      * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
      * localization engine.
      */
-    private VuforiaLocalizer vuforia = null;
+    private VuforiaLocalizer        vuforia = null;
 
     private List<VuforiaTrackable>  allTrackables = new ArrayList<VuforiaTrackable>();
-    private VuforiaTrackables targetsRoverRuckus;
+    private VuforiaTrackables       targetsRoverRuckus;
 
     public void RobotLocator(){
     }
@@ -125,6 +125,7 @@ public class RobotLocator {
     public boolean targetIsVisible() {
         return targetVisible;
     }
+
     public VectorF getLocation() {
         return translation;
     }
@@ -132,12 +133,15 @@ public class RobotLocator {
     public float getLocX() {
         return (translation.getData())[0];
     }
+
     public float getLocY() {
         return (translation.getData())[1];
     }
+
     public float getLocZ() {
         return (translation.getData())[2];
     }
+
     public Orientation getRotation() {
         return rotation;
     }
@@ -157,6 +161,7 @@ public class RobotLocator {
     public void activate() {
         targetsRoverRuckus.activate();
     }
+
     public void deactivate() {targetsRoverRuckus.deactivate();}
 
 }

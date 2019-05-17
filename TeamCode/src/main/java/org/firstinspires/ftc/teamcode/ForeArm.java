@@ -20,9 +20,6 @@ public class ForeArm {
 
     int AUTO_MOVE_COUNTS = 0;
 
-   // public ElapsedTime time = new ElapsedTime();
-
-
     public void init() {
 
         setModeForUpDown(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -67,10 +64,13 @@ public class ForeArm {
  *
  * */
     public void moveUp() { moveUp( FOREARM_UPDOWN_POWER_FOR_MANNUAL ); }
+
     public void moveDown() { moveDown( FOREARM_UPDOWN_POWER_FOR_MANNUAL ); }
 
     public void moveUp(double power) { moveUpDown( - Math.abs(power) ); }
+
     public void moveDown(double power) { moveUpDown( Math.abs(power) ); }
+
     /** power: positive for moving down
      *         negative for moving up
      * @param power
@@ -81,15 +81,20 @@ public class ForeArm {
         motor1.setPower(power);
         motor2.setPower(power);
     }
+
     public void stopUpDown() {
         motor1.setPower(0);
         motor2.setPower(0);
     }
 
     public void moveForward() { moveForward(FOREARM_FORTHBACK_POWER);}
+
     public void moveBackward() { moveBackward(FOREARM_FORTHBACK_POWER);}
+
     public void moveForward(double power) { moveForthBack(Math.abs(power)); }
+
     public void moveBackward(double power) { moveForthBack(-Math.abs(power)); }
+
     /**
      * @param power
      *          - positive for forwards
@@ -99,10 +104,15 @@ public class ForeArm {
         motor3.setDirection(DcMotor.Direction.FORWARD);
         motor3.setPower(power);
     }
+
     public void stopForthBack() {
         motor3.setPower(0);
     }
+
 /******************** End of Part I ************************************/
+
+
+
 
 /** **************** Begin of Part II *************************/
 /**
@@ -113,6 +123,7 @@ public class ForeArm {
     public void moveForwardEnc(int timeoutMS) {
         moveForwardEnc(FOREARM_COUNTS_PER_FORTHBACK_EFFORT, timeoutMS);
     }
+
     public void moveForwardEnc(int counts, int timeoutMS) {
 
         ElapsedTime runtime = new ElapsedTime();
@@ -127,9 +138,11 @@ public class ForeArm {
             //wait
         }
     }
+
     public void moveBackwardEnc(int timeoutMS) {
         moveBackwardEnc(FOREARM_COUNTS_PER_FORTHBACK_EFFORT, timeoutMS);
     }
+
     public void moveBackwardEnc(int counts, int timeoutMS) {
 
         ElapsedTime runtime = new ElapsedTime();
@@ -163,6 +176,7 @@ public class ForeArm {
         motor3.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motor3.setPower(power);
     }
+
     public void keepBackwardingEnc() {
         double power = motor3.getPower();
         if (Math.abs(motor3.getTargetPosition() - motor3.getCurrentPosition()) < 100) {
@@ -180,6 +194,7 @@ public class ForeArm {
         motor3.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         motor3.setPower(power);
     }
+
     public void stopForthBackEnc(){
 //        double power = motor3.getPower();
 //        if ((power > 0.1) && (motor3.isBusy())) {
@@ -202,7 +217,6 @@ public class ForeArm {
 
         isUping = false;
         isDowning = false;
-
     }
 
     public void moveUpEnc(int timeoutMS) {
@@ -225,6 +239,7 @@ public class ForeArm {
             //wait
         }
     }
+
     public void moveDownEnc(int timeoutMS) {
 
         ElapsedTime runtime = new ElapsedTime();
@@ -246,6 +261,7 @@ public class ForeArm {
             //wait
         }
     }
+
     public void keepUpingEnc() {
         double power = Math.max(motor1.getPower(),motor2.getPower());
         if (sensor1IsTouched()) {
@@ -267,6 +283,7 @@ public class ForeArm {
         setModeForUpDown(DcMotor.RunMode.RUN_TO_POSITION);
         setPowerForUpDown(power);
     }
+
     public void keepDowningEnc() {
         double power = Math.max(motor1.getPower(),motor2.getPower());
         if ((Math.abs(motor1.getTargetPosition() - motor1.getCurrentPosition()) < 100) ||
@@ -284,6 +301,7 @@ public class ForeArm {
         setModeForUpDown(DcMotor.RunMode.RUN_TO_POSITION);
         setPowerForUpDown(power);
     }
+
     public void stopUpDownEnc() {
 
 //        double power = Math.max(motor1.getPower(),motor2.getPower());
@@ -312,10 +330,8 @@ public class ForeArm {
         motor2.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
         motor1.setPower(0.0);
         motor2.setPower(0.0);
-
         isUping = false;
         isDowning = false;
-
     }
 
     public void keepUpingEnc2() {
@@ -342,6 +358,7 @@ public class ForeArm {
         setModeForUpDown(DcMotor.RunMode.RUN_TO_POSITION);
         setPowerForUpDown(power);
     }
+
     public void keepDowningEnc2() {
         double power = Math.max(motor1.getPower(),motor2.getPower());
 
@@ -358,14 +375,12 @@ public class ForeArm {
                 power = FOREARM_UPDOWN_POWER_FOR_MANNUAL;
             }
         }
-
         isUping = false;
         isDowning = true;
-
         setModeForUpDown(DcMotor.RunMode.RUN_TO_POSITION);
         setPowerForUpDown(power);
-
     }
+
     public void stopUpDownEnc2() {
 
 //        double power = Math.max(motor1.getPower(),motor2.getPower());
@@ -396,7 +411,11 @@ public class ForeArm {
         isDowning = false;
 
     }
+
 /******************** End of Part II ************************************/
+
+
+
 
 
 /******************** Start of Part III *********************************/
@@ -479,7 +498,6 @@ public class ForeArm {
 
     }
 
-
     public void moveUpDownAngleEnc2(double moveAngle) {
 
         if ((isAutoUping) || (isAutoDowning)) {
@@ -550,18 +568,22 @@ public class ForeArm {
         motor1.setMode(runMode);
         motor2.setMode(runMode);
     }
+
     public void setPowerForUpDown(double power) {
         motor1.setPower(power);
         motor2.setPower(power);
     }
+
     public void setZeroPowerBehaviorForUpDown(ZeroPowerBehavior zeroPowerBehaviorForUpDown) {
         motor1.setZeroPowerBehavior(zeroPowerBehaviorForUpDown);
         motor2.setZeroPowerBehavior(zeroPowerBehaviorForUpDown);
     }
+
     public void clearTargetPositionForUpDown() {
         motor1.setTargetPosition(motor1.getCurrentPosition());
         motor2.setTargetPosition(motor2.getCurrentPosition());
     }
+
     public void setDirectionDOwn() {
         motor1.setDirection(DcMotor.Direction.FORWARD);
         motor2.setDirection(DcMotor.Direction.REVERSE);
@@ -587,11 +609,17 @@ public class ForeArm {
         this.isAutoUping = isAutoUping;
         this.isAutoDowning = isAutoDowning;
     }
+
     public boolean isUping() { return isUping; }
+
     public boolean isDowning() { return isDowning; }
+
     public boolean isUpDownStopped() { return ((!isUping) && (!isDowning)); }
+
     public boolean isForwarding() { return isForwarding; }
+
     public boolean isBackwarding() { return isBackwarding; }
+
     public boolean isForthBackStopped() { return ((!isForwarding)&&(!isBackwarding)); }
 
     public double calPower(int currCount, int startCount, int endCount, double startPower, double endPower)  {

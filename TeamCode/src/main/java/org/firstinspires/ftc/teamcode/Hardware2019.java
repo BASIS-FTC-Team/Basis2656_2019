@@ -27,6 +27,7 @@ public class Hardware2019 {
     /** Servos for mineral collectors */
     public static CRServo servo1;  // Rotate to wipe in
     public static Servo servo2;  // Open/close the mineral holder
+    public static Servo servo3;  // For setting the team marker
 
 
     //////// Lift //////////////////////////////////////
@@ -54,6 +55,7 @@ public class Hardware2019 {
 //        // For mineral collector
         servo1 = hwMap.crservo.get("wipe_servo");
         servo2 = hwMap.get(Servo.class, "turn_servo");
+        servo3 = hwMap.get(Servo.class,"teammarker_servo");
 //
 //        //////// For Lift  ///////
         verticalMotor = hwMap.get(DcMotor.class, "rover_elevator");

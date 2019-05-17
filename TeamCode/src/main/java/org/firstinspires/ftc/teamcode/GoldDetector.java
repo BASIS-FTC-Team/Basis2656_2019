@@ -1,125 +1,198 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
-import org.firstinspires.ftc.teamcode.util.Config;
-
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
-public class GoldDetector{
+import static org.firstinspires.ftc.teamcode.Parameters.LABEL_GOLD_MINERAL;
 
-    private static final String TFOD_MODEL_ASSET = "RoverRuckus.tflite";
-    private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
-    private static final String LABEL_SILVER_MINERAL = "Silver Mineral";
-    private static final String VUFORIA_KEY = "Ac4SO4P/////AAAAmYo+Dd1E4komrpVteq5yhwyKezLLi2tGgobkZ33Cw+FfGBDlxL282Ow6UJycv6OKKGKtALv6scAq+4cHivE+XPOu6008QHCI0P6yx8X9vb8IKrLWM7dC2ZaWp1Em6rVZFS9q/SnAWVjU1J2oZFNKK5t2jsfpcFV+vN+ZCyNXT+kBsk8mLKwesanwvrCoja1i4Ycs/8FJt7G7EVL2H+wQtGH1Q2sy/AGhJRXAiOyZHM97UBhOptoY9trn6omnmlO3/z8Gr+ntJEqXA/GdyHbJkRcI3bG+vxU3fhUsX3W5Gm7dUs3dX2po7Kz1Q38ABtrLuwpJd1abPHZvSt1vrKe8p5JJtk9ABMZcgPXBBL7eOUr6";
+public class GoldDetector {
 
-
-    /**
-     * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
-     * localization engine.
+    /** the List to keep the recognized minerals, sorted by the center_x of minierals */
+    List<Mineral>               mineralList = new ArrayList<>();
+    /** if there is gold recognized, goldFound is set true, otherwise, is false */
+    private boolean             goldFound = false;
+    /** the number of recognized Minerals, Golds, and Silvers */
+    private int                 numM = 0;
+    private int                 numG = 0;
+    private int                 numS = 0;
+    /** If no gold (even no mineral) is detected, it will be 0;
+     * otherwise, it is the order of the gold in the recognized minerals List when first occurs
      */
-    private VuforiaLocalizer vuforia;
-
-    /**
-     * {@link #tfod} is the variable we will use to store our instance of the Tensor Flow Object
-     * Detection engine.
+    private int                 firstGoldOrderFromLeft = 0;
+    /** Goal for giving out the Gold's position when 3 minerals are detected
+     * when there is ONLY ONE gold in the EXACT THREE minerals' case, it indicates
+     * the actual position of the gold, i.e., LEFT / MIDDLE / RIGHT
+     * otherwise it will be UNKNOWN
      */
-    private TFObjectDetector tfod;
-    private int idDetect;
+    //private GoldPosition        goldPosition = GoldPosition.UNKNOWN;
+    /**
+     * if no gold (or even no mineral) detected, the angle is set to 90.0 (Degree)
+     * otherwise, the angle is the one from the camera to the first gold
+     * the value is 0, when the gold is just right in front of the camera,
+     *              negative, when the gold is on the right
+     *              positive, when the gold is on the left
+     * */
+    private double              firstGoldAngle = 90.0; //in Degrees, range: -90.0 ~ +90.0
+    /**
+     *  the slope is 0, when the alignment line of the centers of the recognized minerals is vertical to the camera direction
+     *               positive, when the line is from top-left to bottom-right
+     *               negative, when the line is from bottom-left to top-right
+     *  when no mineral or only one mineral is detected, the value is set to Double.MAX_VALUE;
+     */
+    private double              hAlignSlope = Double.MAX_VALUE;
 
-    HardwareMap hwMap = null;
-
-    int init(HardwareMap Map, Config config) {
-        hwMap = Map;
-
-        initVuforia();
-
-        if (ClassFactory.getInstance().canCreateTFObjectDetector()) {
-            initTfod();
-        } else {
-            // telemetry.addData("Sorry!", "This device is not compatible with TFOD");
-            idDetect = -1;
-        }
-
-        if (tfod != null) {
-            tfod.activate();
-            idDetect = 0;
-        }
-        return idDetect;
+    public void GoldDetector() {
     }
 
-    void doDetect(){
-            if (tfod != null) {
-                // getUpdatedRecognitions() will return null if no new information is available since
-                // the last time that call was made.
-                List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-                if (updatedRecognitions != null) {
-                    //telemetry.addData("# Object Detected", updatedRecognitions.size());
-                    if (updatedRecognitions.size() == 3) {
-                        int goldMineralX = -1;
-                        int silverMineral1X = -1;
-                        int silverMineral2X = -1;
-                        for (Recognition recognition : updatedRecognitions) {
-                            if (recognition.getLabel().equals(LABEL_GOLD_MINERAL)) {
-                                goldMineralX = (int) recognition.getLeft();
-                            } else if (silverMineral1X == -1) {
-                                silverMineral1X = (int) recognition.getLeft();
-                            } else {
-                                silverMineral2X = (int) recognition.getLeft();
-                            }
-                        }
-                        if (goldMineralX != -1 && silverMineral1X != -1 && silverMineral2X != -1) {
-                            if (goldMineralX < silverMineral1X && goldMineralX < silverMineral2X) {
-                                //telemetry.addData("Gold Mineral Position", "Left");
-                                idDetect = 1;
-                            } else if (goldMineralX > silverMineral1X && goldMineralX > silverMineral2X) {
-                                //telemetry.addData("Gold Mineral Position", "Right");
-                                idDetect = 2;
-                            } else {
-                                //telemetry.addData("Gold Mineral Position", "Center");
-                                idDetect = 3;
-                            }
-                        }
+    public void update(List<Recognition> recognitionList) {
+
+        numM = 0;
+        numG = 0;
+        numS = 0;
+        mineralList.clear();
+
+        if (recognitionList == null) {
+            numM = 0;
+        } else {
+            numM = recognitionList.size();
+        }
+
+        if (numM == 0) {
+            numG = 0;
+            numS = 0;
+        } else {
+            mineralList.clear();
+            for (Recognition r : recognitionList) {
+                mineralList.add(new Mineral(r));
+                if (r.getLabel().equals(LABEL_GOLD_MINERAL)) {
+                    numG++;
+                } else {
+                    numS++;
+                }
+            }
+            Collections.sort(mineralList, new Comparator<Mineral>() {
+                @Override
+                public int compare(Mineral lhs, Mineral rhs) {
+                    double a = lhs.getLeft();
+                    double b = rhs.getLeft();
+                    if (a > b) {
+                        return 1;
+                    } else if (a == b) {
+                        return 0;
+                    } else {
+                        return -1;
                     }
-                   // telemetry.update();
+                }
+            });
+        }
+
+    goldFound = (numG > 0)? true : false;
+
+    setGoldOrderAndAngle();
+
+//    setGoldPosition();
+
+    setHAlignSlope();
+    }
+
+
+    // Sets
+    public void setGoldOrderAndAngle() {
+        if (numG == 0) {
+            firstGoldOrderFromLeft = 0;
+            firstGoldAngle = 90.0;
+        }
+        else {
+            int gOrder = 0;
+            for (Mineral m: mineralList) {
+                gOrder ++;
+                if (m.isGold()) {
+                    firstGoldOrderFromLeft = gOrder;
+                    firstGoldAngle = m.getAngle();
+                    break;
                 }
             }
         }
-
-    public int getId(){
-        return  idDetect;
     }
 
-    private void initVuforia() {
-        /*
-         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
-         */
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+//    public void setGoldPosition() {
+//        if ((numM == 3) && (numG == 1)){
+//            if (firstGoldOrderFromLeft == 1)      { goldPosition = GoldPosition.LEFT; }
+//            else if (firstGoldOrderFromLeft == 2) { goldPosition = GoldPosition.MIDDLE; }
+//            else if (firstGoldOrderFromLeft == 3) { goldPosition = GoldPosition.RIGHT; }
+//        } else {goldPosition = GoldPosition.UNKNOWN;}
+//    }
 
-        parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
-
-        //  Instantiate the Vuforia engine
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
-
-        // Loading trackables is not necessary for the Tensor Flow Object Detection engine.
-    }
-    /**
-     * Initialize the Tensor Flow Object Detection engine.
-     */
-    private void initTfod() {
-        int tfodMonitorViewId = hwMap.appContext.getResources().getIdentifier(
-                "tfodMonitorViewId", "id", hwMap.appContext.getPackageName());
-        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_GOLD_MINERAL, LABEL_SILVER_MINERAL);
+    public void setHAlignSlope() {
+        if (numM < 2) { hAlignSlope = Double.MAX_VALUE; }
+        else {
+            Mineral m1 = mineralList.get(0);
+            Mineral m2 = mineralList.get(1);
+            hAlignSlope = m1.calSlopeTo(m2);
+        }
     }
 
+    // Gets
+    public int getNumM() { return numM; }
+
+    public int getNumG() { return numG; }
+
+    public int getNumS() { return numS; }
+
+    //public GoldPosition getGoldPosition() { return goldPosition; }
+
+    public int getFirstGoldOrderFromLeft() { return firstGoldOrderFromLeft; }
+
+    public double getFirstGoldAngle() { return firstGoldAngle; }
+
+    public List<Mineral> getMineralList() { return mineralList;}
+
+    public double getHAlignSlope() { return hAlignSlope; }
+
+    public boolean goldIsFound() { return goldFound; }
+
+
+    //the parameter idx below starts from 0, goes to numM-1
+    public Mineral get(int idx ) {
+        if (numM == 0) {
+            return null;
+        }
+        else if ((idx < 0)|| (idx > (numM-1))) {
+            return null;
+        } else {
+            return mineralList.get(idx);
+        }
+    }
+
+    //The following estimation is based on that the robot starts from the right (move right after landing)
+    // so there are two minerals within the camera with sure
+    public GoldPosition estimateGoldPostion() {
+        if ( numG > 0) {
+            if (firstGoldAngle >= 0 ) {
+                return GoldPosition.RIGHT;
+            } else {
+                return GoldPosition.MIDDLE;
+            }
+        } else if (numM >= 2){
+            return GoldPosition.LEFT;
+        } else {
+            return GoldPosition.UNKNOWN;
+        }
+    }
+
+    // Hope to check the Gold/Silver mineral in close distance with only one mineral in the picture
+    public boolean isTheOnlyGold() {
+        return (numM == 1) && (numG == 1) ;
+    }
+
+    public boolean isTheOnlySilver() {
+        return (numM == 1) && (numS == 1) ;
+    }
 }
-

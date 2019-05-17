@@ -28,6 +28,13 @@ public class LiftArm {
 
     }
 
+    public void graspOn() {
+        verticalMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        verticalMotor.setTargetPosition(verticalMotor.getCurrentPosition() - 100);
+        verticalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        verticalMotor.setPower(0.5);
+    }
+
     public int getLiftPosition() {
         return verticalMotor.getCurrentPosition();
     }
@@ -59,31 +66,10 @@ public class LiftArm {
 
     public void moveUpEnc() {
         moveUpDownEnc(LIFT_POWER,LIFT_COUNTS_PER_UPDOWN_EFFORT,1000);
-//        int newTarget;
-//        ElapsedTime runtime = new ElapsedTime();
-//        newTarget = verticalMotor.getCurrentPosition() + LIFT_COUNTS_PER_UPDOWN_EFFORT;
-//        verticalMotor.setPower(LIFT_POWER);
-//        verticalMotor.setTargetPosition(newTarget);
-//        verticalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        runtime.reset();
-//        while (verticalMotor.isBusy() && runtime.milliseconds() < 1000) {
-//             //wait
-//        }
     }
 
     public void moveDownEnc() {
-
         moveUpDownEnc(LIFT_POWER,-LIFT_COUNTS_PER_UPDOWN_EFFORT,1000);
-//        int newTarget;
-//        ElapsedTime runtime = new ElapsedTime();
-//        newTarget = verticalMotor.getCurrentPosition() - LIFT_COUNTS_PER_UPDOWN_EFFORT;
-//        verticalMotor.setPower(LIFT_POWER);
-//        verticalMotor.setTargetPosition(newTarget);
-//        verticalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        runtime.reset();
-//        while (verticalMotor.isBusy() && runtime.milliseconds() < 1000) {
-//            // wait
-//        }
     }
 
     /**
@@ -131,6 +117,7 @@ public class LiftArm {
         verticalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         verticalMotor.setPower(power);
     }
+
     public void keepDowningEnc() {
         double power = verticalMotor.getPower();
         if (Math.abs(verticalMotor.getTargetPosition() - verticalMotor.getCurrentPosition()) < 1000) {
@@ -148,6 +135,7 @@ public class LiftArm {
         verticalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         verticalMotor.setPower(power);
     }
+
     public void latchOnEnc(int timeoutMS) {
         ElapsedTime runtime = new ElapsedTime();
         //double upDist = LIFT_AUTO_MOVE_DIST; // Measured mannually
@@ -233,6 +221,7 @@ public class LiftArm {
         isDowning = false;
 
     }
+
     public void stopAtOnceEnc(){
 
         verticalMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -252,7 +241,10 @@ public class LiftArm {
     public boolean isTouched() {
         return !touchSensor.getState();
     }
+
     public boolean isUping() { return isUping;}
+
     public boolean isDowning() { return isDowning;}
+
     public boolean isStopped() { return ( (!isUping) && (!isDowning) );}
 }

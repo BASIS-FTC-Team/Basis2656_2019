@@ -5,16 +5,19 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 
 class Mineral {
 
-    private boolean isGold = false;
-    private double leftSide = 0.0;
-    private double rightSide = 0.0;
-    private double topSide = 0.0;
-    private double bottomSide = 0.0;
-    private double center_x = 0.0;
-    private double center_y = 0.0;
-    private double angleToTheMineral = 0.0;
+    private String label;
+    private boolean isGold;
+    private double leftSide;
+    private double rightSide;
+    private double topSide;
+    private double bottomSide;
+    private double center_x;
+    private double center_y;
+    private double angleToTheMineral;
+    private double confidence;
 
     Mineral(Recognition r) {
+        label = r.getLabel();
         leftSide = r.getLeft();
         rightSide = r.getRight();
         topSide = r.getTop();
@@ -22,6 +25,7 @@ class Mineral {
         center_x = (leftSide + rightSide) / 2;
         center_y = (topSide + bottomSide) / 2;
         angleToTheMineral = r.estimateAngleToObject(AngleUnit.DEGREES);
+        confidence = r.getConfidence();
         if (r.getLabel().equals("Gold Mineral")) {
             isGold = true;
         } else {
@@ -32,41 +36,59 @@ class Mineral {
     public void setLeft(double l) {
         this.leftSide = l;
     }
+
     public void setRight(double r) {
         this.rightSide = r;
     }
+
     public void setTop(double t) {
         this.topSide = t;
     }
+
     public void setBottom(double b) {
         this.bottomSide = b;
     }
+
     public void setCenterX(double cx) {this.center_x = cx;}
+
     public void setCenterY(double cy) {this.center_y = cy;}
+
     public void setAngle(double a) {
         this.angleToTheMineral = a;
     }
 
+    public void setConfidence(double confidence) { this.confidence = confidence; }
+
     public double getLeft() {
         return leftSide;
     }
+
     public double getRight() {
         return rightSide;
     }
+
     public double getTop() {
         return topSide;
     }
+
     public double getBottom() {
         return bottomSide;
     }
+
     public double getCenterX() {return center_x ; }
+
     public double getCenterY() {return center_y ; }
+
     public double getAngle() {
         return angleToTheMineral;
     }
 
+    public double getConfidence() { return confidence; }
+
     public void markGold() { isGold = true;}
+
     public void demarkGold() {isGold = false;}
+
     public boolean isGold() {return isGold;}
 
     public double calSlopeTo(Mineral mineral) {

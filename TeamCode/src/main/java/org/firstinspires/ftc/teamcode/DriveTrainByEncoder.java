@@ -114,15 +114,20 @@ public class DriveTrainByEncoder {
 
     public void stop(){ setPowerToAllDriveMotors(0); }
 
+    public void stopEnc() {
+
+        setModeToAllDriveMotors(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setZeroPowerBehaviorToAllDriveMotors(DcMotor.ZeroPowerBehavior.BRAKE);
+        setPowerToAllDriveMotors(0);
+    }
 
     /** The following are totally new methods for encoder-driving added by J.TU 17 April, 2019 */
     public void initEnc() {
 
-//        leftFront.setDirection(DcMotor.Direction.REVERSE);
-//        rightFront.setDirection(DcMotor.Direction.FORWARD);
-//        leftBack.setDirection(DcMotor.Direction.REVERSE);
-//        rightBack.setDirection(DcMotor.Direction.FORWARD);
-
+        leftFront.setDirection(DcMotor.Direction.REVERSE);
+        rightFront.setDirection(DcMotor.Direction.FORWARD);
+        leftBack.setDirection(DcMotor.Direction.REVERSE);
+        rightBack.setDirection(DcMotor.Direction.FORWARD);
         setModeToAllDriveMotors(DcMotor.RunMode.RUN_USING_ENCODER);
         setModeToAllDriveMotors(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         leftFront.setTargetPosition(leftFront.getCurrentPosition());
@@ -195,6 +200,11 @@ public class DriveTrainByEncoder {
             setModeToAllDriveMotors(DcMotor.RunMode.RUN_TO_POSITION);
             setPowerToAllDriveMotors(power);
         }
+
+//        leftFront.setTargetPosition(leftFront.getCurrentPosition());
+//        rightFront.setTargetPosition(rightFront.getCurrentPosition());
+//        leftBack.setTargetPosition(leftBack.getCurrentPosition());
+//        rightBack.setTargetPosition(rightBack.getCurrentPosition());
 
         setModeToAllDriveMotors(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setZeroPowerBehaviorToAllDriveMotors(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -426,11 +436,111 @@ public class DriveTrainByEncoder {
             setModeToAllDriveMotors(DcMotor.RunMode.RUN_TO_POSITION);
             setPowerToAllDriveMotors(power);
         }
+
+//        leftFront.setTargetPosition(leftFront.getCurrentPosition());
+//        rightFront.setTargetPosition(rightFront.getCurrentPosition());
+//        leftBack.setTargetPosition(leftBack.getCurrentPosition());
+//        rightBack.setTargetPosition(rightBack.getCurrentPosition());
+//
         setModeToAllDriveMotors(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setZeroPowerBehaviorToAllDriveMotors(DcMotor.ZeroPowerBehavior.BRAKE);
         setPowerToAllDriveMotors(0);
 
     }
+
+    //=======================
+
+    /** dist: positive - move to right-forward
+     *        negative - move to left-backward
+     * @param dist
+     * @param timeoutMS
+     */
+    public void move_RF_LB_Enc(double dist, int timeoutMS ) {
+
+        /** The slowSpeed is set for slow start-up and slow-down when stopping to avoid vibration */
+        double slowSpeed = Range.clip(MIN_DRIVE_SPEED,-1,1);
+        double fastSpeed = Range.clip(MAX_DRIVE_SPEED,-1,1);
+
+        /** Sets the time frame for the move to time out */
+        int timeout = timeoutMS;
+        ElapsedTime runtime = new ElapsedTime();
+
+        setModeToAllDriveMotors(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        /** Calculate the targets */
+        int newLeftFrontTarget = 0;
+        int newRightFrontTarget = 0;
+        int newLeftBackTarget = 0;
+        int newRightBackTarget = 0;
+        int deltaLF, deltaRF, deltaLB, deltaRB;
+        int countsToMove = (int) (  dist * COUNTS_PER_MM * DIAGONAL_CORRECTION );
+        TelemetryWrapper.setLine(8,String.format("Counts to move: %d", countsToMove));
+//        deltaLF = - countsToMove;
+//        deltaRF =   countsToMove;
+//        deltaLB =   countsToMove;
+//        deltaRB = - countsToMove;
+        deltaLF =   countsToMove;
+        deltaRF =  - countsToMove;
+        deltaLB = - countsToMove;
+        deltaRB =  countsToMove;
+        newLeftFrontTarget = leftFront.getCurrentPosition() + deltaLF;
+        newRightFrontTarget = rightFront.getCurrentPosition() + deltaRF;
+        newLeftBackTarget = leftBack.getCurrentPosition() + deltaLB;
+        newRightBackTarget = rightBack.getCurrentPosition() + deltaRB;
+
+        /** Sets the new targets */
+        leftFront.setTargetPosition(newLeftFrontTarget);
+        rightFront.setTargetPosition(newRightFrontTarget);
+        leftBack.setTargetPosition(newLeftBackTarget);
+        rightBack.setTargetPosition(newRightBackTarget);
+
+        setModeToAllDriveMotors(DcMotor.RunMode.RUN_TO_POSITION);
+
+        double power = fastSpeed;  // start from fastSpeed
+        runtime.reset();
+
+        //setPowerToAllDriveMotors(power);
+        leftFront.setPower(power);
+        rightFront.setPower(power * 0.005);
+        leftBack.setPower(power * 0.005);
+        rightBack.setPower(power);
+
+        while ((leftFront.isBusy() && rightBack.isBusy()) &&
+                (runtime.milliseconds() < timeout)) {
+            // waiting to finish
+
+            if ( (Math.abs(leftFront.getTargetPosition()-leftFront.getCurrentPosition())<COUNTS_THRESHOLD_FOR_SLOWDOWN)      ||
+                    (Math.abs(rightBack.getTargetPosition()-rightBack.getCurrentPosition())<COUNTS_THRESHOLD_FOR_SLOWDOWN ) ) {
+                power = slowSpeed;
+            }
+
+            setModeToAllDriveMotors(DcMotor.RunMode.RUN_TO_POSITION);
+
+
+            //setPowerToAllDriveMotors(power);
+            leftFront.setPower(power);
+            rightFront.setPower(power * 0.05);
+            leftBack.setPower(power * 0.05);
+            rightBack.setPower(power);
+        }
+
+//        leftFront.setTargetPosition(leftFront.getCurrentPosition());
+//        rightFront.setTargetPosition(rightFront.getCurrentPosition());
+//        leftBack.setTargetPosition(leftBack.getCurrentPosition());
+//        rightBack.setTargetPosition(rightBack.getCurrentPosition());
+//
+        setModeToAllDriveMotors(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setZeroPowerBehaviorToAllDriveMotors(DcMotor.ZeroPowerBehavior.BRAKE);
+        setPowerToAllDriveMotors(0);
+
+    }
+
+
+
+    //=======================
+
+
+
 
     /** Spinning clock-wise or counter-clock-wise
      *      speed: power used for motors
@@ -493,6 +603,10 @@ public class DriveTrainByEncoder {
 
         }
 
+//        leftFront.setTargetPosition(leftFront.getCurrentPosition());
+//        rightFront.setTargetPosition(rightFront.getCurrentPosition());
+//        leftBack.setTargetPosition(leftBack.getCurrentPosition());
+//        rightBack.setTargetPosition(rightBack.getCurrentPosition());
         setModeToAllDriveMotors(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setZeroPowerBehaviorToAllDriveMotors(DcMotor.ZeroPowerBehavior.BRAKE);
         setPowerToAllDriveMotors(0);
