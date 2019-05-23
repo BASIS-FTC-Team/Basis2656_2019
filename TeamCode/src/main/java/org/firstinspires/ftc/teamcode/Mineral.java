@@ -85,6 +85,8 @@ class Mineral {
 
     public double getConfidence() { return confidence; }
 
+    public String getLabel() { return label;}
+
     public void markGold() { isGold = true;}
 
     public void demarkGold() {isGold = false;}

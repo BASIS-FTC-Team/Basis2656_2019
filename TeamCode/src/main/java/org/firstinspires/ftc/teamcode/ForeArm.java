@@ -36,10 +36,6 @@ public class ForeArm {
 
     public void initEnc() {
 
-        motor1.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
-        motor2.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
-        motor3.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
-
         motor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motor3.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -51,6 +47,11 @@ public class ForeArm {
         motor1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor3.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        motor1.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
+        motor2.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
+        motor3.setZeroPowerBehavior(ZeroPowerBehavior.BRAKE);
+
         motor1.setPower(0);
         motor2.setPower(0);
         motor3.setPower(0);
@@ -407,68 +408,6 @@ public class ForeArm {
         updateUpDownStatus(false,false,false, false);
     }
 
-//    public void moveUpDownAngleEnc2(double moveAngle) {
-//
-//        if ((isAutoUping) || (isAutoDowning)) {
-//            double power = Math.max(motor1.getPower(), motor2.getPower());
-//            if ((sensor1IsTouched()) || ((!motor1.isBusy())||(!motor2.isBusy()))) {
-//                power = 0;
-//            } else {
-//                if (Math.abs(AUTO_MOVE_COUNTS) >= (COUNTS_THRESHOLD_FOR_SLOWDOWN * 2 + 50)) {
-//                    if ((Math.abs(motor1.getTargetPosition() - motor1.getCurrentPosition()) > (Math.abs(AUTO_MOVE_COUNTS) - COUNTS_THRESHOLD_FOR_SLOWDOWN)) &&
-//                            (Math.abs(motor2.getTargetPosition() - motor2.getCurrentPosition()) > (Math.abs(AUTO_MOVE_COUNTS) - COUNTS_THRESHOLD_FOR_SLOWDOWN))) {
-//                        if (power < MAX_POPER_FOR_FOREARM_UPDOWN) {
-//                            power += ACCELERATION_FOR_FOREARM_UPDOWN;
-//                            if (power > MAX_POPER_FOR_FOREARM_UPDOWN) {
-//                                power = MAX_POPER_FOR_FOREARM_UPDOWN;
-//                            }
-//                        }
-//                    }
-//                    if ((Math.abs(motor1.getTargetPosition() - motor1.getCurrentPosition()) < COUNTS_THRESHOLD_FOR_SLOWDOWN) ||
-//                            (Math.abs(motor2.getTargetPosition() - motor2.getCurrentPosition()) < COUNTS_THRESHOLD_FOR_SLOWDOWN)) {
-//                        if (power > MIN_POWER_FOR_FOREARM_UPDOWN) {
-//                            power -= ACCELERATION_FOR_FOREARM_UPDOWN;
-//                            if (power < MIN_POWER_FOR_FOREARM_UPDOWN) {
-//                                power = MIN_POWER_FOR_FOREARM_UPDOWN;
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//            if (power == 0) {
-//                updateUpDownStatus(isUping(),isDowning(),false,false);
-//                setModeForUpDown(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//                clearTargetPositionForUpDown();
-//                setZeroPowerBehaviorForUpDown(ZeroPowerBehavior.BRAKE);
-//                setPowerForUpDown(0);
-//                updateUpDownStatus(false, false, false, false);
-//                return;
-//            } else {
-//                setModeForUpDown(DcMotor.RunMode.RUN_TO_POSITION);
-//                setPowerForUpDown(power);
-//                return;
-//            }
-//        } else {
-//            ElapsedTime runtime = new ElapsedTime();
-//            setModeForUpDown(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//            int motor1Target, motor2Target;
-//            AUTO_MOVE_COUNTS = (int) ((moveAngle / 360) * COUNTS_PER_REV_FOR_UPDOWN * GEAR_REDUCTION_FOR_UPDOWN_MOTOR);
-//            motor1Target = motor1.getCurrentPosition() + AUTO_MOVE_COUNTS;
-//            motor2Target = motor2.getCurrentPosition() - AUTO_MOVE_COUNTS;
-//            setTargetPositionForUpDown(motor1Target, motor2Target);
-//            setModeForUpDown(DcMotor.RunMode.RUN_TO_POSITION);
-//
-//            if (AUTO_MOVE_COUNTS > 0) {
-//                updateUpDownStatus(false, false, true, false);
-//            } else if (AUTO_MOVE_COUNTS < 0) {
-//                updateUpDownStatus(false, false, false, true);
-//            } else {
-//                updateUpDownStatus(false, false, false, false);
-//            }
-//            runtime.reset();
-//            setPowerForUpDown(MIN_POWER_FOR_FOREARM_UPDOWN);
-//        }
-//    }
 
 /******************** End of Part III *********************************/
 
@@ -535,18 +474,18 @@ public class ForeArm {
 
     public boolean isForthBackStopped() { return ((!isForwarding)&&(!isBackwarding)); }
 
-    public double calPower(int currCount, int startCount, int endCount, double startPower, double endPower)  {
-        if (startPower == endPower) {
-            return startPower;
-        }
-        if (((startCount <= endCount) && (currCount >= endCount)) || ((startCount >= endCount)&&(currCount <= endCount))) {
-            return endPower;
-        }
-        if (((startCount <= endCount) && (currCount <= startCount)) || ((startCount >= endCount)&&(currCount >= startCount))) {
-            return startPower;
-        }
-        return (startPower + (Math.sin(((currCount-startCount)/(endCount-startCount))*Math.PI / 2))*(endPower - startPower));
-    }
+//    public double calPower(int currCount, int startCount, int endCount, double startPower, double endPower)  {
+//        if (startPower == endPower) {
+//            return startPower;
+//        }
+//        if (((startCount <= endCount) && (currCount >= endCount)) || ((startCount >= endCount)&&(currCount <= endCount))) {
+//            return endPower;
+//        }
+//        if (((startCount <= endCount) && (currCount <= startCount)) || ((startCount >= endCount)&&(currCount >= startCount))) {
+//            return startPower;
+//        }
+//        return (startPower + (Math.sin(((currCount-startCount)/(endCount-startCount))*Math.PI / 2))*(endPower - startPower));
+//    }
 
 }
 

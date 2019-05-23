@@ -17,7 +17,12 @@ import static org.firstinspires.ftc.robotcore.external.navigation.AxesOrder.YZX;
 import static org.firstinspires.ftc.robotcore.external.navigation.AxesReference.EXTRINSIC;
 import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.BACK;
 import static org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection.FRONT;
-import static org.firstinspires.ftc.teamcode.Parameters.*;
+import static org.firstinspires.ftc.teamcode.Parameters.CAMERA_FORWARD_DISPLACEMENT;
+import static org.firstinspires.ftc.teamcode.Parameters.CAMERA_LEFT_DISPLACEMENT;
+import static org.firstinspires.ftc.teamcode.Parameters.CAMERA_VERTICAL_DISPLACEMENT;
+import static org.firstinspires.ftc.teamcode.Parameters.mmFTCFieldWidth;
+import static org.firstinspires.ftc.teamcode.Parameters.mmTargetHeight;
+//import static org.firstinspires.ftc.teamcode.Parameters.*;
 
 public class RobotLocator {
 
@@ -87,7 +92,7 @@ public class RobotLocator {
         OpenGLMatrix phoneLocationOnRobot = OpenGLMatrix
                 .translation(CAMERA_FORWARD_DISPLACEMENT, CAMERA_LEFT_DISPLACEMENT, CAMERA_VERTICAL_DISPLACEMENT)
                 .multiplied(Orientation.getRotationMatrix(EXTRINSIC, YZX, DEGREES,
-                        CAMERA_CHOICE == FRONT ? 100 : -80, 0, 0)); // Notice: 1.YZX order is used.2.Not only FRONT/BACK,
+                        CAMERA_CHOICE == FRONT ? 93 : -87, 0, 0)); // Notice: 1.YZX order is used.2.Not only FRONT/BACK,
                                                                                           // but also need to consider camera is put on upper side or lower side,
                                                                                             // which will cause the thrigAngle(around X) to be 0 or 180
 

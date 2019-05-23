@@ -5,15 +5,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.util.Config;
 import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
 
 import static java.lang.Math.atan2;
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
 import static java.lang.Math.hypot;
 import static java.lang.Math.toDegrees;
 import static org.firstinspires.ftc.teamcode.Parameters.ANGLE_AUTO_UPDOWN;
@@ -33,10 +30,10 @@ import static org.firstinspires.ftc.teamcode.Parameters.TFOD_MODEL_ASSET;
 import static org.firstinspires.ftc.teamcode.Parameters.VUFORIA_KEY;
 
 
-@Autonomous(name="Auto_Red_Depot",group = "Basis2656_2019")
+@Autonomous(name="Auto_Red_Depot_Back_to_Crater",group = "Basis2656_2019")
 //@Disabled
 
-public class Auto_Red_Depot extends LinearOpMode {
+public class Auto_Red_Depot_Back_to_Crater extends LinearOpMode {
 
     /*** Define your variables here ********************************************************/
     private ElapsedTime         runtimeMain = new ElapsedTime();
@@ -146,7 +143,7 @@ public class Auto_Red_Depot extends LinearOpMode {
             robotLoc.update();
         }
 
-        if ( robotLoc.targetIsVisible() ) {
+        if (robotLoc.targetIsVisible()) {
 
             double x1, y1, alpha, x2, y2, beta, distToMove1, angleToTurn1, distToMove2, angleToTurn2, angleAtWall;
 
@@ -224,9 +221,15 @@ public class Auto_Red_Depot extends LinearOpMode {
             tmController.pushOff();
             sleep(300);
 
+            ///////Case: Back to Self Crater
             angleAtWall = beta - 90;
-            driveTrainEnc.spinEnc(angleAtWall,5000);
-            driveTrainEnc.moveForthBackEnc(1750,7000);
+            angleAtWall = 90-angleAtWall;
+            driveTrainEnc.spinEnc(-angleAtWall,5000);
+            driveTrainEnc.moveForthBackEnc(1700,7000);
+            //////Case: Go to Opposite Crater
+            //angleAtWall = beta - 90;
+            //driveTrainEnc.spinEnc(angleAtWall,5000);
+            //driveTrainEnc.moveForthBackEnc(1750,7000);
 
         } else {
             switch (goldPostion) {
@@ -238,8 +241,11 @@ public class Auto_Red_Depot extends LinearOpMode {
                     driveTrainEnc.moveForthBackEnc(-(600-30),5000);
                     tmController.pushOff();
                     sleep(300);
-                    driveTrainEnc.spinEnc(90,5000);
-                    driveTrainEnc.moveForthBackEnc(1750,7000);
+
+                    //driveTrainEnc.spinEnc(90,5000);
+                    //driveTrainEnc.moveForthBackEnc(1750,7000);
+                    driveTrainEnc.moveForthBackEnc(1700,7000);
+
                     break;
                 case MIDDLE:
                     driveTrainEnc.spinEnc(90,5000);
@@ -247,18 +253,30 @@ public class Auto_Red_Depot extends LinearOpMode {
                     driveTrainEnc.moveForthBackEnc(-(hypot(900,900)-30),6000);
                     tmController.pushOff();
                     sleep(300);
-                    driveTrainEnc.spinEnc(45,5000);
-                    driveTrainEnc.moveForthBackEnc(1750,7000);
+
+                    //driveTrainEnc.spinEnc(45,5000);
+                    //driveTrainEnc.moveForthBackEnc(1750,7000);
+                    driveTrainEnc.spinEnc(-45,5000);
+                    driveTrainEnc.moveForthBackEnc(1700,7000);
+
                     break;
                 case LEFT:
                     driveTrainEnc.spinEnc(90,5000);
                     driveTrainEnc.moveLeftRightEnc(DIST_BTWN_MINERALS + FIRST_MOVE_RIGHT,5000);
                     driveTrainEnc.moveForthBackEnc(-(hypot(600,600)-20),6000);
+                    driveTrainEnc.spinEnc(45,5000);
+                    driveTrainEnc.moveForthBackEnc(-(600-30),5000);
+                    driveTrainEnc.spinEnc(-90,5000);
                     tmController.pushOff();
                     sleep(300);
-                    driveTrainEnc.spinEnc(45,5000);
-                    driveTrainEnc.moveForthBackEnc(-(600-200),5000);
-                    driveTrainEnc.moveForthBackEnc(1750,7000);
+                    driveTrainEnc.moveForthBackEnc(1700,7000);
+
+                    //tmController.pushOff();
+                    //sleep(300);
+                    //driveTrainEnc.spinEnc(45,5000);
+                    //driveTrainEnc.moveForthBackEnc(-(600-200),5000);
+                    //driveTrainEnc.moveForthBackEnc(1750,7000);
+
             }
         }
 

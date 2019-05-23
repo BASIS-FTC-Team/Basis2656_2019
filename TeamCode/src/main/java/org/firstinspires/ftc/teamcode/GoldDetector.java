@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode;
 
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -54,8 +55,10 @@ public class GoldDetector {
 
         if (recognitionList == null) {
             numM = 0;
+            TelemetryWrapper.setLine(6,"recognitionList == null");
         } else {
             numM = recognitionList.size();
+            TelemetryWrapper.setLine(6,String.format("recognitionList != null, Size() is %d",recognitionList.size()));
         }
 
         if (numM == 0) {
@@ -90,9 +93,6 @@ public class GoldDetector {
     goldFound = (numG > 0)? true : false;
 
     setGoldOrderAndAngle();
-
-//    setGoldPosition();
-
     setHAlignSlope();
     }
 
@@ -158,17 +158,22 @@ public class GoldDetector {
 
     //The following estimation is based on that the robot starts from the right (move right after landing)
     // so there are two minerals within the camera with sure
-    public GoldPosition estimateGoldPostion() {
+    public GoldPosition estimateGoldPosition() {
         if ( numG > 0) { // gold detected
             if (firstGoldAngle >= 0 ) {
+                TelemetryWrapper.setLine(6,String.format("goldPosition is RIGHT. numG=%d",numG));
                 return GoldPosition.RIGHT;
             } else {
+                TelemetryWrapper.setLine(6,String.format("goldPosition is MIDDLE. numG=%d",numG));
                 return GoldPosition.MIDDLE;
             }
         } else { // no gold detected
             if (numM >= 2){  // all detected minerals are silvers
+
+                TelemetryWrapper.setLine(6,String.format("goldPosition is LEFT. numM=%d",numM));
                 return GoldPosition.LEFT;  // so the gold is on the right
             } else {
+                TelemetryWrapper.setLine(6,"Cannot identify the gold position.");
                 return GoldPosition.UNKNOWN;
             }
         }

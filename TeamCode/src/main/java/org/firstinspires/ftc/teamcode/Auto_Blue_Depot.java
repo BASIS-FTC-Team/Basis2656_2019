@@ -121,78 +121,42 @@ public class Auto_Blue_Depot extends LinearOpMode {
         /** After landing, move a FIRST_MOVE_RIGHT to let the hook get out of the latch */
         driveTrainEnc.moveLeftRightEnc(FIRST_MOVE_RIGHT, 5000);
 
-        goldDetector.update(tfod.getUpdatedRecognitions());
-        goldPostion = goldDetector.estimateGoldPostion();
+        goldDetector.update(tfod.getRecognitions());
+        goldPostion = goldDetector.estimateGoldPosition();
 
         loop_times = 0;
         runtimeMain.reset();
 
-        //Log
-        TelemetryWrapper.setLine(logCount++,String.format("[B4loop]%f: (numM, numG, numS)=(%d, %d, %d) \n gP = %s",
-                runtimeMain.milliseconds(),goldDetector.getNumM(), goldDetector.getNumG(), goldDetector.getNumS(), goldDetector.estimateGoldPostion().toString()));
-        //
-
         while (( goldPostion.equals(GoldPosition.UNKNOWN) ) &&  (runtimeMain.milliseconds() < MINERAL_DETECT_TIMELIMIT) ) {
             goldDetector.update(tfod.getRecognitions());
-            goldPostion = goldDetector.estimateGoldPostion();
-
-            //Log
-            TelemetryWrapper.setLine(logCount++, String.format("[INloop] gD Loops: %d; %s", ++loop_times, goldPostion.toString()));
-            //
+            goldPostion = goldDetector.estimateGoldPosition();
         }
 
-        //Log
-        TelemetryWrapper.setLine(logCount++, String.format("[AFTloop]%f: (numM, numG, numS)=(%d, %d, %d) \n gP = %s",
-                runtimeMain.milliseconds(),goldDetector.getNumM(), goldDetector.getNumG(), goldDetector.getNumS(), goldDetector.estimateGoldPostion().toString()));
-        //
-
+        // When Gold Position is UNKNOWN, set MIDDLE as its default
         if (goldPostion.equals(GoldPosition.UNKNOWN) ) {
-            //Log
-            TelemetryWrapper.setLine(logCount++, String.format("[Gold Not Detected] goldPosition UNKNOWN, set as default to MIDDLE."));
-            //
             goldPostion = GoldPosition.MIDDLE;
         }
-
-        //Log
-        TelemetryWrapper.setLine(logCount++,String.format("%f: finally gP = %s",
-                runtimeMain.milliseconds(), goldDetector.estimateGoldPostion().toString()));
-        //
-
 
         driveTrainEnc.moveForthBackEnc(INITIAL_MOVE_TO_MINERAL, 5000);
         driveTrainEnc.spinEnc(90, 5000);
 
-
         loop_times = 0;
-        //Log
-        TelemetryWrapper.setLine(logCount++, String.format("[B4loop]rLoc Loops: %d; (x, y)=(%.1f, %.1f), angle3=%.1f",
-                ++loop_times, robotLoc.getLocX(),robotLoc.getLocY(),robotLoc.getAngle3()));
-        //
         runtimeMain.reset();
         while ((!robotLoc.targetIsVisible()) && (runtimeMain.milliseconds()<1000) ) {
             robotLoc.update();
-            //Log
-            TelemetryWrapper.setLine(logCount++, String.format("[INloop]rLoc Loops: %d; (x, y)=(%.1f, %.1f), angle3=%.1f",
-                    ++loop_times, robotLoc.getLocX(),robotLoc.getLocY(),robotLoc.getAngle3()));
-            //
         }
 
-        //Log
-        TelemetryWrapper.setLine(logCount++, String.format("[INloop]rLoc Loops: %d; (x, y)=(%.1f, %.1f), angle3=%.1f",
-                ++loop_times, robotLoc.getLocX(),robotLoc.getLocY(),robotLoc.getAngle3()));
-        //
+        if ( robotLoc.targetIsVisible() ) {
 
-
-        if (robotLoc.targetIsVisible()) {
-
-            //Log
-            TelemetryWrapper.setLine(logCount++,"RobotLocator targetIsVisible! -- Using calculated path.");
-            //
             double x1, y1, alpha, x2, y2, beta, distToMove1, angleToTurn1, distToMove2, angleToTurn2, angleAtWall;
 
             x1 = robotLoc.getLocX();
             y1 = robotLoc.getLocY();
             alpha = robotLoc.getAngle3();
+            // set MIDDLE as default for x2, y2
+            x2 = pMx;
+            y2 = pMy;
+
             switch (goldPostion) {
                 case RIGHT:
                     x2 = pRx;
@@ -205,14 +169,6 @@ public class Auto_Blue_Depot extends LinearOpMode {
                 case LEFT:
                     x2 = pLx;
                     y2 = pLy;
-                    break;
-                default:
-                    //Log
-                    TelemetryWrapper.setLine(logCount++, String.format("[prepare path] goldPosition UNKNOWN, set as default to MIDDLE."));
-                    //
-                    goldPostion = GoldPosition.MIDDLE;
-                    x2 = pMx;
-                    y2 = pMy;
             }
 
             distToMove1 = hypot(y2 - y1, x2 - x1);
@@ -231,9 +187,7 @@ public class Auto_Blue_Depot extends LinearOpMode {
             } else if (angleToTurn1 < 0) {
                 angleToTurn1 += 180;
             }
-            //Log
-            TelemetryWrapper.setLine(logCount++,String.format("(x1, y1)=(%.1f, %.1f), (x2, y2)=(%.1f, %.1f)",x1, y1,x2, y2));
-            //
+
             driveTrainEnc.spinEnc(-angleToTurn1, 5000);
             driveTrainEnc.moveForthBackEnc(-distToMove1, 7000);
 
@@ -268,32 +222,31 @@ public class Auto_Blue_Depot extends LinearOpMode {
             driveTrainEnc.spinEnc(-angleToTurn2, 5000);
             driveTrainEnc.moveForthBackEnc(-distToMove2, 7000);
             tmController.pushOff();
+            sleep(300);
 
             angleAtWall = beta - 90;
             driveTrainEnc.spinEnc(angleAtWall,5000);
             driveTrainEnc.moveForthBackEnc(1750,7000);
 
         } else {
-            //Log
-            TelemetryWrapper.setLine(logCount++,"RobotLocator NOT targetIsVisible! - Using pre-configured path");
-            //
-
             switch (goldPostion) {
                 case RIGHT:
                     driveTrainEnc.spinEnc(90,5000);
                     driveTrainEnc.moveLeftRightEnc(-(DIST_BTWN_MINERALS - FIRST_MOVE_RIGHT),5000);
                     driveTrainEnc.moveForthBackEnc(-(hypot(600,600)-20),6000);
                     driveTrainEnc.spinEnc(-45,5000);
-                    driveTrainEnc.moveForthBackEnc(-(600),5000);
+                    driveTrainEnc.moveForthBackEnc(-(600-30),5000);
                     tmController.pushOff();
+                    sleep(300);
                     driveTrainEnc.spinEnc(90,5000);
                     driveTrainEnc.moveForthBackEnc(1750,7000);
                     break;
                 case MIDDLE:
                     driveTrainEnc.spinEnc(90,5000);
                     driveTrainEnc.moveLeftRightEnc(FIRST_MOVE_RIGHT,5000);
-                    driveTrainEnc.moveForthBackEnc(-(hypot(900,900)-20),6000);
+                    driveTrainEnc.moveForthBackEnc(-(hypot(900,900)-30),6000);
                     tmController.pushOff();
+                    sleep(300);
                     driveTrainEnc.spinEnc(45,5000);
                     driveTrainEnc.moveForthBackEnc(1750,7000);
                     break;
@@ -302,18 +255,17 @@ public class Auto_Blue_Depot extends LinearOpMode {
                     driveTrainEnc.moveLeftRightEnc(DIST_BTWN_MINERALS + FIRST_MOVE_RIGHT,5000);
                     driveTrainEnc.moveForthBackEnc(-(hypot(600,600)-20),6000);
                     tmController.pushOff();
+                    sleep(300);
                     driveTrainEnc.spinEnc(45,5000);
-                    driveTrainEnc.moveForthBackEnc(-600,5000);
+                    driveTrainEnc.moveForthBackEnc(-(600-200),5000);
                     driveTrainEnc.moveForthBackEnc(1750,7000);
             }
-
         }
-
 
         foreArm.moveUpDownAngleEnc(-ANGLE_AUTO_UPDOWN,5000);
         foreArm.moveForwardEnc(MAX_COUNTS_FOREARM_FORWARD,5000);
         mineralCollector.openHolder();
-        foreArm.moveForwardEnc( - COUNTS_FOREARM_BACKWARD,5000);
+        foreArm.moveBackwardEnc( COUNTS_FOREARM_BACKWARD,5000);
 
         robotLoc.deactivate();
         tfod.deactivate();
@@ -333,38 +285,38 @@ public class Auto_Blue_Depot extends LinearOpMode {
         vuforia = ClassFactory.getInstance().createVuforia(parameters1);
     }
 
-    private void initVuforia() {
-
-        /** For Vuforia engine 1 (for Android Camera) */
-        //VuforiaLocalizer.Parameters parameters1 = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
-        VuforiaLocalizer.Parameters parameters1 = new VuforiaLocalizer.Parameters();
-        parameters1.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters1.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
-        vuforia = ClassFactory.getInstance().createVuforia(parameters1);
-    }
-
-    private void initVuforiaWithWebcam() {
-        /*
-         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
-         */
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
-        parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
-        //  Instantiate the Vuforia engine
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
-
-    }
-
-    private void initVuforiaWithWebcam(int cameraMonitorViewId) {
-
-        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
-        //VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
-        parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
-        //  Instantiate the Vuforia engine
-        vuforia = ClassFactory.getInstance().createVuforia(parameters);
-
-    }
+//    private void initVuforia() {
+//
+//        /** For Vuforia engine 1 (for Android Camera) */
+//        //VuforiaLocalizer.Parameters parameters1 = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+//        VuforiaLocalizer.Parameters parameters1 = new VuforiaLocalizer.Parameters();
+//        parameters1.vuforiaLicenseKey = VUFORIA_KEY;
+//        parameters1.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+//        vuforia = ClassFactory.getInstance().createVuforia(parameters1);
+//    }
+//
+//    private void initVuforiaWithWebcam() {
+//        /*
+//         * Configure Vuforia by creating a Parameter object, and passing it to the Vuforia engine.
+//         */
+//        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+//        parameters.vuforiaLicenseKey = VUFORIA_KEY;
+//        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
+//        //  Instantiate the Vuforia engine
+//        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+//
+//    }
+//
+//    private void initVuforiaWithWebcam(int cameraMonitorViewId) {
+//
+//        VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+//        //VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+//        parameters.vuforiaLicenseKey = VUFORIA_KEY;
+//        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
+//        //  Instantiate the Vuforia engine
+//        vuforia = ClassFactory.getInstance().createVuforia(parameters);
+//
+//    }
 
     /**
      * Initialize the Tensor Flow Object Detection engine.

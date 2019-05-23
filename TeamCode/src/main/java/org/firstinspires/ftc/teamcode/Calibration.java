@@ -70,7 +70,6 @@ public class Calibration extends LinearOpMode {
     double                      newTime = 0;
     double                      deltaTime = 0;
 
-//    private GoldPosition        gP = GoldPosition.UNKNOWN;
 
     private DriveTrain          driveTrain = new DriveTrain();
     private DriveTrainByEncoder driveTrainEnc = new DriveTrainByEncoder();
@@ -84,11 +83,13 @@ public class Calibration extends LinearOpMode {
 //    private static final String LABEL_GOLD_MINERAL = "Gold Mineral";
 //    private static final String LABEL_SILVER_MINERAL = "Silver Mineral";
 
-//    private VuforiaLocalizer    vuforia;
-//    private TFObjectDetector    tfod;
+    private VuforiaLocalizer    vuforia;
+    private TFObjectDetector    tfod;
 //
-//    private GoldDetector gD;
-//    private RobotLocator        robotLoc;
+    private GoldDetector goldDetector;
+    private RobotLocator        robotLoc;
+    private GoldPosition        goldPosition = GoldPosition.UNKNOWN;
+
 
     /*** End of Definition ****************************************************************/
 
@@ -113,11 +114,20 @@ public class Calibration extends LinearOpMode {
 //        foreArm.initEnc();
 //        mineralCollector.init();
 //
-//        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-//                "cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-//        initVuforia(cameraMonitorViewId);
-//        initTfod();
-//        tfod.activate();
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
+                "cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        initVuforia(cameraMonitorViewId);
+        initTfod();
+        tfod.activate();
+
+        goldDetector = new GoldDetector();
+
+        robotLoc = new RobotLocator();
+        robotLoc.initialize(vuforia);
+        robotLoc.activate();
+        robotLoc.update();
+
+
 
         /** End of Initialization *********************************************************/
 
@@ -167,14 +177,37 @@ public class Calibration extends LinearOpMode {
                 driveTrain.moveFree(drive_x, drive_y, turn);
             }
 
+            //Robot Location
+            robotLoc.update();
+            if (robotLoc.targetIsVisible()) {
+                TelemetryWrapper.setLine(1,"Target is visible.");
+                TelemetryWrapper.setLine(3,String.format("Location (x,y,z): (%.2f, %.2f, %.2f)",robotLoc.getLocX(),robotLoc.getLocY(),robotLoc.getLocZ()));
+                TelemetryWrapper.setLine(4,String.format("Orientation(A1,A2,A3): (%.2f, %.2f, %.2f)",robotLoc.getAngle1(),robotLoc.getAngle2(),robotLoc.getAngle3()));
+            } else {
+                TelemetryWrapper.setLine(1,"Target is NOT visible.");
+                TelemetryWrapper.clearLines(3,4);
+            }
 
-//            if (bH1.pressing(x)) {
-//                tmCtrl.setPostion(0.0);
-//            }
-//            if (bH1.pressing(y)) {
-//                tmCtrl.setPostion(1.0);
-//            }
+            //Mineral detector
+            goldDetector.update(tfod.getRecognitions());
+            goldPosition = goldDetector.estimateGoldPosition();
+            TelemetryWrapper.setLine(5,String.format("(numM, numG, numS) = (%d, %d, %d), Gold Position is: %s",
+                    goldDetector.getNumM(), goldDetector.getNumG(), goldDetector.getNumS(), goldPosition.toString()));
+            TelemetryWrapper.clearLines(9,20);
+            int i_in_list = 8;
+            for (Mineral mineral:goldDetector.getMineralList()) {
+                TelemetryWrapper.setLine(i_in_list++,String.format("%s (x,y)=(%.1f, %.1f), (angle, conf)=(%.1f, %.3f)",
+                        mineral.getLabel(),mineral.getCenterX(),mineral.getCenterY(),mineral.getAngle(),mineral.getConfidence()));
+            }
+            // Test the team marker controller
+            if (bH1.pressing(x)) {
+                tmCtrl.setPostion(0.0);
+            }
+            if (bH1.pressing(y)) {
+                tmCtrl.setPostion(1.0);
+            }
 
+            //Calibrating the drive train by encoder
             if (bH1.pressing(dpad_up)) {
 
                 driveTrainEnc.initEnc();
@@ -197,7 +230,7 @@ public class Calibration extends LinearOpMode {
             if (bH1.pressing(dpad_right)) {
 
                 driveTrainEnc.initEnc();
-                driveTrainEnc.moveLeftRightEnc(-600, 5000);
+                driveTrainEnc.moveLeftRightEnc(600, 5000);
             }
 
             if (bH1.pressing(left_bumper)) {
@@ -337,18 +370,20 @@ public class Calibration extends LinearOpMode {
                 //TelemetryWrapper.clearLines(0,10);
             }
         }
-//        tfod.deactivate();
+
+        robotLoc.deactivate();
+        tfod.deactivate();
     }
 
-//    private void initVuforia(int cameraMonitorViewId) {
-//        /** For Vuforia engine 1 (for Android Camera) */
-//        VuforiaLocalizer.Parameters parameters1 = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
-//        // VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
-//        parameters1.vuforiaLicenseKey = VUFORIA_KEY;
-//        parameters1.cameraDirection = VuforiaLocalizer.CameraDirection.FRONT;
-//        //  Instantiate the Vuforia engine 1
-//        vuforia = ClassFactory.getInstance().createVuforia(parameters1);
-//    }
+    private void initVuforia(int cameraMonitorViewId) {
+        /** For Vuforia engine 1 (for Android Camera) */
+        VuforiaLocalizer.Parameters parameters1 = new VuforiaLocalizer.Parameters(cameraMonitorViewId);
+        // VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
+        parameters1.vuforiaLicenseKey = VUFORIA_KEY;
+        parameters1.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
+        //  Instantiate the Vuforia engine 1
+        vuforia = ClassFactory.getInstance().createVuforia(parameters1);
+    }
 //
 //    private void initVuforia() {
 //
@@ -361,17 +396,17 @@ public class Calibration extends LinearOpMode {
 //        vuforia = ClassFactory.getInstance().createVuforia(parameters1);
 //    }
 //
-//    /**
-//     * Initialize the Tensor Flow Object Detection engine.
-//     */
-//    private void initTfod() {
-//        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-//                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-//        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-//        //tfodParameters.minimumConfidence = 0.4; // Added by J.Tu
-//        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
-//        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_GOLD_MINERAL, LABEL_SILVER_MINERAL);
-//    }
+    /**
+     * Initialize the Tensor Flow Object Detection engine.
+     */
+    private void initTfod() {
+        int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
+                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
+        //tfodParameters.minimumConfidence = 0.4; // Added by J.Tu
+        tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
+        tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_GOLD_MINERAL, LABEL_SILVER_MINERAL);
+    }
 //
 //    private void turnLightOn() {
 //        try {
