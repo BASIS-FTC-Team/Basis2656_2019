@@ -17,8 +17,8 @@ public class Parameters {
     public static final float   mmTargetHeight   = (6) * mmPerInch;          // the height of the center of the target image above the floor
     /* Smart phone's camera displacement, used by RobotLocator.java */
     public static int           CAMERA_FORWARD_DISPLACEMENT  = 228;   // eg: Camera is 240 mm in front of robot center
-    public static int           CAMERA_VERTICAL_DISPLACEMENT = 90;   // eg: Camera is 105 mm above ground
-    public static int           CAMERA_LEFT_DISPLACEMENT     = 30;     // eg: Camera is 50 mm right of the robot's center line
+    public static int           CAMERA_VERTICAL_DISPLACEMENT = 85;   // eg: Camera is 105 mm above ground
+    public static int           CAMERA_LEFT_DISPLACEMENT     = 42;     // eg: Camera is 50 mm right of the robot's center line
     //public static double CAMERA_TO_CENTER = -10.0; // the distance from camera to the left-right center line of the robot, negative on the left, positive on the right
     /* TFOD */
     public static double        TFOD_CONFIDENCE = 0.4;  // the default value in tfod class is 0.4
@@ -55,6 +55,11 @@ public class Parameters {
     public static double        FRONT_WALL_TARGET_X = -1480;
     public static double        FRONT_WALL_TARGET_Y =  -300;
 
+    public static double        BLUE_CORNER_TARGET_X = -1470;
+    public static double        BLUE_CORNER_TARGET_Y = 1400;
+
+    public static double        RED_CORNER_TARGET_X = 1470;
+    public static double        RED_CORNER_TARGET_Y = -1400;
 
 
     //public static double AUTO_DRIVE_SPEED = 0.8;
@@ -65,7 +70,7 @@ public class Parameters {
     public static double        MAX_POPER_FOR_FOREARM_UPDOWN = 0.35;
     public static double        ACCELERATION_FOR_FOREARM_UPDOWN = 0.01;
     public static double        FOREARM_FORTHBACK_POWER = 0.5;
-    /* for mannual updown */
+    /* for manual updown */
     public static double        FOREARM_UPDOWN_POWER_FOR_MANNUAL = 0.25;
     public static double        ACCELERATION_FOR_FOREARM_UPDOWN_FOR_MANNUAL = 0.005;
     public static int           FOREARM_COUNTS_PER_UPDOWN_EFFORT = 50;
@@ -151,6 +156,12 @@ public class Parameters {
 
         FRONT_WALL_TARGET_X =  config.getDouble("front_wall_target_x",-1480);
         FRONT_WALL_TARGET_Y = config.getDouble("front_wall_target_y",-300);
+
+        BLUE_CORNER_TARGET_X = config.getDouble("blue_corner_target_x", -1470);
+        BLUE_CORNER_TARGET_Y = config.getDouble("blue_corner_target_y",  1400);
+
+        RED_CORNER_TARGET_X = config.getDouble("red_corner_target_x",  1470);
+        RED_CORNER_TARGET_Y = config.getDouble("red_corner_target_y",  -1400);
 
         // from ForeArm.java
         MIN_POWER_FOR_FOREARM_UPDOWN = config.getDouble("min_power_for_forearm_updown",0.2);

@@ -44,7 +44,6 @@ public class MineralCollector {
         isWipingOut = false;
     }
 
-
     public void openHolder(){
         servo2.setPosition(HOLDER_OPEN_POS);
         holderIsClosed = false;

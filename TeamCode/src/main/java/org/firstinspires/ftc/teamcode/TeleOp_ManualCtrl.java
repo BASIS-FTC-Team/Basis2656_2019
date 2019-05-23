@@ -109,42 +109,42 @@ public class TeleOp_ManualCtrl extends LinearOpMode {
              * Xiaomi smartphones
              *
              * */
-            if (bH1.held(b)) {
+            if (bH1.held(b) || bH2.held(b) ) {
                 foreArm.keepUpingEnc();
                 //TelemetryWrapper.setLine(6, "Button B hold.");
             }
-            if (bH1.releasing(b)) {
+            if (bH1.releasing(b) || bH2.releasing(b)) {
                 foreArm.stopUpDownEnc();
                 //TelemetryWrapper.setLine(6, "Button B released.");
             }
 
-            if (bH1.held(a)) {
+            if (bH1.held(a) || bH2.held(a) ) {
                 foreArm.keepDowningEnc();
                 //TelemetryWrapper.setLine(6, "Button A hold.");
             }
-            if (bH1.releasing(a)) {
+            if (bH1.releasing(a) || bH2.releasing(a)) {
                 foreArm.stopUpDownEnc();
                 //TelemetryWrapper.setLine(6, "Button A released.");
             }
 
             ///////////////////////////////  Gamepad2  ///////////////////////////
-            if (bH2.held(b)) {
-                foreArm.keepUpingEnc2();
-                //TelemetryWrapper.setLine(6, "Button B2 hold.");
-            }
-            if (bH2.releasing(b)) {
-                foreArm.stopUpDownEnc2();
-                //TelemetryWrapper.setLine(6, "Button B2 released.");
-            }
-
-            if (bH2.held(a)) {
-                foreArm.keepDowningEnc2();
-                //TelemetryWrapper.setLine(6, "Button A2 hold.");
-            }
-            if (bH2.releasing(a)) {
-                foreArm.stopUpDownEnc2();
-                //TelemetryWrapper.setLine(6, "Button A2 released.");
-            }
+//            if (bH2.held(b)) {
+//                foreArm.keepUpingEnc2();
+//                //TelemetryWrapper.setLine(6, "Button B2 hold.");
+//            }
+//            if (bH2.releasing(b)) {
+//                foreArm.stopUpDownEnc2();
+//                //TelemetryWrapper.setLine(6, "Button B2 released.");
+//            }
+//
+//            if (bH2.held(a)) {
+//                foreArm.keepDowningEnc2();
+//                //TelemetryWrapper.setLine(6, "Button A2 hold.");
+//            }
+//            if (bH2.releasing(a)) {
+//                foreArm.stopUpDownEnc2();
+//                //TelemetryWrapper.setLine(6, "Button A2 released.");
+//            }
 
 //            // 一键上收测试
 //            if (bH1.pressed(dpad_up)) {
@@ -159,27 +159,27 @@ public class TeleOp_ManualCtrl extends LinearOpMode {
 
             /////////  Controlling foreArm Forth/Back  ///////////////////////////////////////////////
             /** For Forearm to move FORWARD or BACKWARD */
-            if (bH1.held(y)) {
+            if (bH1.held(y) || bH2.held(y)) {
                 foreArm.keepForwardingEnc();
                 //TelemetryWrapper.setLine(6, "Button Y hold.");
             }
-            if (bH1.releasing(y)) {
+            if (bH1.releasing(y) || bH2.releasing(y)) {
                 foreArm.stopForthBackEnc();
                 //TelemetryWrapper.setLine(6, "Button Y released.");
             }
 
-            if (bH1.held(x)) {
+            if (bH1.held(x) || bH2.held(x)) {
                 foreArm.keepBackwardingEnc();
                 //TelemetryWrapper.setLine(6, "Button X hold.");
             }
-            if (bH1.releasing(x)) {
+            if (bH1.releasing(x) || bH2.releasing(x)) {
                 foreArm.stopForthBackEnc();
                 //TelemetryWrapper.setLine(6, "Button X released.");
             }
 
             ////////  Controlling the mineral collector  ////////////////////////////////////////////
             /** For collecting the minerals */
-            if (bH1.pressing(left_bumper)) {
+            if (bH1.pressing(left_bumper) || bH2.pressing(left_bumper)) {
 
                 if (mineralCollector.isWipingIn()) {
                     mineralCollector.wipeStop();
@@ -189,7 +189,7 @@ public class TeleOp_ManualCtrl extends LinearOpMode {
                     //TelemetryWrapper.setLine(2, "Wiping IN");
                 }
             }
-            if (bH1.pressing(right_bumper)) {
+            if (bH1.pressing(right_bumper) || bH2.pressing(right_bumper)) {
 
                 if (mineralCollector.isWipingOut()) {
                     mineralCollector.wipeStop();
@@ -201,12 +201,17 @@ public class TeleOp_ManualCtrl extends LinearOpMode {
             }
 
             /** For opening or closing the mineral collector holder */
-            if (bH1.pressing(dpad_right)) {
+            if (bH1.pressing(dpad_right) || bH2.pressing(dpad_right)) {
                 mineralCollector.openHolder();
                 //TelemetryWrapper.setLine(2,"Open the Holder");
-            } else if (bH1.pressing(dpad_left)) {
+            } else if (bH1.pressing(dpad_left) || bH2.pressing(dpad_left)) {
                 mineralCollector.closeHolder();
                 //TelemetryWrapper.setLine(2,"Close the Holder");
+            }
+            if (mineralCollector.holderIsClosed()) {
+                mineralCollector.closeHolder();
+            } else {
+                mineralCollector.openHolder();
             }
 
             /////////// Latching and landing by Lift ///////////////////

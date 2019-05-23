@@ -12,9 +12,13 @@ import org.firstinspires.ftc.teamcode.util.Config;
 import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
 
 import static java.lang.Math.atan2;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
 import static java.lang.Math.hypot;
 import static java.lang.Math.toDegrees;
 import static org.firstinspires.ftc.teamcode.Parameters.ANGLE_AUTO_UPDOWN;
+import static org.firstinspires.ftc.teamcode.Parameters.BLUE_CORNER_TARGET_X;
+import static org.firstinspires.ftc.teamcode.Parameters.BLUE_CORNER_TARGET_Y;
 import static org.firstinspires.ftc.teamcode.Parameters.COUNTS_FOREARM_BACKWARD;
 import static org.firstinspires.ftc.teamcode.Parameters.DIST_BTWN_MINERALS;
 import static org.firstinspires.ftc.teamcode.Parameters.FIRST_MOVE_RIGHT;
@@ -23,14 +27,16 @@ import static org.firstinspires.ftc.teamcode.Parameters.LABEL_GOLD_MINERAL;
 import static org.firstinspires.ftc.teamcode.Parameters.LABEL_SILVER_MINERAL;
 import static org.firstinspires.ftc.teamcode.Parameters.MAX_COUNTS_FOREARM_FORWARD;
 import static org.firstinspires.ftc.teamcode.Parameters.MINERAL_DETECT_TIMELIMIT;
+import static org.firstinspires.ftc.teamcode.Parameters.RED_CORNER_TARGET_X;
+import static org.firstinspires.ftc.teamcode.Parameters.RED_CORNER_TARGET_Y;
 import static org.firstinspires.ftc.teamcode.Parameters.TFOD_MODEL_ASSET;
 import static org.firstinspires.ftc.teamcode.Parameters.VUFORIA_KEY;
 
 
-@Autonomous(name="Auto_Red_Right",group = "Basis2656_2019")
+@Autonomous(name="Auto_Blue_Depot",group = "Basis2656_2019")
 //@Disabled
 
-public class Auto_Red_Right extends LinearOpMode {
+public class Auto_Blue_Depot extends LinearOpMode {
 
     /*** Define your variables here ********************************************************/
     private ElapsedTime         runtimeMain = new ElapsedTime();
@@ -50,9 +56,26 @@ public class Auto_Red_Right extends LinearOpMode {
     private GoldPosition        goldPostion = GoldPosition.UNKNOWN;
     private RobotLocator        robotLoc;
 
-    //private final double blue_pRx = -319, blue_pRy = 1036, blue_pMx = -600, blue_pMy = 600, blue_pLx = -1036, blue_pLy = 319;
-    private final double red_pRx = 319, red_pRy = -1036, red_pMx = 600, red_pMy = -600, red_pLx = 1036, red_pLy = -319;
+    /** Notice for programmer:
+     *      For Auto_Red_Right and Auto_Blue_Right OpModes, only the following variables are different.
+     *      Uncomment the assignment for the correct autoCase
+     */
+    /* For autoCase.BLUE_RIGHT:
+       blue_pRx = -319, blue_pRy = 1036, blue_pMx = -600, blue_pMy = 600, blue_pLx = -1036, blue_pLy = 319 */
+    private final double corner_Target_X = BLUE_CORNER_TARGET_X;
+    private final double corner_Target_Y = BLUE_CORNER_TARGET_Y;
+    private final double pRx = -305.6, pRy = 1045;
+    private final double pMx = -600, pMy = 600;
+    private final double pLx = -1045, pLy = 305.6;
 
+    /* For autoCase.RED_RIGHT:
+       pRx = 319, red_pRy = -1036, red_pMx = 600, red_pMy = -600, red_pLx = 1036, red_pLy = -319
+       */
+//    private final double corner_Target_X = RED_CORNER_TARGET_X;
+//    private final double corner_Target_Y = RED_CORNER_TARGET_Y;
+//    private final double pRx = 305.6, pRy = -1045;
+//    private final double pMx = 600, pMy = -600;
+//    private final double pLx = 1045, pLy = -305.6;
 
     @Override
     public void runOpMode() {
@@ -68,6 +91,7 @@ public class Auto_Red_Right extends LinearOpMode {
         foreArm.initEnc();
         mineralCollector.init();
         liftArm.initEnc();
+        liftArm.graspOn();
 
         tmController = new TeamMarkerController();
         tmController.stayOn();
@@ -86,11 +110,8 @@ public class Auto_Red_Right extends LinearOpMode {
 
         /** End of Initialization *********************************************************/
 
-        liftArm.graspOn();
 
         waitForStart();
-
-
 
         /////////////////////////////  Start of Autonomous Actions  /////////////////////////
 
@@ -110,7 +131,6 @@ public class Auto_Red_Right extends LinearOpMode {
         TelemetryWrapper.setLine(logCount++,String.format("[B4loop]%f: (numM, numG, numS)=(%d, %d, %d) \n gP = %s",
                 runtimeMain.milliseconds(),goldDetector.getNumM(), goldDetector.getNumG(), goldDetector.getNumS(), goldDetector.estimateGoldPostion().toString()));
         //
-
 
         while (( goldPostion.equals(GoldPosition.UNKNOWN) ) &&  (runtimeMain.milliseconds() < MINERAL_DETECT_TIMELIMIT) ) {
             goldDetector.update(tfod.getRecognitions());
@@ -175,24 +195,24 @@ public class Auto_Red_Right extends LinearOpMode {
             alpha = robotLoc.getAngle3();
             switch (goldPostion) {
                 case RIGHT:
-                    x2 = red_pRx;
-                    y2 = red_pRy;
+                    x2 = pRx;
+                    y2 = pRy;
                     break;
                 case MIDDLE:
-                    x2 = red_pMx;
-                    y2 = red_pMy;
+                    x2 = pMx;
+                    y2 = pMy;
                     break;
                 case LEFT:
-                    x2 = red_pLx;
-                    y2 = red_pLy;
+                    x2 = pLx;
+                    y2 = pLy;
                     break;
                 default:
                     //Log
                     TelemetryWrapper.setLine(logCount++, String.format("[prepare path] goldPosition UNKNOWN, set as default to MIDDLE."));
                     //
                     goldPostion = GoldPosition.MIDDLE;
-                    x2 = red_pMx;
-                    y2 = red_pMy;
+                    x2 = pMx;
+                    y2 = pMy;
             }
 
             distToMove1 = hypot(y2 - y1, x2 - x1);
@@ -226,8 +246,8 @@ public class Auto_Red_Right extends LinearOpMode {
             }
             x1 = x2;
             y1 = y2;
-            x2 = 1480;
-            y2 = -1480;
+            x2 = corner_Target_X;
+            y2 = corner_Target_Y;
             distToMove2 = hypot(y2 - y1, x2 - x1);
             beta = toDegrees(atan2(y2 - y1, x2 - x1));
 
@@ -251,7 +271,7 @@ public class Auto_Red_Right extends LinearOpMode {
 
             angleAtWall = beta - 90;
             driveTrainEnc.spinEnc(angleAtWall,5000);
-            driveTrainEnc.moveForthBackEnc(1780,7000);
+            driveTrainEnc.moveForthBackEnc(1750,7000);
 
         } else {
             //Log
@@ -262,38 +282,38 @@ public class Auto_Red_Right extends LinearOpMode {
                 case RIGHT:
                     driveTrainEnc.spinEnc(90,5000);
                     driveTrainEnc.moveLeftRightEnc(-(DIST_BTWN_MINERALS - FIRST_MOVE_RIGHT),5000);
-                    driveTrainEnc.moveForthBackEnc(-hypot(600,600),6000);
+                    driveTrainEnc.moveForthBackEnc(-(hypot(600,600)-20),6000);
                     driveTrainEnc.spinEnc(-45,5000);
-                    driveTrainEnc.moveForthBackEnc(-600,5000);
+                    driveTrainEnc.moveForthBackEnc(-(600),5000);
                     tmController.pushOff();
                     driveTrainEnc.spinEnc(90,5000);
-                    driveTrainEnc.moveForthBackEnc(1780,7000);
+                    driveTrainEnc.moveForthBackEnc(1750,7000);
                     break;
                 case MIDDLE:
                     driveTrainEnc.spinEnc(90,5000);
                     driveTrainEnc.moveLeftRightEnc(FIRST_MOVE_RIGHT,5000);
-                    driveTrainEnc.moveForthBackEnc(-hypot(900,900),6000);
+                    driveTrainEnc.moveForthBackEnc(-(hypot(900,900)-20),6000);
                     tmController.pushOff();
                     driveTrainEnc.spinEnc(45,5000);
-                    driveTrainEnc.moveForthBackEnc(1780,7000);
+                    driveTrainEnc.moveForthBackEnc(1750,7000);
                     break;
                 case LEFT:
                     driveTrainEnc.spinEnc(90,5000);
                     driveTrainEnc.moveLeftRightEnc(DIST_BTWN_MINERALS + FIRST_MOVE_RIGHT,5000);
-                    driveTrainEnc.moveForthBackEnc(-hypot(600,600),6000);
+                    driveTrainEnc.moveForthBackEnc(-(hypot(600,600)-20),6000);
                     tmController.pushOff();
                     driveTrainEnc.spinEnc(45,5000);
                     driveTrainEnc.moveForthBackEnc(-600,5000);
-                    driveTrainEnc.moveForthBackEnc(1780,7000);
+                    driveTrainEnc.moveForthBackEnc(1750,7000);
             }
 
         }
 
-        foreArm.moveForwardEnc(MAX_COUNTS_FOREARM_FORWARD,5000);
-        foreArm.moveForwardEnc( - COUNTS_FOREARM_BACKWARD,5000);
+
         foreArm.moveUpDownAngleEnc(-ANGLE_AUTO_UPDOWN,5000);
-
-
+        foreArm.moveForwardEnc(MAX_COUNTS_FOREARM_FORWARD,5000);
+        mineralCollector.openHolder();
+        foreArm.moveForwardEnc( - COUNTS_FOREARM_BACKWARD,5000);
 
         robotLoc.deactivate();
         tfod.deactivate();

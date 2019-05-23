@@ -22,4 +22,6 @@ public class TeamMarkerController {
         teamMarkerServo.setPosition(TM_PUSHOFF_POS);
     }
 
+    public void setPostion( double postion) { teamMarkerServo.setPosition(postion);}
+
 }

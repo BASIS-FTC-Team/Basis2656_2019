@@ -26,12 +26,6 @@ public class GoldDetector {
      * otherwise, it is the order of the gold in the recognized minerals List when first occurs
      */
     private int                 firstGoldOrderFromLeft = 0;
-    /** Goal for giving out the Gold's position when 3 minerals are detected
-     * when there is ONLY ONE gold in the EXACT THREE minerals' case, it indicates
-     * the actual position of the gold, i.e., LEFT / MIDDLE / RIGHT
-     * otherwise it will be UNKNOWN
-     */
-    //private GoldPosition        goldPosition = GoldPosition.UNKNOWN;
     /**
      * if no gold (or even no mineral) detected, the angle is set to 90.0 (Degree)
      * otherwise, the angle is the one from the camera to the first gold
@@ -122,13 +116,6 @@ public class GoldDetector {
         }
     }
 
-//    public void setGoldPosition() {
-//        if ((numM == 3) && (numG == 1)){
-//            if (firstGoldOrderFromLeft == 1)      { goldPosition = GoldPosition.LEFT; }
-//            else if (firstGoldOrderFromLeft == 2) { goldPosition = GoldPosition.MIDDLE; }
-//            else if (firstGoldOrderFromLeft == 3) { goldPosition = GoldPosition.RIGHT; }
-//        } else {goldPosition = GoldPosition.UNKNOWN;}
-//    }
 
     public void setHAlignSlope() {
         if (numM < 2) { hAlignSlope = Double.MAX_VALUE; }
@@ -145,8 +132,6 @@ public class GoldDetector {
     public int getNumG() { return numG; }
 
     public int getNumS() { return numS; }
-
-    //public GoldPosition getGoldPosition() { return goldPosition; }
 
     public int getFirstGoldOrderFromLeft() { return firstGoldOrderFromLeft; }
 
@@ -174,16 +159,18 @@ public class GoldDetector {
     //The following estimation is based on that the robot starts from the right (move right after landing)
     // so there are two minerals within the camera with sure
     public GoldPosition estimateGoldPostion() {
-        if ( numG > 0) {
+        if ( numG > 0) { // gold detected
             if (firstGoldAngle >= 0 ) {
                 return GoldPosition.RIGHT;
             } else {
                 return GoldPosition.MIDDLE;
             }
-        } else if (numM >= 2){
-            return GoldPosition.LEFT;
-        } else {
-            return GoldPosition.UNKNOWN;
+        } else { // no gold detected
+            if (numM >= 2){  // all detected minerals are silvers
+                return GoldPosition.LEFT;  // so the gold is on the right
+            } else {
+                return GoldPosition.UNKNOWN;
+            }
         }
     }
 

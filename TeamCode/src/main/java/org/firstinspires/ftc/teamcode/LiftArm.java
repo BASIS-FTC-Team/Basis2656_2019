@@ -30,9 +30,9 @@ public class LiftArm {
 
     public void graspOn() {
         verticalMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        verticalMotor.setTargetPosition(verticalMotor.getCurrentPosition() - 100);
+        verticalMotor.setTargetPosition(verticalMotor.getCurrentPosition() - 200);
         verticalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        verticalMotor.setPower(0.5);
+        verticalMotor.setPower(0.9);
     }
 
     public int getLiftPosition() {

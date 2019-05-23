@@ -27,17 +27,31 @@ import static org.firstinspires.ftc.teamcode.Parameters.LABEL_SILVER_MINERAL;
 import static org.firstinspires.ftc.teamcode.Parameters.MAX_COUNTS_FOREARM_FORWARD;
 import static org.firstinspires.ftc.teamcode.Parameters.MINERAL_DETECT_TIMELIMIT;
 import static org.firstinspires.ftc.teamcode.Parameters.PUSH_GOLD;
-import static org.firstinspires.ftc.teamcode.Parameters.RED_WALL_TARGET_X;
-import static org.firstinspires.ftc.teamcode.Parameters.RED_WALL_TARGET_Y;
 import static org.firstinspires.ftc.teamcode.Parameters.TFOD_MODEL_ASSET;
 import static org.firstinspires.ftc.teamcode.Parameters.VUFORIA_KEY;
 import static org.firstinspires.ftc.teamcode.Parameters.WALL_TO_DEPOT;
 
 
-@Autonomous(name="Auto_Red_Left",group = "Basis2656_2019")
+@Autonomous(name="Auto_Blue_Crater",group = "Basis2656_2019")
 //@Disabled
 
-public class Auto_Red_Left extends LinearOpMode {
+public class Auto_Blue_Crater extends LinearOpMode {
+
+    /**
+     * Notice for programmer:
+     * wallTarget_X and wallTarget_Y are set to be different values for different autoCase
+     * Just uncomment the correct case to set the correct values.
+     * */
+
+    /* For AutoCase.BLUE_LEFT */
+    private double wallTarget_X = BLUE_WALL_TARGET_X;
+    private double wallTarget_Y = BLUE_WALL_TARGET_Y;
+
+    /* For AutoCase.RED_LEFT */
+//    private double wallTarget_X = RED_WALL_TARGET_X;
+//    private double wallTarget_Y = RED_WALL_TARGET_Y;
+
+
 
     /*** Define your variables here ********************************************************/
     private ElapsedTime         runtimeMain = new ElapsedTime();
@@ -63,7 +77,10 @@ public class Auto_Red_Left extends LinearOpMode {
 
         /***************************** Start of Initializations ****************************/
 
+        //Log initialization
         TelemetryWrapper.init(telemetry,200);
+        //
+
         Parameters.init(config);
         Hardware2019.init(hardwareMap);
 
@@ -72,6 +89,7 @@ public class Auto_Red_Left extends LinearOpMode {
         foreArm.initEnc();
         mineralCollector.init();
         liftArm.initEnc();
+        liftArm.graspOn();
 
         tmController = new TeamMarkerController();
         tmController.stayOn();
@@ -88,15 +106,13 @@ public class Auto_Red_Left extends LinearOpMode {
         robotLoc.activate();
         robotLoc.update();
 
-        /** End of Initialization *********************************************************/
+         /***************************** End of Initialization ******************************/
 
-        liftArm.graspOn();
+
 
         waitForStart();
 
-
-
-        /////////////////////////////  Start of Autonomous Actions  /////////////////////////
+        /*****************************   Start of Autonomous Actions  ******************************/
 
         /** Landing off */
         liftArm.landOffEnc(4000);
@@ -117,9 +133,9 @@ public class Auto_Red_Left extends LinearOpMode {
 
 
         while (( goldPostion.equals(GoldPosition.UNKNOWN) ) &&  (runtimeMain.milliseconds() < MINERAL_DETECT_TIMELIMIT) ) {
+
             goldDetector.update(tfod.getRecognitions());
             goldPostion = goldDetector.estimateGoldPostion();
-
             //Log
             TelemetryWrapper.setLine(logCount++, String.format("[INloop] gD Loops: %d; %s", ++loop_times, goldPostion.toString()));
             //
@@ -139,10 +155,8 @@ public class Auto_Red_Left extends LinearOpMode {
                 runtimeMain.milliseconds(), goldDetector.estimateGoldPostion().toString()));
         //
 
-
         driveTrainEnc.moveForthBackEnc(INITIAL_MOVE_TO_MINERAL, 5000);
         driveTrainEnc.spinEnc(90, 5000);
-
 
         loop_times = 0;
         //Log
@@ -151,6 +165,7 @@ public class Auto_Red_Left extends LinearOpMode {
         //
         runtimeMain.reset();
         while ((!robotLoc.targetIsVisible()) && (runtimeMain.milliseconds()<1000) ) {
+
             robotLoc.update();
             //Log
             TelemetryWrapper.setLine(logCount++, String.format("[INloop]rLoc Loops: %d; (x, y)=(%.1f, %.1f), angle3=%.1f",
@@ -174,22 +189,8 @@ public class Auto_Red_Left extends LinearOpMode {
             x1 = robotLoc.getLocX();
             y1 = robotLoc.getLocY();
             a1 = robotLoc.getAngle3();
-            x2 = RED_WALL_TARGET_X;
-            y2 = RED_WALL_TARGET_Y;
-
-//            if ((x1 > 0) && (y1 > 0)) {
-//                x2 = BLUE_WALL_TARGET_X;
-//                y2 = BLUE_WALL_TARGET_Y;
-//            } else if ((x1 < 0) && (y1 < 0)) {
-//                x2 = RED_WALL_TARGET_X;
-//                y2 = RED_WALL_TARGET_Y;
-//            } else if ((x1 > 0) && (y1 < 0)) {
-//                x2 = FRONT_WALL_TARGET_X;
-//                y2 = FRONT_WALL_TARGET_Y;
-//            } else {
-//                x2 = BACK_WALL_TARGET_X;
-//                y2 = BACK_WALL_TARGET_Y;
-//            }
+            x2 = wallTarget_X;
+            y2 = wallTarget_Y;
 
             //Log
             TelemetryWrapper.setLine(logCount++,String.format("(x1, y1)=(%.1f, %.1f), (x2, y2)=(%.1f, %.1f)",x1, y1,x2, y2));
@@ -214,29 +215,39 @@ public class Auto_Red_Left extends LinearOpMode {
         driveTrainEnc.spinEnc(angleAtWall, 5000);
         driveTrainEnc.moveForthBackEnc(-WALL_TO_DEPOT, 5000);
         tmController.pushOff();
-        driveTrainEnc.moveForthBackEnc( WALL_TO_DEPOT, 5000);
+        driveTrainEnc.moveForthBackEnc( WALL_TO_DEPOT + 20, 5000);
         driveTrainEnc.spinEnc(45,5000);
 
         switch (goldPostion) {
-            case UNKNOWN:  //when UNKNOWN, LEFT is supposed to be the default
-                driveTrainEnc.moveForthBackEnc( INITIAL_DIST_TO_WALL - DIST_BTWN_MINERALS, 7000);
+            case UNKNOWN:
+                driveTrainEnc.moveForthBackEnc( INITIAL_DIST_TO_WALL - DIST_BTWN_MINERALS - 100, 7000);
+                driveTrainEnc.spinEnc(-70, 5000);
                 break;
             case LEFT:
-                driveTrainEnc.moveForthBackEnc( INITIAL_DIST_TO_WALL - DIST_BTWN_MINERALS, 7000);
+                driveTrainEnc.moveForthBackEnc( INITIAL_DIST_TO_WALL - DIST_BTWN_MINERALS -100, 7000);
+                driveTrainEnc.spinEnc(-70, 5000);
                 break;
             case MIDDLE:
                 driveTrainEnc.moveForthBackEnc( INITIAL_DIST_TO_WALL , 7000);
+                driveTrainEnc.spinEnc(-90, 5000);
                 break;
             case RIGHT:
-                driveTrainEnc.moveForthBackEnc( INITIAL_DIST_TO_WALL + DIST_BTWN_MINERALS  , 7000);
+                driveTrainEnc.moveForthBackEnc( INITIAL_DIST_TO_WALL + DIST_BTWN_MINERALS + 100  , 7000);
+                driveTrainEnc.spinEnc(-110, 5000);
                 break;
         }
 
-        driveTrainEnc.spinEnc(-90, 5000);
         driveTrainEnc.moveForthBackEnc(PUSH_GOLD, 5000);
-        foreArm.moveForwardEnc(MAX_COUNTS_FOREARM_FORWARD,5000);
-        foreArm.moveForwardEnc( - COUNTS_FOREARM_BACKWARD,5000);
+
         foreArm.moveUpDownAngleEnc(-ANGLE_AUTO_UPDOWN,5000);
+
+        foreArm.moveForwardEnc(MAX_COUNTS_FOREARM_FORWARD,5000);
+
+        mineralCollector.openHolder();
+
+        foreArm.moveBackwardEnc( COUNTS_FOREARM_BACKWARD,5000);
+
+
 
         robotLoc.deactivate();
         tfod.deactivate();
@@ -244,8 +255,11 @@ public class Auto_Red_Left extends LinearOpMode {
         tmController.stayOn();
 
     }
+    /*******************************   End of Autonomous Actions  **********************************/
 
-    /////////////////////////// Start of Shared functions ///////////////////////////
+
+
+    /************************************ Start of Shared functions ********************************/
 
     private void initVuforia(int cameraMonitorViewId) {
         /** For Vuforia engine 1 (for Android Camera) */
@@ -300,6 +314,10 @@ public class Auto_Red_Left extends LinearOpMode {
         tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABEL_GOLD_MINERAL, LABEL_SILVER_MINERAL);
     }
 
-    /////////////////////////// End of Shared functions ///////////////////////////
+    /************************************ End of Shared functions ****************************************/
+
+    public enum AutoCase {
+        BLUE_LEFT, BLUE_RIGHT, RED_LEFT, RED_RIGHT;
+    }
 
 }
