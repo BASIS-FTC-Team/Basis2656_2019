@@ -38,7 +38,7 @@ public class Parameters {
     public static double        DISTANCE_TO_WALL = INITIAL_DIST_TO_WALL;
     public static double        DIST_TO_ADJUST_BY_WALL = 40.;
     public static double        WALL_TO_DEPOT = 663.0; // 1.5 * 597.0 (tile length) - 80.0 (FRONT_WHEEL_CENTER_TO_FRONT_RIM) - 305.0/2 (half of DIST_BTWN_FRONT_REAR_WHEELS) ;
-    public static double        DEPOT_TO_CRATER = 1326.0; // 597.0 (tile length)  * 3 - (80 + 305.0/2) [center to front rim] * 2;
+    public static double        DEPOT_TO_CRATER = 1800;
     public static int           MAX_COUNTS_FOREARM_FORWARD = 1500; // Stretch out to the farest place
     public static int           COUNTS_FOREARM_BACKWARD = 500; // Draw back to the right place for deliver the mineral to the cargo
     public static double        ANGLE_AUTO_UPDOWN = 60.;
@@ -142,7 +142,7 @@ public class Parameters {
         WALL_TO_DEPOT = config.getDouble("wall_to_depot",663.0); // 1.5 * 597.0 (tile length) - 80.0 (FRONT_WHEEL_CENTER_TO_FRONT_RIM) - 305.0/2 (half of DIST_BTWN_FRONT_REAR_WHEELS) ;
         MAX_COUNTS_FOREARM_FORWARD = config.getInt("max_counts_forearm_forward",1500); // Stretch out to the farest place
         COUNTS_FOREARM_BACKWARD = config.getInt("counts_forearm_backward",500);
-        DEPOT_TO_CRATER = config.getDouble("depot_to_crater",1100.0); // 597.0 (tile length)  * 3 - (80 + 305.0/2) [center to front rim] * 2;
+        DEPOT_TO_CRATER = config.getDouble("depot_to_crater",1800.0); // 597.0 (tile length)  * 3 - (80 + 305.0/2) [center to front rim] * 2;
         ANGLE_AUTO_UPDOWN = config.getDouble("angle_auto_updown",60.);
 
         BLUE_WALL_TARGET_X = config.getDouble("blue_wall_target_x",-300);

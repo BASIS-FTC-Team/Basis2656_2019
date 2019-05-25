@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
 
 import static org.firstinspires.ftc.teamcode.util.ButtonHelper.a;
 import static org.firstinspires.ftc.teamcode.util.ButtonHelper.b;
+import static org.firstinspires.ftc.teamcode.util.ButtonHelper.back;
 import static org.firstinspires.ftc.teamcode.util.ButtonHelper.dpad_down;
 import static org.firstinspires.ftc.teamcode.util.ButtonHelper.dpad_left;
 import static org.firstinspires.ftc.teamcode.util.ButtonHelper.dpad_right;
@@ -185,6 +186,11 @@ public class TeleOp_ManualCtrl extends LinearOpMode {
                 } else {
                     liftArm.stopAtOnceEnc();
                 }
+            }
+
+            if((bH1.pressing(back)) || (bH2.pressing(back))) {
+                liftArm.autoGoingUp();
+                //liftArm.stopAtOnceEnc();
             }
 
         }

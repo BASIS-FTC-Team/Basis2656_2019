@@ -180,7 +180,7 @@ public class Auto_Red_Crater extends LinearOpMode {
 
             case LEFT:
                 driveTrainEnc.moveForthBackEnc( INITIAL_DIST_TO_WALL - DIST_BTWN_MINERALS -100, 7000);
-                driveTrainEnc.spinEnc(-70, 5000);
+                driveTrainEnc.spinEnc(-90, 5000);
                 break;
             case MIDDLE:
                 driveTrainEnc.moveForthBackEnc( INITIAL_DIST_TO_WALL , 7000);
@@ -188,11 +188,11 @@ public class Auto_Red_Crater extends LinearOpMode {
                 break;
             case RIGHT:
                 driveTrainEnc.moveForthBackEnc( INITIAL_DIST_TO_WALL + DIST_BTWN_MINERALS + 100  , 7000);
-                driveTrainEnc.spinEnc(-110, 5000);
+                driveTrainEnc.spinEnc(-90, 5000);
                 break;
         }
 
-        driveTrainEnc.moveForthBackEnc(PUSH_GOLD, 5000);
+        driveTrainEnc.moveForthBackEnc(PUSH_GOLD+50, 5000);
 
         foreArm.moveUpDownAngleEnc(-ANGLE_AUTO_UPDOWN,5000);
 

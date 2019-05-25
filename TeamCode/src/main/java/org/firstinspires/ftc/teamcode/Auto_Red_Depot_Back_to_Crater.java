@@ -17,6 +17,7 @@ import static org.firstinspires.ftc.teamcode.Parameters.ANGLE_AUTO_UPDOWN;
 import static org.firstinspires.ftc.teamcode.Parameters.BLUE_CORNER_TARGET_X;
 import static org.firstinspires.ftc.teamcode.Parameters.BLUE_CORNER_TARGET_Y;
 import static org.firstinspires.ftc.teamcode.Parameters.COUNTS_FOREARM_BACKWARD;
+import static org.firstinspires.ftc.teamcode.Parameters.DEPOT_TO_CRATER;
 import static org.firstinspires.ftc.teamcode.Parameters.DIST_BTWN_MINERALS;
 import static org.firstinspires.ftc.teamcode.Parameters.FIRST_MOVE_RIGHT;
 import static org.firstinspires.ftc.teamcode.Parameters.INITIAL_MOVE_TO_MINERAL;
@@ -225,7 +226,7 @@ public class Auto_Red_Depot_Back_to_Crater extends LinearOpMode {
             angleAtWall = beta - 90;
             angleAtWall = 90-angleAtWall;
             driveTrainEnc.spinEnc(-angleAtWall,5000);
-            driveTrainEnc.moveForthBackEnc(1700,7000);
+            driveTrainEnc.moveForthBackEnc(DEPOT_TO_CRATER,7000);
             //////Case: Go to Opposite Crater
             //angleAtWall = beta - 90;
             //driveTrainEnc.spinEnc(angleAtWall,5000);
@@ -244,7 +245,7 @@ public class Auto_Red_Depot_Back_to_Crater extends LinearOpMode {
 
                     //driveTrainEnc.spinEnc(90,5000);
                     //driveTrainEnc.moveForthBackEnc(1750,7000);
-                    driveTrainEnc.moveForthBackEnc(1700,7000);
+                    driveTrainEnc.moveForthBackEnc(DEPOT_TO_CRATER,7000);
 
                     break;
                 case MIDDLE:
@@ -257,7 +258,7 @@ public class Auto_Red_Depot_Back_to_Crater extends LinearOpMode {
                     //driveTrainEnc.spinEnc(45,5000);
                     //driveTrainEnc.moveForthBackEnc(1750,7000);
                     driveTrainEnc.spinEnc(-45,5000);
-                    driveTrainEnc.moveForthBackEnc(1700,7000);
+                    driveTrainEnc.moveForthBackEnc(DEPOT_TO_CRATER,7000);
 
                     break;
                 case LEFT:
@@ -269,7 +270,7 @@ public class Auto_Red_Depot_Back_to_Crater extends LinearOpMode {
                     driveTrainEnc.spinEnc(-90,5000);
                     tmController.pushOff();
                     sleep(300);
-                    driveTrainEnc.moveForthBackEnc(1700,7000);
+                    driveTrainEnc.moveForthBackEnc(DEPOT_TO_CRATER,7000);
 
                     //tmController.pushOff();
                     //sleep(300);

@@ -5,6 +5,9 @@ import com.qualcomm.robotcore.hardware.DcMotor.ZeroPowerBehavior;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.teamcode.util.TelemetryWrapper;
+
 import static org.firstinspires.ftc.teamcode.Parameters.*;
 import static org.firstinspires.ftc.teamcode.Hardware2019.*;
 
@@ -31,6 +34,13 @@ public class LiftArm {
     public void graspOn() {
         verticalMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         verticalMotor.setTargetPosition(verticalMotor.getCurrentPosition() - 200);
+        verticalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        verticalMotor.setPower(0.5);
+    }
+
+    public void autoGoingUp() {
+        verticalMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        verticalMotor.setTargetPosition(verticalMotor.getCurrentPosition() - LIFT_AUTO_LATCHING_COUNTS);
         verticalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         verticalMotor.setPower(0.9);
     }
@@ -105,17 +115,21 @@ public class LiftArm {
         if (Math.abs(verticalMotor.getTargetPosition() - verticalMotor.getCurrentPosition()) < 1000) {
             verticalMotor.setTargetPosition(verticalMotor.getCurrentPosition() + 10000);
         }
-        if (power < LIFT_POWER) {
-            power += 0.1;
-            if (power > LIFT_POWER) {
-                power = LIFT_POWER;
-            }
-        }
+//        if (power < LIFT_POWER) {
+//            power += 0.1;
+//            if (power > LIFT_POWER) {
+//                power = LIFT_POWER;
+//            }
+//        }
+        power = LIFT_POWER;
+
         isUping = true;
         isDowning = false;
 
         verticalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         verticalMotor.setPower(power);
+
+        TelemetryWrapper.setLine(7, String.format("Lift power is %.3f, power is %.3f",LIFT_POWER, verticalMotor.getPower()));
     }
 
     public void keepDowningEnc() {
@@ -123,12 +137,13 @@ public class LiftArm {
         if (Math.abs(verticalMotor.getTargetPosition() - verticalMotor.getCurrentPosition()) < 1000) {
             verticalMotor.setTargetPosition(verticalMotor.getCurrentPosition() - 10000);
         }
-        if (power < LIFT_POWER) {
-            power += 0.1;
-            if (power > LIFT_POWER) {
-                power = LIFT_POWER;
-            }
-        }
+//        if (power < LIFT_POWER) {
+//            power += 0.1;
+//            if (power > LIFT_POWER) {
+//                power = LIFT_POWER;
+//            }
+//        }
+        power = LIFT_POWER;
         isUping = false;
         isDowning = true;
 
