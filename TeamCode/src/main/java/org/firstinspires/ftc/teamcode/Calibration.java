@@ -89,6 +89,7 @@ public class Calibration extends LinearOpMode {
     private GoldDetector goldDetector;
     private RobotLocator        robotLoc;
     private GoldPosition        goldPosition = GoldPosition.UNKNOWN;
+    double power = 0.1;
 
 
     /*** End of Definition ****************************************************************/
@@ -110,7 +111,7 @@ public class Calibration extends LinearOpMode {
         Parameters.init(config);
         Hardware2019.init(hardwareMap);
 //
-//        liftArm.initEnc();
+        liftArm.initEnc();
 //        foreArm.initEnc();
 //        mineralCollector.init();
 //
@@ -200,6 +201,7 @@ public class Calibration extends LinearOpMode {
                         mineral.getLabel(),mineral.getCenterX(),mineral.getCenterY(),mineral.getAngle(),mineral.getConfidence()));
             }
             // Test the team marker controller
+
             if (bH1.pressing(x)) {
                 tmCtrl.setPostion(0.0);
             }
@@ -233,17 +235,17 @@ public class Calibration extends LinearOpMode {
                 driveTrainEnc.moveLeftRightEnc(600, 5000);
             }
 
-            if (bH1.pressing(left_bumper)) {
-
-                driveTrainEnc.initEnc();
-                driveTrainEnc.spinEnc(-90,5000);
-            }
-
-            if (bH1.pressing(right_bumper)) {
-
-                driveTrainEnc.initEnc();
-                driveTrainEnc.spinEnc(90,5000);
-            }
+//            if (bH1.pressing(left_bumper)) {
+//
+//                driveTrainEnc.initEnc();
+//                driveTrainEnc.spinEnc(-90,5000);
+//            }
+//
+//            if (bH1.pressing(right_bumper)) {
+//
+//                driveTrainEnc.initEnc();
+//                driveTrainEnc.spinEnc(90,5000);
+//            }
 
 
 
@@ -318,13 +320,13 @@ public class Calibration extends LinearOpMode {
                 }
                 /* CW/CCW to test DEGREE_CORRECTION */
                 if (stepEnabled[18]) {
-                    TelemetryWrapper.setLine(7, String.format("CCW Turning = %.1f Degrees.", -90.));
-                    TelemetryWrapper.setLine(1, String.format("%8.1f Step 8: Turning - 135 degrees for depot...", runtime.milliseconds()));
+//                    TelemetryWrapper.setLine(7, String.format("CCW Turning = %.1f Degrees.", -90.));
+//                    TelemetryWrapper.setLine(1, String.format("%8.1f Step 8: Turning - 135 degrees for depot...", runtime.milliseconds()));
                     driveTrainEnc.spinEnc(-90., 5000);
                 }
                 if (stepEnabled[19]) {
-                    TelemetryWrapper.setLine(7, String.format("CCW Turning = %.1f Degrees.", 90.));
-                    TelemetryWrapper.setLine(1, String.format("%8.1f Step 8: Turning - 135 degrees for depot...", runtime.milliseconds()));
+//                    TelemetryWrapper.setLine(7, String.format("CCW Turning = %.1f Degrees.", 90.));
+//                    TelemetryWrapper.setLine(1, String.format("%8.1f Step 8: Turning - 135 degrees for depot...", runtime.milliseconds()));
                     driveTrainEnc.spinEnc(90., 5000);
                 }
                 driveTrainEnc.stop();
@@ -365,6 +367,19 @@ public class Calibration extends LinearOpMode {
                         //sleep(100);
                     }
 
+                    if (bH1.pressing(x) ) {
+                        power -= 0.01;
+                        if (power <0) { power = 0;}
+                    }
+
+                    if (bH1.pressing(y)) {
+                        power += 0.01;
+                        if (power > 1) { power = 1; }
+                    }
+
+                    liftArm.testGraspOn(power);
+
+                    TelemetryWrapper.setLine(5,String.format("grasp_on_power: %.3f",power));
                     TelemetryWrapper.setLine(4, String.format("stepEnable[%d] = %b ", index, stepEnabled[index]));
                 }
                 //TelemetryWrapper.clearLines(0,10);
@@ -488,7 +503,5 @@ public class Calibration extends LinearOpMode {
         @Override public String toString() {
             return  String.format("Step %02d: [ %15.3f ] : [ %10.3f ] : %s ",stepNo, timeStampMS, timeDeltaS, stepDesc);
         }
-
     }
-
 }

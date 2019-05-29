@@ -33,16 +33,34 @@ public class LiftArm {
 
     public void graspOn() {
         verticalMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        verticalMotor.setTargetPosition(verticalMotor.getCurrentPosition() - 200);
+        verticalMotor.setTargetPosition(verticalMotor.getCurrentPosition() - 50);
         verticalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        verticalMotor.setPower(0.5);
+        verticalMotor.setPower(GRASP_ON_POWER);
     }
 
-    public void autoGoingUp() {
+    public void testGraspOn(double power) {
+        //verticalMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        verticalMotor.setTargetPosition(verticalMotor.getCurrentPosition());
+        verticalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        verticalMotor.setPower(power);
+    }
+
+
+    //This if for Robot going up automatically, whiel the lift itself will be going down
+    public void autoGoingUp(int counts) {
         verticalMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        verticalMotor.setTargetPosition(verticalMotor.getCurrentPosition() - LIFT_AUTO_LATCHING_COUNTS);
+        verticalMotor.setTargetPosition(verticalMotor.getCurrentPosition() - counts);
         verticalMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         verticalMotor.setPower(0.9);
+        ElapsedTime runtime = new ElapsedTime();
+        while (verticalMotor.isBusy() && runtime.milliseconds() < 3000) {
+            //wait
+            if (isTouched()) {
+                break;
+            }
+        }
+        verticalMotor.setTargetPosition(verticalMotor.getCurrentPosition());
+        verticalMotor.setPower(GRASP_ON_POWER);
     }
 
     public int getLiftPosition() {

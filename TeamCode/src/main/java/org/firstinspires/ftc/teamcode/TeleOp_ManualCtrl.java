@@ -189,7 +189,7 @@ public class TeleOp_ManualCtrl extends LinearOpMode {
             }
 
             if((bH1.pressing(back)) || (bH2.pressing(back))) {
-                liftArm.autoGoingUp();
+                liftArm.autoGoingUp(600);
                 //liftArm.stopAtOnceEnc();
             }
 

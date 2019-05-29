@@ -110,6 +110,7 @@ public class Parameters {
     public static int           LIFT_AUTO_MOVE_COUNTS = 431; // (int) 125 / 97.5 [15 segments of chain * 6.5 mm/seg] * 56/24 [Reduction rate] * 144 (counts_per_rev)
     public static int           LIFT_AUTO_LANDING_COUNTS = 436; // LIFT_AUTO_MOVE_COUNTS + 5
     public static int           LIFT_AUTO_LATCHING_COUNTS = 556; // LIFT_AUTO_MOVE_COUNTS + 125
+    public static double        GRASP_ON_POWER = 0.1;
 
     // from MineralCollector.java ///////////
     public static double        HOLDER_OPEN_POS = 0.65;     // Servo Position for holder_open
@@ -210,6 +211,8 @@ public class Parameters {
         LIFT_AUTO_MOVE_COUNTS = config.getInt("lift_auto_move_counts",862);
         LIFT_AUTO_LANDING_COUNTS = config.getInt("lift_auto_landing_counts", 1100);
         LIFT_AUTO_LATCHING_COUNTS = config.getInt("lift_auto_latching_counts",862);
+
+        GRASP_ON_POWER = config.getDouble("grasp_on_power",0.1);
 
         // from MineralCollector.java
         HOLDER_CLOSED_POS = config.getDouble("holder_closed_pos", 0.19);

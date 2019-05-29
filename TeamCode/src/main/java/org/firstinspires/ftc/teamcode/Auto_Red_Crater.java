@@ -91,6 +91,7 @@ public class Auto_Red_Crater extends LinearOpMode {
         foreArm.initEnc();
         mineralCollector.init();
         liftArm.initEnc();
+
         liftArm.graspOn();
 
         tmController = new TeamMarkerController();

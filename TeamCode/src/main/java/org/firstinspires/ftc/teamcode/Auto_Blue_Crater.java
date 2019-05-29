@@ -110,8 +110,6 @@ public class Auto_Blue_Crater extends LinearOpMode {
 
          /***************************** End of Initialization ******************************/
 
-
-
         waitForStart();
 
         /*****************************   Start of Autonomous Actions  ******************************/
